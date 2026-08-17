@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /baton/
+Disallow: /api/admin/
+Disallow: /api/ines/
+
+Sitemap: https://berthoplay.pages.dev/sitemap.xml

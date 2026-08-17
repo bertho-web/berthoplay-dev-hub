@@ -1,0 +1,15 @@
+# BerthoPlay - Console Web Haute Performance
+
+> Console Web PWA de jeux 3D, rétrogaming, messagerie instantanée, causeries vocales, clans et réseau social de gamers.
+
+## Présentation
+BerthoPlay est une plateforme de jeu vidéo web haute performance fonctionnant sous forme de Progressive Web App (PWA) souveraine.
+
+## Fonctionnalités Principales
+- Catalogue de Jeux 3D & 2D : Billard 3D Pro, Bubble Shooter AAA, Conduite & Course, Moto Superbike, Dames Pro, Échecs Danger, Horde Survivor 3D.
+- Réseau Social & Communauté : Profils publics, abonnements entre alliés, clans et cagnottes de groupe.
+- Messagerie & Causeries : Tchat en direct, messages vocaux, partage de photos et appels WebRTC audio/vidéo.
+- Économie Virtuelle : Monnaie Berthocoins gagnée lors des victoires et défis.
+
+## Liens Utiles
+- Accueil BerthoPlay : https://berthoplay.pages.dev/
