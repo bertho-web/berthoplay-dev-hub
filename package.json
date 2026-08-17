@@ -1,5 +1,5 @@
 {
-  "name": "berthoplay",
+  "name": "berthoplay-dev-hub",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -8,12 +8,8 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "three": "^0.160.0"
-  },
   "devDependencies": {
-    "typescript": "^5.3.3",
-    "vite": "^6.0.0",
-    "vite-plugin-pwa": "^0.17.4"
+    "vite": "^5.4.11",
+    "vite-plugin-pwa": "^0.20.5"
   }
 }
