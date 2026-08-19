@@ -1,0 +1,1159 @@
+// ============================================================================
+// 🎮 BERTHOPLAY — WORD WHEEL AAAA (SRC/GAMES/WORD.JS)
+// ============================================================================
+
+class WordAudio {
+  static getCtx() {
+    if (!this.ctx) {
+      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+    return this.ctx;
+  }
+
+  static playTone(index) {
+    try {
+      const ctx = this.getCtx();
+      const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33];
+      const freq = scale[Math.min(index, scale.length - 1)];
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.12);
+    } catch(e) {}
+  }
+
+  static playSolved() {
+    try {
+      const ctx = this.getCtx();
+      const now = ctx.currentTime;
+      [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.16, now + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.05);
+        osc.stop(now + i * 0.05 + 0.35);
+      });
+    } catch(e) {}
+  }
+
+  static playError() {
+    try {
+      const ctx = this.getCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(140, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(90, ctx.currentTime + 0.14);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.14);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.14);
+    } catch(e) {}
+  }
+
+  static playClick() {
+    try {
+      const ctx = this.getCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(750, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.06);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.06);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.06);
+    } catch(e) {}
+  }
+}
+
+// --- BASE 50 NIVEAUX FRANÇAIS ---
+const LEVELS_DB = [
+  {
+    lvl: 1,
+    variations: [
+      { lang: 'FRANÇAIS', wheel: ['A', 'M', 'I', 'S'], grid: [{ word: 'AMIS', r: 0, c: 0, dir: 'H' }, { word: 'MAIS', r: 0, c: 1, dir: 'V' }, { word: 'MIS', r: 2, c: 0, dir: 'H' }, { word: 'AMI', r: 0, c: 0, dir: 'V' }, { word: 'MAI', r: 3, c: 1, dir: 'H' }], bonus: ['SAI', 'AS', 'AI'] },
+      { lang: 'FRANÇAIS', wheel: ['J', 'E', 'U', 'X'], grid: [{ word: 'JEUX', r: 0, c: 0, dir: 'H' }, { word: 'JEU', r: 0, c: 0, dir: 'V' }, { word: 'EUX', r: 0, c: 1, dir: 'V' }], bonus: ['EX', 'EU'] }
+    ]
+  },
+  {
+    lvl: 2,
+    variations: [
+      { lang: 'FRANÇAIS', wheel: ['P', 'O', 'U', 'R', 'T'], grid: [{ word: 'POUR', r: 0, c: 0, dir: 'H' }, { word: 'TOUR', r: 0, c: 3, dir: 'V' }, { word: 'TROU', r: 2, c: 1, dir: 'H' }, { word: 'POT', r: 0, c: 0, dir: 'V' }, { word: 'PUR', r: 3, c: 2, dir: 'H' }], bonus: ['PORT', 'ROUT', 'TOP', 'PRO'] }
+    ]
+  },
+  {
+    lvl: 3,
+    variations: [
+      { lang: 'FRANÇAIS', wheel: ['T', 'A', 'B', 'L', 'E'], grid: [{ word: 'TABLE', r: 0, c: 0, dir: 'H' }, { word: 'BATE', r: 0, c: 2, dir: 'V' }, { word: 'BALE', r: 2, c: 0, dir: 'H' }, { word: 'BLE', r: 0, c: 2, dir: 'H' }, { word: 'PLAT', r: 1, c: 4, dir: 'V' }], bonus: ['BETA', 'TALE', 'LATE', 'ALE', 'BAC'] }
+    ]
+  },
+  {
+    lvl: 4,
+    variations: [
+      { lang: 'FRANÇAIS', wheel: ['J', 'O', 'U', 'E', 'R'], grid: [{ word: 'JOUER', r: 0, c: 0, dir: 'H' }, { word: 'ROUE', r: 0, c: 4, dir: 'V' }, { word: 'JOUR', r: 0, c: 0, dir: 'V' }, { word: 'JEU', r: 2, c: 0, dir: 'H' }, { word: 'RUE', r: 3, c: 2, dir: 'H' }], bonus: ['JURE', 'ORE', 'OR', 'EU'] }
+    ]
+  },
+  {
+    lvl: 5,
+    variations: [
+      {
+        lang: 'FRANÇAIS',
+        wheel: ['C', 'A', 'R', 'E', 'S'],
+        grid: [
+          { word: 'RACES', r: 0, c: 0, dir: 'H' },
+          { word: 'CARES', r: 0, c: 2, dir: 'V' },
+          { word: 'CASE',  r: 2, c: 0, dir: 'H' },
+          { word: 'ARC',   r: 1, c: 2, dir: 'H' },
+          { word: 'SAC',   r: 4, c: 2, dir: 'H' }
+        ],
+        bonus: ['RACE', 'CARE', 'ACRES', 'CAR', 'ACE', 'SEC', 'ARS']
+      },
+      {
+        lang: 'FRANÇAIS',
+        wheel: ['P', 'A', 'R', 'C', 'S'],
+        grid: [
+          { word: 'PARCS', r: 0, c: 0, dir: 'H' },
+          { word: 'CAPS',  r: 0, c: 3, dir: 'V' },
+          { word: 'ARC',   r: 1, c: 1, dir: 'H' }
+        ],
+        bonus: ['PARC', 'CAR', 'RAP', 'SAC', 'PAS']
+      }
+    ]
+  },
+  {
+    lvl: 6,
+    variations: [
+      {
+        lang: 'FRANÇAIS',
+        wheel: ['M', 'O', 'N', 'D', 'E'],
+        grid: [
+          { word: 'MONDE', r: 0, c: 0, dir: 'H' },
+          { word: 'DEMON', r: 0, c: 4, dir: 'V' },
+          { word: 'DOME',  r: 2, c: 1, dir: 'H' },
+          { word: 'NOM',   r: 0, c: 2, dir: 'V' },
+          { word: 'DON',   r: 4, c: 2, dir: 'H' }
+        ],
+        bonus: ['MODE', 'ONDE', 'ODE', 'MEN', 'DO']
+      }
+    ]
+  },
+  {
+    lvl: 7,
+    variations: [
+      {
+        lang: 'FRANÇAIS',
+        wheel: ['G', 'A', 'M', 'E', 'R', 'S'],
+        grid: [
+          { word: 'GAMERS', r: 0, c: 0, dir: 'H' },
+          { word: 'GARES',  r: 0, c: 0, dir: 'V' },
+          { word: 'MAGES',  r: 2, c: 1, dir: 'H' },
+          { word: 'RAMES',  r: 4, c: 0, dir: 'H' },
+          { word: 'MERS',   r: 2, c: 1, dir: 'V' }
+        ],
+        bonus: ['GAMER', 'GARE', 'MAGE', 'RAME', 'MER', 'AGE', 'SAGE', 'ARS']
+      }
+    ]
+  },
+  {
+    lvl: 8,
+    variations: [
+      {
+        lang: 'FRANÇAIS • BERTHO',
+        wheel: ['B', 'E', 'R', 'T', 'H', 'O'],
+        grid: [
+          { word: 'BERTHO', r: 0, c: 0, dir: 'H' },
+          { word: 'HOTE',   r: 0, c: 4, dir: 'V' },
+          { word: 'ROBE',   r: 2, c: 2, dir: 'H' },
+          { word: 'BORE',   r: 0, c: 0, dir: 'V' },
+          { word: 'BOT',    r: 3, c: 0, dir: 'H' }
+        ],
+        bonus: ['THE', 'HERO', 'BETH', 'ROTE', 'TORE', 'BROTE', 'ORE']
+      }
+    ]
+  },
+  {
+    lvl: 9,
+    variations: [
+      {
+        lang: 'FRANÇAIS',
+        wheel: ['S', 'I', 'L', 'V', 'E', 'R'],
+        grid: [
+          { word: 'SILVER', r: 0, c: 0, dir: 'H' },
+          { word: 'LIVRE',  r: 0, c: 2, dir: 'V' },
+          { word: 'RIRE',   r: 3, c: 2, dir: 'H' },
+          { word: 'RIVE',   r: 1, c: 4, dir: 'V' },
+          { word: 'SIRE',   r: 0, c: 0, dir: 'V' }
+        ],
+        bonus: ['VIEL', 'LIRE', 'VIS', 'VER', 'LIE']
+      }
+    ]
+  },
+  {
+    lvl: 10,
+    variations: [
+      {
+        lang: 'FRANÇAIS',
+        wheel: ['C', 'O', 'N', 'S', 'O', 'L', 'E'],
+        grid: [
+          { word: 'CONSOLE', r: 0, c: 0, dir: 'H' },
+          { word: 'COLON',   r: 0, c: 0, dir: 'V' },
+          { word: 'CLOS',    r: 2, c: 0, dir: 'H' },
+          { word: 'SOL',     r: 0, c: 3, dir: 'V' },
+          { word: 'LOSE',    r: 4, c: 2, dir: 'H' }
+        ],
+        bonus: ['CLONE', 'ONCE', 'SONO', 'COLO', 'NOSE', 'SOC']
+      }
+    ]
+  }
+];
+
+for (let i = 11; i <= 50; i++) {
+  LEVELS_DB.push({
+    lvl: i,
+    variations: [
+      {
+        lang: 'FRANÇAIS',
+        wheel: ['P', 'L', 'A', 'N', 'E', 'T', 'E'].slice(0, 5 + (i % 3)),
+        grid: [
+          { word: 'PLANETE', r: 0, c: 0, dir: 'H' },
+          { word: 'PLANTE',  r: 0, c: 0, dir: 'V' },
+          { word: 'PLANE',   r: 2, c: 0, dir: 'H' },
+          { word: 'LANE',    r: 0, c: 1, dir: 'V' },
+          { word: 'PLAT',    r: 4, c: 0, dir: 'H' }
+        ],
+        bonus: ['PALE', 'TALE', 'LATE', 'NET', 'ALE', 'PAN']
+      }
+    ]
+  });
+}
+
+export class BerthoWords {
+  constructor(targetElement, levelNum = 1, onComplete, onFail, onExit) {
+    if (typeof levelNum === 'function') {
+      this.onExit = levelNum;
+      this.levelNum = 1;
+      this.onComplete = onComplete || null;
+      this.onFail = onFail || null;
+    } else {
+      this.levelNum = Math.min(Math.max(1, levelNum), 50);
+      this.onComplete = onComplete;
+      this.onFail = onFail;
+      this.onExit = onExit;
+    }
+
+    this.targetElement = targetElement;
+    this.showModal = false;
+    this.modalScrollY = 0;
+    this.modalMaxScroll = 0;
+    this.modalTouchStartY = 0;
+
+    this.loadState();
+    this.initLevel();
+    this.initDOM();
+  }
+
+  loadState() {
+    try {
+      const saved = localStorage.getItem('BERTHOPLAY_V1') || localStorage.getItem('BERTHO_TEST_STATE');
+      const parsed = saved ? JSON.parse(saved) : {};
+      this.coins = parsed.coins !== undefined ? parsed.coins : 0;
+      this.maxUnlockedLevel = parsed.wordWheelLevel || parsed.wordWheelMaxUnlocked || 1;
+      this.levelStars = parsed.wordWheelStars || {};
+    } catch(e) {
+      this.coins = 0;
+      this.maxUnlockedLevel = 1;
+      this.levelStars = {};
+    }
+  }
+
+  saveState() {
+    try {
+      const saved = localStorage.getItem('BERTHOPLAY_V1') || localStorage.getItem('BERTHO_TEST_STATE');
+      const parsed = saved ? JSON.parse(saved) : {};
+      parsed.coins = this.coins;
+      parsed.wordWheelLevel = Math.max(this.maxUnlockedLevel, this.levelNum);
+      parsed.wordWheelStars = this.levelStars;
+      localStorage.setItem('BERTHOPLAY_V1', JSON.stringify(parsed));
+      localStorage.setItem('BERTHO_TEST_STATE', JSON.stringify(parsed));
+    } catch(e) {}
+  }
+
+  initLevel() {
+    const levelEntry = LEVELS_DB[this.levelNum - 1] || LEVELS_DB[0];
+    const pool = levelEntry.variations;
+    this.levelData = pool[Math.floor(Math.random() * pool.length)];
+
+    this.letters = [...this.levelData.wheel];
+    this.targetWords = this.levelData.grid.map(g => g.word);
+    this.bonusWords = this.levelData.bonus || [];
+
+    this.foundWords = new Set();
+    this.revealedLetterIndices = {};
+
+    this.selectedIndices = [];
+    this.currentDragPos = null;
+    this.isDragging = false;
+    this.letterNodes = [];
+
+    this.particles = [];
+    this.floatingToasts = [];
+    this.wheelRotationAngle = 0;
+  }
+
+  initDOM() {
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.overflow = 'hidden';
+    document.body.style.userSelect = 'none';
+
+    if (this.targetElement && this.targetElement.tagName === 'CANVAS') {
+      this.canvas = this.targetElement;
+      this.canvas.style.display = 'block';
+    } else {
+      this.canvas = document.createElement('canvas');
+      this.canvas.id = 'word-game-canvas';
+      this.canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100dvh; display:block; background:#020617; touch-action:none; z-index:1000;';
+      document.body.appendChild(this.canvas);
+    }
+
+    this.ctx = this.canvas.getContext('2d');
+    this.resize();
+    this.bindEvents();
+    this.startLoop();
+  }
+
+  resize() {
+    const dpr = window.devicePixelRatio || 1;
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+
+    this.canvas.width = this.width * dpr;
+    this.canvas.height = this.height * dpr;
+    this.canvas.style.width = `${this.width}px`;
+    this.canvas.style.height = `${this.height}px`;
+
+    this.ctx.scale(dpr, dpr);
+    this.computeLayout();
+  }
+
+  computeLayout() {
+    this.safeTop = Math.max(50, Math.floor(this.height * 0.065));
+    this.safeSide = Math.max(24, Math.floor(this.width * 0.065));
+    this.safeBottom = Math.max(28, Math.floor(this.height * 0.035));
+
+    this.wheelCenter = {
+      x: this.width / 2,
+      y: this.height * 0.67
+    };
+    this.trayRadius = Math.min(this.width * 0.33, 115);
+    this.wheelRadius = this.trayRadius * 0.68;
+    this.letterHitRadius = Math.min(this.wheelRadius * 0.38, 28);
+
+    const total = this.letters.length;
+    this.letterNodes = this.letters.map((char, i) => {
+      const angle = (i / total) * Math.PI * 2 - Math.PI / 2 + this.wheelRotationAngle;
+      return {
+        char: char,
+        x: this.wheelCenter.x + Math.cos(angle) * this.wheelRadius,
+        y: this.wheelCenter.y + Math.sin(angle) * this.wheelRadius,
+        radius: this.letterHitRadius
+      };
+    });
+
+    const bottomControlsY = Math.min(this.height - this.safeBottom - 20, this.wheelCenter.y + this.trayRadius + 42);
+
+    this.btnShuffle = {
+      x: Math.max(52, this.width * 0.18),
+      y: bottomControlsY,
+      radius: 25
+    };
+
+    this.btnHint = {
+      x: Math.min(this.width - 52, this.width * 0.82),
+      y: bottomControlsY,
+      radius: 25
+    };
+
+    let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
+    this.levelData.grid.forEach(item => {
+      for (let i = 0; i < item.word.length; i++) {
+        const r = item.dir === 'V' ? item.r + i : item.r;
+        const c = item.dir === 'H' ? item.c + i : item.c;
+        minR = Math.min(minR, r); maxR = Math.max(maxR, r);
+        minC = Math.min(minC, c); maxC = Math.max(maxC, c);
+      }
+    });
+
+    const rowsCount = maxR - minR + 1;
+    const colsCount = maxC - minC + 1;
+
+    const availableTop = this.safeTop + 45;
+    const availableBottom = this.wheelCenter.y - this.trayRadius - 42;
+    const availableH = availableBottom - availableTop;
+    const availableW = this.width - (this.safeSide * 2) - 10;
+
+    this.gridCellSize = Math.min(46, Math.floor(availableW / (colsCount || 1)), Math.floor(availableH / (rowsCount || 1)));
+    this.gridGap = 5;
+
+    const totalGridW = colsCount * (this.gridCellSize + this.gridGap) - this.gridGap;
+    const totalGridH = rowsCount * (this.gridCellSize + this.gridGap) - this.gridGap;
+
+    this.gridStartX = (this.width - totalGridW) / 2 - (minC * (this.gridCellSize + this.gridGap));
+    this.gridStartY = availableTop + (availableH - totalGridH) / 2 - (minR * (this.gridCellSize + this.gridGap));
+  }
+
+  bindEvents() {
+    this.handleResize = () => this.resize();
+    window.addEventListener('resize', this.handleResize);
+
+    const getPos = (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    };
+
+    const getNodeAtPos = (pos) => {
+      return this.letterNodes.findIndex(node => {
+        const dx = node.x - pos.x;
+        const dy = node.y - pos.y;
+        return (dx * dx + dy * dy) <= (node.radius * 1.55) ** 2;
+      });
+    };
+
+    this.onPointerDown = (e) => {
+      e.preventDefault();
+      const pos = getPos(e);
+
+      if (this.showModal) {
+        this.modalTouchStartY = pos.y;
+        this.handleModalClick(pos);
+        return;
+      }
+
+      // 1. Badge Niveau Cliquable
+      if (pos.x >= this.safeSide && pos.x <= this.safeSide + 125 && pos.y >= this.safeTop - 10 && pos.y <= this.safeTop + 42) {
+        this.showModal = true;
+        WordAudio.playClick();
+        return;
+      }
+
+      // 2. Bouton Quitter
+      const quitW = 76;
+      const quitX = this.width - this.safeSide - quitW;
+      if (pos.x >= quitX - 8 && pos.x <= quitX + quitW + 8 && pos.y >= this.safeTop - 10 && pos.y <= this.safeTop + 42) {
+        this.destroy();
+        if (this.onExit) this.onExit();
+        return;
+      }
+
+      // 3. Bouton Mélanger 🔀
+      if ((pos.x - this.btnShuffle.x) ** 2 + (pos.y - this.btnShuffle.y) ** 2 <= (this.btnShuffle.radius * 1.4) ** 2) {
+        this.shuffleLetters();
+        return;
+      }
+
+      // 4. Bouton Indice Ampoule 💡
+      if ((pos.x - this.btnHint.x) ** 2 + (pos.y - this.btnHint.y) ** 2 <= (this.btnHint.radius * 1.4) ** 2) {
+        this.useHint();
+        return;
+      }
+
+      const index = getNodeAtPos(pos);
+      if (index !== -1) {
+        this.isDragging = true;
+        this.selectedIndices = [index];
+        this.currentDragPos = pos;
+        this.haptic(15);
+        WordAudio.playLetterTone(0);
+      }
+    };
+
+    this.onPointerMove = (e) => {
+      const pos = getPos(e);
+
+      if (this.showModal && e.touches) {
+        const deltaY = pos.y - this.modalTouchStartY;
+        this.modalScrollY = Math.max(-this.modalMaxScroll, Math.min(0, this.modalScrollY + deltaY * 0.8));
+        this.modalTouchStartY = pos.y;
+        return;
+      }
+
+      if (!this.isDragging) return;
+      e.preventDefault();
+      this.currentDragPos = pos;
+
+      const index = getNodeAtPos(pos);
+      if (index !== -1 && !this.selectedIndices.includes(index)) {
+        this.selectedIndices.push(index);
+        this.haptic(15);
+        WordAudio.playLetterTone(this.selectedIndices.length - 1);
+      }
+    };
+
+    this.onPointerUp = (e) => {
+      if (!this.isDragging) return;
+      this.isDragging = false;
+      this.currentDragPos = null;
+      this.validateWord();
+      this.selectedIndices = [];
+    };
+
+    this.canvas.addEventListener('touchstart', this.onPointerDown, { passive: false });
+    this.canvas.addEventListener('touchmove', this.onPointerMove, { passive: false });
+    this.canvas.addEventListener('touchend', this.onPointerUp, { passive: false });
+
+    this.canvas.addEventListener('mousedown', this.onPointerDown);
+    this.canvas.addEventListener('mousemove', this.onPointerMove);
+    window.addEventListener('mouseup', this.onPointerUp);
+  }
+
+  haptic(ms = 15) {
+    if (navigator.vibrate) navigator.vibrate(ms);
+  }
+
+  handleModalClick(pos) {
+    if (pos.x >= this.width - this.safeSide - 35 && pos.x <= this.width - this.safeSide + 15 && pos.y >= this.safeTop - 15 && pos.y <= this.safeTop + 35) {
+      this.showModal = false;
+      WordAudio.playClick();
+      return;
+    }
+
+    const cols = 5;
+    const startX = this.safeSide;
+    const startY = this.safeTop + 45 + this.modalScrollY;
+    const tileSize = (this.width - (this.safeSide * 2) - (cols - 1) * 8) / cols;
+
+    for (let i = 1; i <= 50; i++) {
+      const r = Math.floor((i - 1) / cols);
+      const c = (i - 1) % cols;
+      const x = startX + c * (tileSize + 8);
+      const y = startY + r * (tileSize + 8);
+
+      if (pos.x >= x && pos.x <= x + tileSize && pos.y >= y && pos.y <= y + tileSize && pos.y >= this.safeTop + 35) {
+        if (i <= this.maxUnlockedLevel) {
+          this.levelNum = i;
+          this.showModal = false;
+          this.initLevel();
+          this.computeLayout();
+          WordAudio.playClick();
+        } else {
+          this.addFloatingToast("NIVEAU VERROUILLÉ", "#ef4444");
+          WordAudio.playError();
+        }
+        return;
+      }
+    }
+  }
+
+  shuffleLetters() {
+    this.wheelRotationAngle += Math.PI / 3;
+    for (let i = this.letters.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.letters[i], this.letters[j]] = [this.letters[j], this.letters[i]];
+    }
+    this.computeLayout();
+    this.haptic(20);
+    WordAudio.playClick();
+  }
+
+  useHint() {
+    const HINT_COST = 5;
+    if (this.coins < HINT_COST) {
+      this.addFloatingToast("COINS INSUFFISANTS", "#ef4444");
+      WordAudio.playError();
+      return;
+    }
+
+    const unsolved = this.levelData.grid.find(item => !this.foundWords.has(item.word));
+
+    if (unsolved) {
+      const word = unsolved.word;
+      if (!this.revealedLetterIndices[word]) this.revealedLetterIndices[word] = [];
+
+      let nextIndex = -1;
+      for (let i = 0; i < word.length; i++) {
+        if (!this.revealedLetterIndices[word].includes(i)) {
+          nextIndex = i;
+          break;
+        }
+      }
+
+      if (nextIndex !== -1) {
+        this.revealedLetterIndices[word].push(nextIndex);
+        this.coins -= HINT_COST;
+        this.saveState();
+        this.haptic(25);
+        WordAudio.playClick();
+        this.addFloatingToast(`INDICE -${HINT_COST} COINS`, "#fbbf24");
+        return;
+      }
+    }
+
+    this.addFloatingToast("GRILLE DÉJÀ COMPLÈTE", "#38bdf8");
+  }
+
+  getCurrentSpelled() {
+    return this.selectedIndices.map(i => this.letterNodes[i].char).join('');
+  }
+
+  validateWord() {
+    const spelled = this.getCurrentSpelled();
+    if (!spelled || spelled.length < 2) return;
+
+    if (this.targetWords.includes(spelled)) {
+      if (!this.foundWords.has(spelled)) {
+        this.foundWords.add(spelled);
+
+        const earned = spelled.length <= 3 ? 10 : (spelled.length === 4 ? 15 : 20);
+        this.coins += earned;
+        this.saveState();
+
+        const toastMsg = `+${earned} COINS (${spelled})`;
+        this.addFloatingToast(toastMsg, "#34d399");
+        this.spawnParticles(this.width / 2, this.height * 0.25, "#34d399");
+        WordAudio.playSolved();
+        this.haptic([30, 40, 30]);
+
+        if (this.foundWords.size === this.targetWords.length) {
+          setTimeout(() => this.onLevelWon(), 700);
+        }
+      } else {
+        this.addFloatingToast("DÉJÀ TROUVÉ", "#fbbf24");
+        WordAudio.playError();
+      }
+    } else if (this.bonusWords.includes(spelled)) {
+      if (!this.foundWords.has(spelled)) {
+        const earned = 10;
+        this.coins += earned;
+        this.saveState();
+        this.addFloatingToast(`MOT BONUS +${earned} (${spelled})`, "#fbbf24");
+        this.spawnParticles(this.width / 2, this.height * 0.25, "#fbbf24");
+        WordAudio.playSolved();
+      }
+    } else {
+      this.addFloatingToast(spelled, "#ef4444");
+      WordAudio.playError();
+      this.haptic(35);
+    }
+  }
+
+  onLevelWon() {
+    const bonus = 25;
+    this.coins += bonus;
+    this.levelStars[this.levelNum] = 3;
+    this.maxUnlockedLevel = Math.max(this.maxUnlockedLevel, this.levelNum + 1);
+    this.saveState();
+    this.spawnParticles(this.width / 2, this.height / 2, "#fbbf24", 50);
+
+    this.addFloatingToast(`VICTOIRE ! NIVEAU SUIVANT`, "#34d399");
+    WordAudio.playSolved();
+
+    setTimeout(() => {
+      if (this.levelNum < 50) {
+        this.levelNum++;
+        this.initLevel();
+        this.computeLayout();
+      } else if (this.onComplete) {
+        this.onComplete(50, this.coins, 3);
+      }
+    }, 1200);
+  }
+
+  addFloatingToast(text, color) {
+    this.floatingToasts.push({
+      text: text,
+      color: color,
+      y: this.wheelCenter.y - this.trayRadius - 38,
+      alpha: 1.0,
+      vy: -1.2
+    });
+  }
+
+  spawnParticles(x, y, color, count = 25) {
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 5 + 2;
+      this.particles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        radius: Math.random() * 3 + 2,
+        color: color,
+        alpha: 1.0,
+        decay: Math.random() * 0.02 + 0.015
+      });
+    }
+  }
+
+  startLoop() {
+    const loop = () => {
+      this.update();
+      this.draw();
+      this.animationId = requestAnimationFrame(loop);
+    };
+    this.animationId = requestAnimationFrame(loop);
+  }
+
+  update() {
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.15;
+      p.alpha -= p.decay;
+      if (p.alpha <= 0) this.particles.splice(i, 1);
+    }
+
+    for (let i = this.floatingToasts.length - 1; i >= 0; i--) {
+      const t = this.floatingToasts[i];
+      t.y += t.vy;
+      t.alpha -= 0.02;
+      if (t.alpha <= 0) this.floatingToasts.splice(i, 1);
+    }
+  }
+
+  draw() {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.width, this.height);
+
+    const grad = ctx.createLinearGradient(0, 0, 0, this.height);
+    grad.addColorStop(0, '#020617');
+    grad.addColorStop(0.5, '#0b1329');
+    grad.addColorStop(1, '#020617');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, this.width, this.height);
+
+    this.drawHeader(ctx);
+    this.drawCrosswordMatrix(ctx);
+    this.drawTrayAndLetters(ctx);
+    this.drawFX(ctx);
+
+    if (this.showModal) {
+      this.drawModal(ctx);
+    }
+  }
+
+  drawHeader(ctx) {
+    const topY = this.safeTop;
+
+    // 1. Badge Niveau Cliquable
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 1.5;
+    this.roundRect(ctx, this.safeSide, topY, 116, 32, 8, true, true);
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = '900 13px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`NIVEAU ${this.levelNum} / 50 ▾`, this.safeSide + 58, topY + 21);
+
+    // 2. Solde Coins
+    const coinX = this.width / 2 + 10;
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(coinX - 30, topY + 16, 9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#78350f';
+    ctx.font = '900 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText("C", coinX - 30, topY + 19);
+
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = '900 14px -apple-system, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${this.coins}`, coinX - 18, topY + 21);
+
+    // 3. Bouton Quitter
+    const quitW = 76;
+    const quitX = this.width - this.safeSide - quitW;
+
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+    ctx.lineWidth = 1.2;
+    this.roundRect(ctx, quitX, topY, quitW, 32, 10, true, true);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '900 11px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText("QUITTER", quitX + quitW / 2, topY + 20);
+  }
+
+  drawCrosswordMatrix(ctx) {
+    const size = this.gridCellSize;
+    const gap = this.gridGap;
+    const renderedCells = {};
+
+    this.levelData.grid.forEach(item => {
+      const isWordSolved = this.foundWords.has(item.word);
+      const revealedIndices = this.revealedLetterIndices[item.word] || [];
+
+      for (let i = 0; i < item.word.length; i++) {
+        const r = item.dir === 'V' ? item.r + i : item.r;
+        const c = item.dir === 'H' ? item.c + i : item.c;
+        const cellKey = `${r}_${c}`;
+        const char = item.word[i];
+        const isLetterVisible = isWordSolved || revealedIndices.includes(i);
+
+        if (!renderedCells[cellKey] || isLetterVisible) {
+          renderedCells[cellKey] = {
+            r: r, c: c,
+            char: char,
+            visible: isLetterVisible || (renderedCells[cellKey] && renderedCells[cellKey].visible)
+          };
+        }
+      }
+    });
+
+    Object.values(renderedCells).forEach(cell => {
+      const x = this.gridStartX + cell.c * (size + gap);
+      const y = this.gridStartY + cell.r * (size + gap);
+
+      if (cell.visible) {
+        const tileGrad = ctx.createLinearGradient(x, y, x, y + size);
+        tileGrad.addColorStop(0, '#0284c7');
+        tileGrad.addColorStop(1, '#0369a1');
+        ctx.fillStyle = tileGrad;
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+        this.roundRect(ctx, x, y, size, size, 8, true, true);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `900 ${Math.floor(size * 0.58)}px -apple-system, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(cell.char, x + size / 2, y + size * 0.7);
+      } else {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1.8;
+        this.roundRect(ctx, x, y, size, size, 8, true, true);
+      }
+    });
+  }
+
+  drawTrayAndLetters(ctx) {
+    const cx = this.wheelCenter.x;
+    const cy = this.wheelCenter.y;
+    const R = this.trayRadius;
+
+    // 1. Bol Sombre 3D
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    
+    const trayGrad = ctx.createRadialGradient(cx, cy - R * 0.4, R * 0.2, cx, cy, R);
+    trayGrad.addColorStop(0, '#1e293b');
+    trayGrad.addColorStop(0.7, '#0f172a');
+    trayGrad.addColorStop(1, '#020617');
+    ctx.fillStyle = trayGrad;
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R - 2, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // 2. Bouton Mélanger 🔀
+    const sx = this.btnShuffle.x;
+    const sy = this.btnShuffle.y;
+    ctx.beginPath();
+    ctx.arc(sx, sy, this.btnShuffle.radius, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+    ctx.fill();
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(sx - 8, sy - 6); ctx.lineTo(sx - 2, sy - 6); ctx.lineTo(sx + 5, sy + 4); ctx.lineTo(sx + 8, sy + 4);
+    ctx.stroke();
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.beginPath();
+    ctx.moveTo(sx + 8, sy + 1); ctx.lineTo(sx + 12, sy + 4); ctx.lineTo(sx + 8, sy + 7);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(sx - 8, sy + 6); ctx.lineTo(sx - 2, sy + 6); ctx.lineTo(sx + 5, sy - 4); ctx.lineTo(sx + 8, sy - 4);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(sx + 8, sy - 7); ctx.lineTo(sx + 12, sy - 4); ctx.lineTo(sx + 8, sy - 1);
+    ctx.closePath();
+    ctx.fill();
+
+    // 3. Bouton Indice Ampoule 💡 (5 Coins)
+    const hx = this.btnHint.x;
+    const hy = this.btnHint.y;
+    ctx.beginPath();
+    ctx.arc(hx, hy, this.btnHint.radius, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+    ctx.fill();
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.strokeStyle = '#fbbf24';
+    ctx.fillStyle = '#fbbf24';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(hx, hy - 4, 6, 0, Math.PI, true);
+    ctx.lineTo(hx - 3, hy + 3);
+    ctx.lineTo(hx + 3, hy + 3);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fillRect(hx - 2, hy + 4, 4, 2);
+
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = '900 10px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText("5", hx, hy + 16);
+
+    // 4. Cordon Nacré Blanc Lumineux
+    if (this.selectedIndices.length > 0) {
+      ctx.save();
+      ctx.beginPath();
+      const first = this.letterNodes[this.selectedIndices[0]];
+      ctx.moveTo(first.x, first.y);
+
+      for (let i = 1; i < this.selectedIndices.length; i++) {
+        const node = this.letterNodes[this.selectedIndices[i]];
+        ctx.lineTo(node.x, node.y);
+      }
+
+      if (this.currentDragPos) {
+        ctx.lineTo(this.currentDragPos.x, this.currentDragPos.y);
+      }
+
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 16;
+      ctx.stroke();
+
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3.5;
+      ctx.shadowBlur = 0;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 5. Lettres Sculptées en Or 3D
+    this.letterNodes.forEach((node, idx) => {
+      const isSelected = this.selectedIndices.includes(idx);
+      const fontSize = Math.floor(node.radius * 1.55);
+
+      ctx.save();
+      ctx.font = `900 ${fontSize}px "Arial Black", -apple-system, sans-serif`;
+      ctx.textAlign = 'center';
+
+      ctx.fillStyle = '#451a03';
+      ctx.fillText(node.char, node.x + 1, node.y + fontSize * 0.38 + 4);
+
+      const goldGrad = ctx.createLinearGradient(node.x, node.y - fontSize * 0.4, node.x, node.y + fontSize * 0.4);
+      if (isSelected) {
+        goldGrad.addColorStop(0, '#ffffff');
+        goldGrad.addColorStop(0.3, '#fef08a');
+        goldGrad.addColorStop(0.7, '#f59e0b');
+        goldGrad.addColorStop(1, '#ea580c');
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 20;
+      } else {
+        goldGrad.addColorStop(0, '#fef08a');
+        goldGrad.addColorStop(0.4, '#eab308');
+        goldGrad.addColorStop(0.8, '#d97706');
+        goldGrad.addColorStop(1, '#b45309');
+      }
+
+      ctx.fillStyle = goldGrad;
+      ctx.fillText(node.char, node.x, node.y + fontSize * 0.38);
+
+      ctx.strokeStyle = isSelected ? '#ffffff' : '#78350f';
+      ctx.lineWidth = isSelected ? 2 : 1.2;
+      ctx.strokeText(node.char, node.x, node.y + fontSize * 0.38);
+      ctx.restore();
+    });
+
+    // 6. Pilule Mot en cours
+    if (this.isDragging && this.selectedIndices.length > 0) {
+      const spelled = this.getCurrentSpelled();
+      const pillY = this.wheelCenter.y - this.trayRadius - 26;
+      ctx.font = '900 16px -apple-system, sans-serif';
+      const textWidth = ctx.measureText(spelled).width + 36;
+
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      this.roundRect(ctx, this.width / 2 - textWidth / 2, pillY - 16, textWidth, 34, 17, true, true);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.fillText(spelled, this.width / 2, pillY + 6);
+    }
+  }
+
+  drawModal(ctx) {
+    ctx.save();
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(0, 0, this.width, this.height);
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = '900 18px -apple-system, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText("50 NIVEAUX WORD WHEEL", this.safeSide, this.safeTop + 10);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '900 20px -apple-system, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText("✕", this.width - this.safeSide, this.safeTop + 10);
+
+    const cols = 5;
+    const startX = this.safeSide;
+    const startY = this.safeTop + 40 + this.modalScrollY;
+    const tileSize = (this.width - (this.safeSide * 2) - (cols - 1) * 8) / cols;
+
+    const totalRows = Math.ceil(50 / cols);
+    const contentH = totalRows * (tileSize + 8);
+    this.modalMaxScroll = Math.max(0, contentH - (this.height - this.safeTop - 60));
+
+    ctx.beginPath();
+    ctx.rect(0, this.safeTop + 25, this.width, this.height - this.safeTop - 25);
+    ctx.clip();
+
+    for (let i = 1; i <= 50; i++) {
+      const r = Math.floor((i - 1) / cols);
+      const c = (i - 1) % cols;
+      const x = startX + c * (tileSize + 8);
+      const y = startY + r * (tileSize + 8);
+
+      const isUnlocked = i <= this.maxUnlockedLevel;
+      const isCurrent = i === this.levelNum;
+      const stars = this.levelStars[i] || 0;
+
+      if (isCurrent && isUnlocked) {
+        ctx.fillStyle = '#0284c7';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+      } else if (isUnlocked) {
+        ctx.fillStyle = '#1e293b';
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+        ctx.lineWidth = 1.2;
+      } else {
+        ctx.fillStyle = '#0f172a';
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1;
+      }
+
+      this.roundRect(ctx, x, y, tileSize, tileSize, 10, true, true);
+
+      if (isUnlocked) {
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `900 ${Math.floor(tileSize * 0.4)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(i, x + tileSize / 2, y + tileSize * (stars > 0 ? 0.52 : 0.62));
+
+        if (stars > 0) {
+          ctx.fillStyle = '#fbbf24';
+          ctx.font = `10px sans-serif`;
+          ctx.fillText("★★★", x + tileSize / 2, y + tileSize * 0.82);
+        }
+      } else {
+        const cx = x + tileSize / 2;
+        const cy = y + tileSize / 2;
+        ctx.fillStyle = '#475569';
+        this.roundRect(ctx, cx - 8, cy - 3, 16, 12, 3, true, false);
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 4, 5, Math.PI, 0);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  drawFX(ctx) {
+    this.particles.forEach(p => {
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    this.floatingToasts.forEach(t => {
+      ctx.save();
+      ctx.globalAlpha = t.alpha;
+      ctx.fillStyle = t.color;
+      ctx.font = '900 17px -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(t.text, this.width / 2, t.y);
+      ctx.restore();
+    });
+  }
+
+  roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    if (fill) ctx.fill();
+    if (stroke) ctx.stroke();
+  }
+
+  destroy() {
+    if (this.animationId) cancelAnimationFrame(this.animationId);
+    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener('mouseup', this.onPointerUp);
+    document.body.style.overflow = '';
+    document.body.style.userSelect = '';
+    if (this.canvas && this.canvas.id === 'word-game-canvas' && this.canvas.parentNode) {
+      this.canvas.parentNode.removeChild(this.canvas);
+    }
+  }
+}
+
+export const WordWheelGame = BerthoWords;
+export default BerthoWords;
