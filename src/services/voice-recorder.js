@@ -1,5 +1,5 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — ENREGISTREUR VOCAL & LECTEUR AUDIO STYLE WAVEFORM
+// BERTHOPLAY — ENREGISTREUR VOCAL & LECTEUR AUDIO STYLE WAVEFORM
 // ============================================================================
 
 export class BerthoVoiceRecorder {
@@ -160,7 +160,7 @@ export class BerthoVoiceRecorder {
             const activeCount = Math.floor((pct / 100) * bars.length);
             
             bars.forEach((bar, idx) => {
-              bar.style.background = idx <= activeCount ? '#38bdf8' : 'rgba(255,255,255,0.25)';
+              bar.style.background = idx <= activeCount ? 'var(--violet-lit)' : 'rgba(255,255,255,0.25)';
             });
             
             const mins = Math.floor(audio.currentTime / 60);
@@ -186,14 +186,14 @@ export class BerthoVoiceRecorder {
     
     return `
       <div class="voice-player-card" style="display:flex; align-items:center; gap:10px; padding:4px 0; width:100%; min-width:180px; max-width:240px; box-sizing:border-box;">
-        <button id="btn-${uniqueId}" style="background:#0284c7; border:none; color:#fff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+        <button id="btn-${uniqueId}" style="background:var(--blood); border:none; color:#fff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.3);">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
         </button>
         <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:0;">
           <div id="wave-${uniqueId}" style="display:flex; align-items:center; gap:2px; height:20px; width:100%;">
             ${barsHTML}
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:0.65rem; color:#94a3b8; font-weight:600;">
+          <div style="display:flex; justify-content:space-between; font-size:0.65rem; color:var(--ink-3); font-weight:600;">
             <span id="time-${uniqueId}">${durationStr}</span>
           </div>
         </div>

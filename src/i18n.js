@@ -1,5 +1,5 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — MOTEUR D'INTERNATIONALISATION MULTILINGUE (22 LANGUES EXHAUSTIVES)
+// BERTHOPLAY — MOTEUR D'INTERNATIONALISATION MULTILINGUE (22 LANGUES EXHAUSTIVES)
 // ============================================================================
 
 class I18nEngine {
@@ -11,6 +11,7 @@ class I18nEngine {
         navHome: "Accueil", navActus: "Actus", navTop: "Top", navAccount: "Compte", navSettings: "Réglages",
         gameVictories: "Victoires :", gameStage: "Étape :", gameProgression: "Progression :", gameBest: "Best :",
         coins: "COINS", btnConnexion: "Connexion", btnEco: "Infrastructures Bertho",
+        btnPlay: "Jouer", btnReviews: "Avis", btnResume: "Reprendre",
         btnInstallPWA: "Installer l'application", pwaBannerText: "Installez l'application BerthoPlay pour une expérience 100% fluide et plein écran",
         pwaStatus: "Statut PWA", pwaInstalled: "Application Installée", pwaBrowser: "Navigateur Web",
         settingsTitle: "Réglages de la Console", soundLabel: "Sons & Bruitages", rulesLabel: "Règlements & Confidentialité",
@@ -18,7 +19,7 @@ class I18nEngine {
         logout: "Se Déconnecter", langLabel: "Langue de la Console",
         voiceMessage: "Message vocal", audioCall: "Appel Audio", videoCall: "Appel Vidéo",
         followers: "Abonnés", following: "Abonnements", commonFollowers: "Abonnés en commun",
-        searchPlaceholder: "🔍 Rechercher un joueur...", searchNoResult: "Aucun joueur trouvé.",
+        searchPlaceholder: "Rechercher un joueur...", searchNoResult: "Aucun joueur trouvé.",
         requestMic: "Microphone requis", requestNotif: "Notifications Push",
         confirmClearCacheTitle: "VIDER LE CACHE", confirmClearCacheMsg: "Voulez-vous réinitialiser le cache local de la console ?",
         cacheSuccess: "Cache réinitialisé avec succès !"
@@ -36,7 +37,7 @@ class I18nEngine {
         logout: "Bima", langLabel: "Lokota ya Console",
         voiceMessage: "Mongongo", audioCall: "Benga mongongo", videoCall: "Benga video",
         followers: "Baninga", following: "Balandi", commonFollowers: "Baninga na bino",
-        searchPlaceholder: "🔍 Luka mosani...", searchNoResult: "Mosani amonanaki te.",
+        searchPlaceholder: "Luka mosani...", searchNoResult: "Mosani amonanaki te.",
         requestMic: "Microphone esengeli", requestNotif: "Sango ya PWA",
         confirmClearCacheTitle: "PENZA CACHE", confirmClearCacheMsg: "Olingi olongola bapapye ya kala ?",
         cacheSuccess: "Epenzami malamu !"
@@ -54,7 +55,7 @@ class I18nEngine {
         logout: "Vaika", langLabel: "Ndinga ya Console",
         voiceMessage: "Ndinga", audioCall: "Benga ndinga", videoCall: "Benga video",
         followers: "Kanda", following: "Balandi", commonFollowers: "Kanda ya mpangi",
-        searchPlaceholder: "🔍 Sosa muntu...", searchNoResult: "Muntu amonanaki ko.",
+        searchPlaceholder: "Sosa muntu...", searchNoResult: "Muntu amonanaki ko.",
         requestMic: "Microphone", requestNotif: "Sango",
         confirmClearCacheTitle: "KATULA CACHE", confirmClearCacheMsg: "Zolele katula cache ?",
         cacheSuccess: "Ikatudimini !"
@@ -72,7 +73,7 @@ class I18nEngine {
         logout: "Toka", langLabel: "Lugha ya Console",
         voiceMessage: "Ujumbe wa Sauti", audioCall: "Piga Sauti", videoCall: "Piga Video",
         followers: "Wafuasi", following: "Unaowafuata", commonFollowers: "Wafuasi wa Pamoja",
-        searchPlaceholder: "🔍 Tafuta mchezaji...", searchNoResult: "Hakuna mchezaji aliyepatikana.",
+        searchPlaceholder: "Tafuta mchezaji...", searchNoResult: "Hakuna mchezaji aliyepatikana.",
         requestMic: "Kipaza sauti Kinahitajika", requestNotif: "Arifa za Push",
         confirmClearCacheTitle: "FUTA KUMBUKUMBU", confirmClearCacheMsg: "Je, unataka kufuta kumbukumbu ya hapa?",
         cacheSuccess: "Kumbukumbu imefutwa kwa mafanikio!"
@@ -90,7 +91,7 @@ class I18nEngine {
         logout: "Jade", langLabel: "Ede Console",
         voiceMessage: "Iroyin Ohun", audioCall: "Ipe Ohun", videoCall: "Ipe Bidio",
         followers: "Awon ti o tele o", following: "Awon ti o tele", commonFollowers: "Awon ti e joo tele",
-        searchPlaceholder: "🔍 Wa elere...", searchNoResult: "Kosi elere kankan.",
+        searchPlaceholder: "Wa elere...", searchNoResult: "Kosi elere kankan.",
         requestMic: "Maikirofoni Gbon", requestNotif: "Awon Ibi Iroyin",
         confirmClearCacheTitle: "MULE CACHE KURO", confirmClearCacheMsg: "Se o fe mu cache kuro?",
         cacheSuccess: "A ti mu cache kuro ni reere!"
@@ -108,7 +109,7 @@ class I18nEngine {
         logout: "Pụọ", langLabel: "Asụsụ Console",
         voiceMessage: "Ozi Ụda", audioCall: "Anya Ụda", videoCall: "Anya Video",
         followers: "Ndị na-eso gị", following: "Ndị ị na-eso", commonFollowers: "Ndị so gị abụọ",
-        searchPlaceholder: "🔍 Chọọ onye egwuregwu...", searchNoResult: "Enweghị onye ahụrụ.",
+        searchPlaceholder: "Chọọ onye egwuregwu...", searchNoResult: "Enweghị onye ahụrụ.",
         requestMic: "Mikrofon Dị Mkpa", requestNotif: "Ọkwa Push",
         confirmClearCacheTitle: "KPOCHAPỤ CACHE", confirmClearCacheMsg: "Ị chọrọ ikpochapụ cache?",
         cacheSuccess: "Ikpochapụrụ cache nke ọma!"
@@ -126,7 +127,7 @@ class I18nEngine {
         logout: "Fita", langLabel: "Harshen Console",
         voiceMessage: "Sakon Muryar", audioCall: "Kiran Murya", videoCall: "Kiran Bidiyo",
         followers: "Masu Biyo Ka", following: "Masu Biyowa", commonFollowers: "Abokan Biyo Na Tsaro",
-        searchPlaceholder: "🔍 Nema dan wasa...", searchNoResult: "Ba a sami dan wasa ba.",
+        searchPlaceholder: "Nema dan wasa...", searchNoResult: "Ba a sami dan wasa ba.",
         requestMic: "Ana Bukatar Na'urar Murya", requestNotif: "Sankon Tura",
         confirmClearCacheTitle: "GOGE CACHE", confirmClearCacheMsg: "Kuna son goge cache?",
         cacheSuccess: "An goge cache cikin nasara!"
@@ -144,7 +145,7 @@ class I18nEngine {
         logout: "Phuma", langLabel: "Ulimi lwe-Console",
         voiceMessage: "Ulayezo Womsindo", audioCall: "Ucingo Lwomsindo", videoCall: "Ucingo Lwevidiyo",
         followers: "Abalandeli", following: "Abo Bafundi", commonFollowers: "Abalandeli Ababelana Nabo",
-        searchPlaceholder: "🔍 Dinga umdlali...", searchNoResult: "Akukho mdlali utholakeleyo.",
+        searchPlaceholder: "Dinga umdlali...", searchNoResult: "Akukho mdlali utholakeleyo.",
         requestMic: "Kudingeka Imakrofoni", requestNotif: "Izaziso ze-Push",
         confirmClearCacheTitle: "SUSA I-CACHE", confirmClearCacheMsg: "Ingabe ufuna ukususa i-cache yendawo?",
         cacheSuccess: "I-cache isuswe ngempumelelo!"
@@ -152,6 +153,7 @@ class I18nEngine {
 
       // 9. ENGLISH (EN)
       en: {
+        btnPlay: "Play", btnReviews: "Reviews", btnResume: "Resume",
         navHome: "Home", navActus: "Feed", navTop: "Top", navAccount: "Account", navSettings: "Settings",
         gameVictories: "Wins:", gameStage: "Stage:", gameProgression: "Progress:", gameBest: "Best:",
         coins: "COINS", btnConnexion: "Sign In", btnEco: "Bertho Ecosystem",
@@ -162,7 +164,7 @@ class I18nEngine {
         logout: "Log Out", langLabel: "Console Language",
         voiceMessage: "Voice Note", audioCall: "Audio Call", videoCall: "Video Call",
         followers: "Followers", following: "Following", commonFollowers: "Mutual Followers",
-        searchPlaceholder: "🔍 Search player...", searchNoResult: "No player found.",
+        searchPlaceholder: "Search player...", searchNoResult: "No player found.",
         requestMic: "Microphone Required", requestNotif: "Push Notifications",
         confirmClearCacheTitle: "CLEAR CACHE", confirmClearCacheMsg: "Do you want to clear local cache?",
         cacheSuccess: "Cache cleared successfully!"
@@ -180,7 +182,7 @@ class I18nEngine {
         logout: "Cerrar sesión", langLabel: "Idioma de la Consola",
         voiceMessage: "Mensaje de Voz", audioCall: "Llamada de Audio", videoCall: "Llamada de Video",
         followers: "Seguidores", following: "Siguiendo", commonFollowers: "Seguidores en Común",
-        searchPlaceholder: "🔍 Buscar jugador...", searchNoResult: "Jugador no encontrado.",
+        searchPlaceholder: "Buscar jugador...", searchNoResult: "Jugador no encontrado.",
         requestMic: "Micrófono Requerido", requestNotif: "Notificaciones Push",
         confirmClearCacheTitle: "BORRAR CACHÉ", confirmClearCacheMsg: "¿Deseas borrar la caché local?",
         cacheSuccess: "¡Caché borrada con éxito!"
@@ -198,7 +200,7 @@ class I18nEngine {
         logout: "Sair", langLabel: "Idioma da Consola",
         voiceMessage: "Mensagem de Voz", audioCall: "Chamada de Voz", videoCall: "Chamada de Vídeo",
         followers: "Seguidores", following: "Seguindo", commonFollowers: "Seguidores em Comum",
-        searchPlaceholder: "🔍 Buscar jogador...", searchNoResult: "Nenhum jogador encontrado.",
+        searchPlaceholder: "Buscar jogador...", searchNoResult: "Nenhum jogador encontrado.",
         requestMic: "Microfone Necessário", requestNotif: "Notificações Push",
         confirmClearCacheTitle: "LIMPAR CACHE", confirmClearCacheMsg: "Deseja limpar o cache local?",
         cacheSuccess: "Cache limpo com sucesso!"
@@ -216,7 +218,7 @@ class I18nEngine {
         logout: "Abmelden", langLabel: "Konsolensprache",
         voiceMessage: "Sprachnachricht", audioCall: "Audioanruf", videoCall: "Videoanruf",
         followers: "Follower", following: "Folgt", commonFollowers: "Gemeinsame Follower",
-        searchPlaceholder: "🔍 Spieler suchen...", searchNoResult: "Kein Spieler gefunden.",
+        searchPlaceholder: "Spieler suchen...", searchNoResult: "Kein Spieler gefunden.",
         requestMic: "Mikrofon Erforderlich", requestNotif: "Push-Benachrichtigungen",
         confirmClearCacheTitle: "CACHE LEEREN", confirmClearCacheMsg: "Möchten Sie den lokalen Cache leeren?",
         cacheSuccess: "Cache erfolgreich geleert!"
@@ -234,7 +236,7 @@ class I18nEngine {
         logout: "Disconnetti", langLabel: "Lingua Console",
         voiceMessage: "Messaggio Vocale", audioCall: "Chiamata Audio", videoCall: "Chiamata Video",
         followers: "Follower", following: "Seguiti", commonFollowers: "Follower in Comune",
-        searchPlaceholder: "🔍 Cerca giocatore...", searchNoResult: "Nessun giocatore trovato.",
+        searchPlaceholder: "Cerca giocatore...", searchNoResult: "Nessun giocatore trovato.",
         requestMic: "Microfono Richiesto", requestNotif: "Notifiche Push",
         confirmClearCacheTitle: "SVUOTA CACHE", confirmClearCacheMsg: "Vuoi svuotare la cache locale?",
         cacheSuccess: "Cache svuotata con successo!"
@@ -252,7 +254,7 @@ class I18nEngine {
         logout: "Uitloggen", langLabel: "Console Taal",
         voiceMessage: "Spraakbericht", audioCall: "Audio Oproep", videoCall: "Video Oproep",
         followers: "Volgers", following: "Volgend", commonFollowers: "Gemeenschappelijke Volgers",
-        searchPlaceholder: "🔍 Zoek speler...", searchNoResult: "Geen speler gevonden.",
+        searchPlaceholder: "Zoek speler...", searchNoResult: "Geen speler gevonden.",
         requestMic: "Microfoon Vereist", requestNotif: "Push Meldingen",
         confirmClearCacheTitle: "CACHE WISSEN", confirmClearCacheMsg: "Wilt u de lokale cache wissen?",
         cacheSuccess: "Cache succesvol gewist!"
@@ -270,7 +272,7 @@ class I18nEngine {
         logout: "Выйти", langLabel: "Язык Консоли",
         voiceMessage: "Голосовое сообщение", audioCall: "Аудиозвонок", videoCall: "Видеозвонок",
         followers: "Подписчики", following: "Подписки", commonFollowers: "Общие подписчики",
-        searchPlaceholder: "🔍 Найти игрока...", searchNoResult: "Игрок не найден.",
+        searchPlaceholder: "Найти игрока...", searchNoResult: "Игрок не найден.",
         requestMic: "Требуется Микрофон", requestNotif: "Push-уведомления",
         confirmClearCacheTitle: "ОЧИСТИТЬ КЭШ", confirmClearCacheMsg: "Вы хотите очистить локальный кэш?",
         cacheSuccess: "Кэш успешно очищен!"
@@ -288,7 +290,7 @@ class I18nEngine {
         logout: "退出登录", langLabel: "控制台语言",
         voiceMessage: "语音消息", audioCall: "语音通话", videoCall: "视频通话",
         followers: "粉丝", following: "关注", commonFollowers: "共同关注",
-        searchPlaceholder: "🔍 搜索玩家...", searchNoResult: "未找到玩家。",
+        searchPlaceholder: "搜索玩家...", searchNoResult: "未找到玩家。",
         requestMic: "需要麦克风", requestNotif: "推送通知",
         confirmClearCacheTitle: "清除缓存", confirmClearCacheMsg: "您要清除本地缓存吗？",
         cacheSuccess: "缓存已成功清除！"
@@ -306,7 +308,7 @@ class I18nEngine {
         logout: "ログアウト", langLabel: "コンソール言語",
         voiceMessage: "ボイスメッセージ", audioCall: "音声通話", videoCall: "ビデオ通話",
         followers: "フォロワー", following: "フォロー中", commonFollowers: "共通のフォロワー",
-        searchPlaceholder: "🔍 プレイヤーを検索...", searchNoResult: "プレイヤーが見つかりません。",
+        searchPlaceholder: "プレイヤーを検索...", searchNoResult: "プレイヤーが見つかりません。",
         requestMic: "マイクが必要", requestNotif: "プッシュ通知",
         confirmClearCacheTitle: "キャッシュ消去", confirmClearCacheMsg: "ローカルキャッシュを消去しますか？",
         cacheSuccess: "キャッシュが正常に消去されました！"
@@ -324,7 +326,7 @@ class I18nEngine {
         logout: "로그아웃", langLabel: "콘솔 언어",
         voiceMessage: "음성 메시지", audioCall: "음성 통화", videoCall: "영상 통화",
         followers: "팔로워", following: "팔로잉", commonFollowers: "함께 아는 팔로워",
-        searchPlaceholder: "🔍 플레이어 검색...", searchNoResult: "플레이어를 찾을 수 없습니다.",
+        searchPlaceholder: "플레이어 검색...", searchNoResult: "플레이어를 찾을 수 없습니다.",
         requestMic: "마이크 필요", requestNotif: "푸시 알림",
         confirmClearCacheTitle: "캐시 삭제", confirmClearCacheMsg: "로컬 캐시를 삭제하시겠습니까?",
         cacheSuccess: "캐시가 성공적으로 삭제되었습니다!"
@@ -342,7 +344,7 @@ class I18nEngine {
         logout: "تسجيل الخروج", langLabel: "لغة المنصة",
         voiceMessage: "رسالة صوتية", audioCall: "مكالمة صوتية", videoCall: "مكالمة فيديو",
         followers: "المتابعون", following: "يتابع", commonFollowers: "متابعون مشتركون",
-        searchPlaceholder: "🔍 البحث عن لاعب...", searchNoResult: "لم يتم العثور على أي لاعب.",
+        searchPlaceholder: "البحث عن لاعب...", searchNoResult: "لم يتم العثور على أي لاعب.",
         requestMic: "الميكروفون مطلوب", requestNotif: "إشعارات المنصة",
         confirmClearCacheTitle: "مسح الذاكرة", confirmClearCacheMsg: "هل تريد مسح الذاكرة المؤقتة؟",
         cacheSuccess: "تم مسح الذاكرة المؤقتة بنجاح!"
@@ -360,7 +362,7 @@ class I18nEngine {
         logout: "साइन आउट", langLabel: "कंसोल भाषा",
         voiceMessage: "वॉयस मैसेज", audioCall: "ऑडियो कॉल", videoCall: "वीडियो कॉल",
         followers: "फ़ॉलोअर्स", following: "फ़ॉलो कर रहे हैं", commonFollowers: "कॉमन फ़ॉलोअर्स",
-        searchPlaceholder: "🔍 खिलाड़ी खोजें...", searchNoResult: "कोई खिलाड़ी नहीं मिला।",
+        searchPlaceholder: "खिलाड़ी खोजें...", searchNoResult: "कोई खिलाड़ी नहीं मिला।",
         requestMic: "माइक्रोफ़ोन आवश्यक है", requestNotif: "पुश नोटिफिकेशन",
         confirmClearCacheTitle: "कैश साफ़ करें", confirmClearCacheMsg: "क्या आप कैश साफ़ करना चाहते हैं?",
         cacheSuccess: "कैश सफलतापूर्वक साफ़ किया गया!"
@@ -378,7 +380,7 @@ class I18nEngine {
         logout: "Çıkış Yap", langLabel: "Konsol Dili",
         voiceMessage: "Sesli Mesaj", audioCall: "Sesli Arama", videoCall: "Görüntülü Arama",
         followers: "Takipçiler", following: "Takip Edilenler", commonFollowers: "Ortak Takipçiler",
-        searchPlaceholder: "🔍 Oyuncu ara...", searchNoResult: "Oyuncu bulunamadı.",
+        searchPlaceholder: "Oyuncu ara...", searchNoResult: "Oyuncu bulunamadı.",
         requestMic: "Mikrofon Gerekli", requestNotif: "Anlık Bildirimler",
         confirmClearCacheTitle: "ÖNBELLEĞİ TEMİZLE", confirmClearCacheMsg: "Yerel önbelleği temizlemek istiyor musunuz?",
         cacheSuccess: "Önbellek başarıyla temizlendi!"
@@ -396,7 +398,7 @@ class I18nEngine {
         logout: "Đăng xuất", langLabel: "Ngôn ngữ Console",
         voiceMessage: "Tin nhắn thoại", audioCall: "Cuộc gọi thoại", videoCall: "Cuộc gọi Video",
         followers: "Người theo dõi", following: "Đang theo dõi", commonFollowers: "Người theo dõi chung",
-        searchPlaceholder: "🔍 Tìm người chơi...", searchNoResult: "Không tìm thấy người chơi.",
+        searchPlaceholder: "Tìm người chơi...", searchNoResult: "Không tìm thấy người chơi.",
         requestMic: "Yêu cầu Micro", requestNotif: "Thông báo Push",
         confirmClearCacheTitle: "XÓA CACHE", confirmClearCacheMsg: "Bạn có muốn xóa cache cục bộ?",
         cacheSuccess: "Xóa cache thành công!"
@@ -430,13 +432,40 @@ class I18nEngine {
       localStorage.setItem('BERTHOPLAY_V1', JSON.stringify(data));
     } catch(e) {}
 
+    this.applyDocumentLang();
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: langCode } }));
   }
 
-  t(key) {
-    const langObj = this.translations[this.currentLang] || this.translations['fr'];
-    return langObj[key] || (this.translations['fr'][key] || key);
+  /**
+   * @param {string} key
+   * @param {string} [fallback] texte affiché si la clé n'existe dans aucune
+   *        langue. Sans lui, une clé manquante s'affichait telle quelle à
+   *        l'écran (« btnPlay » en plein milieu d'un bouton).
+   */
+  t(key, fallback) {
+    const langObj = this.translations[this.currentLang] || this.translations.fr;
+    const value = langObj[key] ?? this.translations.fr[key];
+    if (value !== undefined) return value;
+
+    if (import.meta.env?.DEV) {
+      console.warn(`[i18n] clé manquante : ${key}`);
+    }
+    return fallback ?? key;
+  }
+
+  /**
+   * Aligne <html lang> et <html dir> sur la langue active : sans ça, les
+   * lecteurs d'écran prononcent le français avec l'accent anglais et l'arabe
+   * s'affiche de gauche à droite.
+   */
+  applyDocumentLang() {
+    const rtl = ['ar', 'he', 'fa', 'ur'];
+    document.documentElement.lang = this.currentLang;
+    document.documentElement.dir = rtl.includes(this.currentLang) ? 'rtl' : 'ltr';
   }
 }
 
 export const i18n = new I18nEngine();
+
+// Le document doit porter la bonne langue dès le premier rendu.
+i18n.applyDocumentLang();

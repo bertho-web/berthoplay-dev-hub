@@ -1,179 +1,295 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — MOTEUR DE MODALES, TOASTS & TRADUCTEUR D'ERREURS (100% PUR)
+// BERTHOPLAY — MODALES, TOASTS & TRADUCTION D'ERREURS
+// ----------------------------------------------------------------------------
+// Toutes les boîtes de dialogue de l'application passent par ici : une seule
+// apparence, un seul comportement clavier, un seul jeu de sons.
+//
+// Accessibilité : rôle dialog, focus capturé puis restitué, Échap ferme,
+// clic sur le voile ferme (sauf pour une action destructive à confirmer).
 // ============================================================================
 
+import { BerthoSoundEffects } from './services/sound-effects.js';
+import { icon } from './components/icons.js';
+
+const OVERLAY_ID = 'bertho-custom-ui-overlay';
+
 export class BerthoUI {
-  
-  // 🛡️ TRADUCTEUR D'ERREURS TECHNIQUES VERS LE LANGAGE HUMAIN (FILTRE BDT)
+
+  // ==========================================================================
+  // TRADUCTION DES ERREURS TECHNIQUES
+  // ==========================================================================
+
+  /**
+   * Une erreur affichée à un joueur doit dire quoi faire, pas ce qui a cassé.
+   * Les libellés bruts (D1_ERROR, SQLITE_TOOBIG…) ne sortent jamais d'ici.
+   */
   static error(title, rawError, onClose) {
-    let humanMsg = typeof rawError === 'string' ? rawError : (rawError?.message || "Une erreur est survenue.");
-    
-    if (humanMsg.includes('no such column') || humanMsg.includes('D1_ERROR')) {
-      humanMsg = "Mise à jour de la base de données en cours. Veuillez réessayer votre connexion dans un instant.";
-    } else if (humanMsg.includes('SQLITE_TOOBIG') || humanMsg.includes('too big')) {
-      humanMsg = "Oups ! Le fichier sélectionné est trop volumineux. Veuillez choisir une image ou vidéo plus légère.";
-    } else if (humanMsg.includes('Failed to fetch') || humanMsg.includes('NetworkError')) {
-      humanMsg = "Oups ! Connexion au serveur interrompue. Vérifiez votre réseau Internet et réessayez.";
-    } else if (humanMsg.includes('403') || humanMsg.includes('Accès Refusé')) {
-      humanMsg = "Accès restreint : Identifiant ou clef d'administration incorrecte.";
-    } else if (humanMsg.includes('401') || humanMsg.includes('incorrect')) {
-      humanMsg = "Numéro de téléphone ou mot de passe incorrect. Veuillez vérifier vos saisies.";
-    } else if (humanMsg.includes('UNIQUE constraint failed') || humanMsg.includes('déjà utilisé')) {
-      humanMsg = "Ce numéro de téléphone ou ce pseudonyme est déjà enregistré par un autre joueur.";
+    const raw = typeof rawError === 'string' ? rawError : (rawError?.message || '');
+    let message = raw || "Une erreur est survenue.";
+
+    const rules = [
+      [/no such column|D1_ERROR/i,            "La base de données est en cours de mise à jour. Réessayez dans un instant."],
+      [/SQLITE_TOOBIG|too big/i,              "Ce fichier est trop lourd. Choisissez une image ou une vidéo plus légère."],
+      [/Failed to fetch|NetworkError|offline/i, "Connexion au serveur interrompue. Vérifiez votre réseau, puis réessayez."],
+      [/\b403\b|Accès Refusé/i,               "Accès restreint : identifiant ou clef d'administration incorrecte."],
+      [/\b401\b|incorrect/i,                  "Numéro de téléphone ou mot de passe incorrect. Vérifiez vos saisies."],
+      [/UNIQUE constraint failed|déjà utilisé/i, "Ce numéro ou ce pseudonyme est déjà pris par un autre joueur."],
+      [/\b429\b|rate limit/i,                 "Trop de tentatives d'affilée. Patientez une minute avant de réessayer."],
+      [/\b5\d{2}\b|Internal Server/i,         "Le serveur ne répond pas correctement. Réessayez dans quelques minutes."]
+    ];
+
+    for (const [pattern, human] of rules) {
+      if (pattern.test(raw)) { message = human; break; }
     }
-    
-    this.alert(title || "NOTIFICATION", humanMsg, onClose);
-  }
-  
-  // 📢 MODALE D'ALERTE HAUT DE GAMME
-  static alert(title, message, onClose) {
-    this.clean();
-    
-    const modal = document.createElement('div');
-    modal.id = 'bertho-custom-ui-overlay';
-    modal.innerHTML = `
-      <style>
-        .bui-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(3, 3, 10, 0.96); z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(20px); box-sizing: border-box; }
-        .bui-box { background: rgba(15, 23, 42, 0.95); border: 1px solid #38bdf8; border-radius: 24px; padding: 25px; width: 92%; max-width: 380px; text-align: center; color: #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 15px rgba(56,189,248,0.2); }
-        .bui-title { font-size: 1.1rem; font-weight: 900; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
-        .bui-msg { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 20px; }
-        .bui-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #0284c7, #0369a1); border: none; border-radius: 12px; color: #fff; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-      </style>
 
-      <div class="bui-overlay">
-        <div class="bui-box">
-          <div class="bui-title">${title}</div>
-          <div class="bui-msg">${message}</div>
-          <button class="bui-btn" id="bui-btn-ok">CONFIRMER</button>
-        </div>
+    this.alert(title || 'Erreur', message, onClose, 'error');
+  }
+
+  // ==========================================================================
+  // SOCLE DE MODALE
+  // ==========================================================================
+
+  /**
+   * Monte une modale et gère tout ce qu'elle doit gérer : focus, Échap,
+   * capture de tabulation, restitution du focus à la fermeture.
+   */
+  static mount({ title, body, actions, tone = 'neutral', dismissible = true, onDismiss, focusSelector }) {
+    this.clean();
+
+    const previouslyFocused = document.activeElement;
+
+    const overlay = document.createElement('div');
+    overlay.id = OVERLAY_ID;
+    overlay.style.cssText = [
+      'position:fixed', 'inset:0', 'z-index:var(--z-modal)',
+      'display:flex', 'align-items:center', 'justify-content:center',
+      'padding:max(var(--sp-5), var(--safe-t)) var(--sp-5) max(var(--sp-5), var(--safe-b))',
+      'background-color:var(--scrim-modal)',
+      'backdrop-filter:blur(10px)', '-webkit-backdrop-filter:blur(10px)'
+    ].join(';');
+
+    const accent = {
+      neutral: 'var(--line-strong)',
+      error:   'var(--line-blood)',
+      success: 'rgba(74,222,128,0.4)',
+      gold:    'var(--line-gold)'
+    }[tone] || 'var(--line-strong)';
+
+    overlay.innerHTML = `
+      <div class="panel" role="dialog" aria-modal="true" aria-labelledby="bui-title"
+           style="width:min(100%, 24rem); border-color:${accent}; box-shadow:var(--shadow-lg); padding:var(--sp-6);">
+        <h2 class="t-screen-title" id="bui-title" style="font-size:var(--text-md); margin-bottom:var(--sp-3);">${title}</h2>
+        <div style="margin-bottom:var(--sp-5);">${body}</div>
+        <div style="display:flex; gap:var(--sp-2);">${actions}</div>
       </div>
     `;
-    
-    document.body.appendChild(modal);
-    
-    document.getElementById('bui-btn-ok')?.addEventListener('click', () => {
-      this.clean();
-      if (onClose) onClose();
+
+    document.body.appendChild(overlay);
+
+    const close = () => {
+      overlay.remove();
+      // Rendre le focus là où il était : sans ça le clavier repart de zéro.
+      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus();
+    };
+    overlay._close = close;
+
+    // Le focus part sur le champ s'il y en a un, sinon sur l'action principale.
+    const target = focusSelector
+      ? overlay.querySelector(focusSelector)
+      : overlay.querySelector('button');
+    target?.focus();
+
+    if (dismissible) {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) { BerthoSoundEffects.playClose(); close(); onDismiss?.(); }
+      });
+    }
+
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dismissible) {
+        BerthoSoundEffects.playClose();
+        close();
+        onDismiss?.();
+        return;
+      }
+      // Capture de tabulation : le focus ne doit pas s'échapper derrière le voile.
+      if (e.key !== 'Tab') return;
+      const focusables = overlay.querySelectorAll('button, input, textarea, select, a[href], [tabindex]:not([tabindex="-1"])');
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+
+    BerthoSoundEffects.playOpen();
+    return { overlay, close };
+  }
+
+  // ==========================================================================
+  // ALERTE
+  // ==========================================================================
+
+  static alert(title, message, onClose, tone = 'neutral') {
+    const { close } = this.mount({
+      title,
+      tone,
+      body: `<p class="t-body">${message}</p>`,
+      actions: `<button class="btn btn--primary btn--cut btn--block" id="bui-ok" type="button">J'ai compris</button>`
+    });
+
+    if (tone === 'error') BerthoSoundEffects.playErrorSound();
+
+    document.getElementById('bui-ok')?.addEventListener('click', () => {
+      close();
+      onClose?.();
     });
   }
-  
-  // ❓ MODALE DE CONFIRMATION OUI / ANNULER
-  static confirm(title, message, onConfirm, onCancel) {
-    this.clean();
-    
-    const modal = document.createElement('div');
-    modal.id = 'bertho-custom-ui-overlay';
-    modal.innerHTML = `
-      <style>
-        .bui-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(3, 3, 10, 0.96); z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(20px); box-sizing: border-box; }
-        .bui-box { background: rgba(15, 23, 42, 0.95); border: 1px solid #38bdf8; border-radius: 24px; padding: 25px; width: 92%; max-width: 380px; text-align: center; color: #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 15px rgba(56,189,248,0.2); }
-        .bui-title { font-size: 1.1rem; font-weight: 900; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
-        .bui-msg { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 20px; }
-        .bui-actions { display: flex; gap: 10px; }
-        .bui-btn-yes { flex: 1; padding: 14px; background: linear-gradient(135deg, #0284c7, #0369a1); border: none; border-radius: 12px; color: #fff; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-        .bui-btn-no { flex: 1; padding: 14px; background: #1e293b; border: 1px solid #334155; border-radius: 12px; color: #94a3b8; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-      </style>
 
-      <div class="bui-overlay">
-        <div class="bui-box">
-          <div class="bui-title">${title}</div>
-          <div class="bui-msg">${message}</div>
-          <div class="bui-actions">
-            <button class="bui-btn-yes" id="bui-btn-yes">OUI</button>
-            <button class="bui-btn-no" id="bui-btn-no">ANNULER</button>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    document.getElementById('bui-btn-yes')?.addEventListener('click', () => {
-      this.clean();
-      if (onConfirm) onConfirm();
+  // ==========================================================================
+  // CONFIRMATION
+  // ==========================================================================
+
+  /**
+   * @param {object} [opts]
+   * @param {boolean} [opts.destructive] rend l'action confirmante rouge et
+   *        empêche la fermeture par simple clic à côté.
+   * @param {string}  [opts.confirmLabel] verbe de l'action, pas « Oui » :
+   *        un bouton doit dire ce qu'il fait.
+   */
+  static confirm(title, message, onConfirm, onCancel, opts = {}) {
+    const { destructive = false, confirmLabel, cancelLabel = 'Annuler' } = opts;
+    const label = confirmLabel || (destructive ? 'Supprimer' : 'Confirmer');
+
+    const { close } = this.mount({
+      title,
+      tone: destructive ? 'error' : 'neutral',
+      dismissible: !destructive,
+      onDismiss: onCancel,
+      body: `<p class="t-body">${message}</p>`,
+      actions: `
+        <button class="btn btn--secondary grow" id="bui-no" type="button">${cancelLabel}</button>
+        <button class="btn ${destructive ? 'btn--danger' : 'btn--primary btn--cut'} grow" id="bui-yes" type="button">${label}</button>
+      `
     });
-    
-    document.getElementById('bui-btn-no')?.addEventListener('click', () => {
-      this.clean();
-      if (onCancel) onCancel();
-    });
+
+    document.getElementById('bui-yes')?.addEventListener('click', () => { close(); onConfirm?.(); });
+    document.getElementById('bui-no')?.addEventListener('click', () => { close(); onCancel?.(); });
   }
-  
-  // ✍️ MODALE DE SAISIE DE TEXTE (PROMPT)
-  static prompt(title, placeholder, onSubmit, onCancel) {
-    this.clean();
-    
-    const modal = document.createElement('div');
-    modal.id = 'bertho-custom-ui-overlay';
-    modal.innerHTML = `
-      <style>
-        .bui-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(3, 3, 10, 0.96); z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(20px); box-sizing: border-box; }
-        .bui-box { background: rgba(15, 23, 42, 0.95); border: 1px solid #38bdf8; border-radius: 24px; padding: 25px; width: 92%; max-width: 380px; text-align: center; color: #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 15px rgba(56,189,248,0.2); }
-        .bui-title { font-size: 1.1rem; font-weight: 900; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; }
-        .bui-input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 12px; color: #fff; font-size: 0.9rem; outline: none; margin-bottom: 15px; box-sizing: border-box; }
-        .bui-actions { display: flex; gap: 10px; }
-        .bui-btn-yes { flex: 1; padding: 14px; background: linear-gradient(135deg, #0284c7, #0369a1); border: none; border-radius: 12px; color: #fff; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-        .bui-btn-no { flex: 1; padding: 14px; background: #1e293b; border: 1px solid #334155; border-radius: 12px; color: #94a3b8; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-      </style>
 
-      <div class="bui-overlay">
-        <div class="bui-box">
-          <div class="bui-title">${title}</div>
-          <input type="text" id="bui-prompt-input" class="bui-input" placeholder="${placeholder || ''}" autocomplete="off" />
-          <div class="bui-actions">
-            <button class="bui-btn-yes" id="bui-btn-yes">VALIDER</button>
-            <button class="bui-btn-no" id="bui-btn-no">ANNULER</button>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    const input = document.getElementById('bui-prompt-input');
-    if (input) input.focus();
-    
+  // ==========================================================================
+  // SAISIE
+  // ==========================================================================
+
+  static prompt(title, placeholder, onSubmit, onCancel, opts = {}) {
+    const { label = title, value = '', maxLength = 120, hint } = opts;
+
+    const { overlay, close } = this.mount({
+      title,
+      onDismiss: onCancel,
+      focusSelector: '#bui-input',
+      body: `
+        <div class="field">
+          <label class="field__label" for="bui-input">${label}</label>
+          <input class="input" id="bui-input" type="text" value="${this.escape(value)}"
+                 placeholder="${this.escape(placeholder || '')}" maxlength="${maxLength}"
+                 autocomplete="off" autocapitalize="sentences" enterkeyhint="done" />
+          ${hint ? `<p class="field__hint">${hint}</p>` : ''}
+          <p class="field__error" id="bui-input-error" hidden>
+            ${icon('alert-circle', 'icon icon--sm')}<span>Ce champ ne peut pas être vide.</span>
+          </p>
+        </div>`,
+      actions: `
+        <button class="btn btn--secondary grow" id="bui-no" type="button">Annuler</button>
+        <button class="btn btn--primary btn--cut grow" id="bui-yes" type="button">Valider</button>
+      `
+    });
+
+    const input = overlay.querySelector('#bui-input');
+    const error = overlay.querySelector('#bui-input-error');
+
     const submit = () => {
       const val = input?.value?.trim();
-      this.clean();
-      if (onSubmit) onSubmit(val);
+      // Erreur au ras du champ, pas dans une seconde modale par-dessus.
+      if (!val) {
+        error.hidden = false;
+        input.setAttribute('aria-invalid', 'true');
+        BerthoSoundEffects.playErrorSound();
+        input.focus();
+        return;
+      }
+      close();
+      onSubmit?.(val);
     };
-    
-    document.getElementById('bui-btn-yes')?.addEventListener('click', submit);
-    input?.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
-    
-    document.getElementById('bui-btn-no')?.addEventListener('click', () => {
-      this.clean();
-      if (onCancel) onCancel();
+
+    input?.addEventListener('input', () => {
+      error.hidden = true;
+      input.removeAttribute('aria-invalid');
     });
+    input?.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+    overlay.querySelector('#bui-yes')?.addEventListener('click', submit);
+    overlay.querySelector('#bui-no')?.addEventListener('click', () => { close(); onCancel?.(); });
   }
-  
-  // 🔔 BANNIÈRE TOAST DISCRÈTE EN HAUT DE L'ÉCRAN
-  static toast(title, message, icon = '📢') {
-    const existing = document.getElementById('bertho-toast-banner');
-    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
-    
-    const toast = document.createElement('div');
-    toast.id = 'bertho-toast-banner';
-    toast.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); width:90%; max-width:420px; background:rgba(15,23,42,0.96); border:1px solid #38bdf8; border-radius:18px; padding:12px 16px; color:#fff; z-index:999999; box-shadow:0 10px 30px rgba(56,189,248,0.3); backdrop-filter:blur(15px); display:flex; align-items:center; gap:12px; box-sizing:border-box; animation:slideDown 0.4s ease;';
-    
-    toast.innerHTML = `
-      <div style="font-size:1.4rem;">${icon}</div>
-      <div style="flex:1;">
-        <strong style="color:#38bdf8; font-size:0.85rem; display:block;">${title}</strong>
-        <span style="font-size:0.78rem; color:#cbd5e1;">${message}</span>
-      </div>
-    `;
-    
-    document.body.appendChild(toast);
-    
+
+  // ==========================================================================
+  // TOASTS
+  // ==========================================================================
+
+  /**
+   * Message court et non bloquant.
+   * @param {string} title
+   * @param {string} message
+   * @param {'info'|'success'|'error'|'gold'} [variant]
+   */
+  static toast(title, message, variant = 'info') {
+    const stack = document.getElementById('toast-stack');
+    if (!stack) return;
+
+    // Un ancien appel pouvait passer un emoji ici : on l'ignore proprement.
+    if (!['info', 'success', 'error', 'gold'].includes(variant)) variant = 'info';
+
+    const glyph = { info: 'info', success: 'check-circle', error: 'alert-circle', gold: 'coin' }[variant];
+    const color = { info: 'var(--violet-lit)', success: 'var(--success)', error: 'var(--blood-lit)', gold: 'var(--gold-lit)' }[variant];
+
+    const el = document.createElement('div');
+    el.className = `toast toast--${variant}`;
+    el.innerHTML = `
+      <span style="color:${color}; display:flex;">${icon(glyph, 'icon toast__icon')}</span>
+      <div class="grow">
+        <strong style="display:block; font-size:var(--text-sm); font-weight:700;">${title}</strong>
+        ${message ? `<span class="t-meta">${message}</span>` : ''}
+      </div>`;
+
+    stack.appendChild(el);
+
+    if (variant === 'success') BerthoSoundEffects.playSuccess();
+    else if (variant === 'error') BerthoSoundEffects.playErrorSound();
+    else if (variant === 'gold') BerthoSoundEffects.playCoinEarned();
+    else BerthoSoundEffects.playNotificationChime();
+
+    // Trois toasts au maximum : au-delà, le plus ancien s'efface.
+    while (stack.children.length > 3) stack.firstElementChild.remove();
+
     setTimeout(() => {
-      if (toast.parentNode) toast.parentNode.removeChild(toast);
-    }, 3500);
+      el.dataset.leaving = 'true';
+      setTimeout(() => el.remove(), 200);
+    }, 3600);
   }
-  
+
+  // ==========================================================================
+  // UTILITAIRES
+  // ==========================================================================
+
+  static escape(str) {
+    return String(str ?? '').replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
   static clean() {
-    const el = document.getElementById('bertho-custom-ui-overlay');
-    if (el && el.parentNode) el.parentNode.removeChild(el);
+    const el = document.getElementById(OVERLAY_ID);
+    if (el) {
+      el._close ? el._close() : el.remove();
+    }
   }
 }

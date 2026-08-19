@@ -1,5 +1,5 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — GESTIONNAIRE DE NOTIFICATIONS PUSH & PWA BADGES
+// BERTHOPLAY — GESTIONNAIRE DE NOTIFICATIONS PUSH & PWA BADGES
 // ============================================================================
 
 export class BerthoPushNotifications {

@@ -1,5 +1,5 @@
 // ============================================================================
-// 📁 BERTHOPLAY — CAUSERIE INDIVIDUELLE (SRC/CHAT.JS) [INTÉGRAL]
+// BERTHOPLAY — CAUSERIE INDIVIDUELLE (SRC/CHAT.JS) [INTÉGRAL]
 // ============================================================================
 
 import { API } from './services/api.js';
@@ -65,124 +65,17 @@ export class BerthoChat {
     const modal = document.createElement('div');
     modal.id = 'chat-widget-overlay';
     modal.innerHTML = `
-      <style>
-        .chat-overlay {
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-          background: rgba(3, 3, 12, 0.98); z-index: 99999; display: flex;
-          flex-direction: column; align-items: center; justify-content: center;
-          padding: max(8px, env(safe-area-inset-top)) 10px max(12px, env(safe-area-inset-bottom));
-          color: #fff; backdrop-filter: blur(25px); box-sizing: border-box;
-        }
-        .chat-box {
-          background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.3);
-          border-radius: 20px; padding: 12px; width: 100%; max-width: 440px;
-          height: 90vh; display: flex; flex-direction: column;
-          justify-content: space-between; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
-          box-sizing: border-box; overflow: hidden; position: relative;
-        }
-        .chat-header {
-          display: flex; justify-content: space-between; align-items: center;
-          border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; flex-shrink: 0;
-        }
-        .chat-title-container { display: flex; align-items: center; gap: 10px; min-width: 0; }
-        .chat-avatar {
-          width: 38px; height: 38px; border-radius: 50%;
-          background: linear-gradient(135deg, #0284c7, #38bdf8);
-          display: flex; align-items: center; justify-content: center;
-          font-weight: 900; font-size: 0.95rem; color: #fff; flex-shrink: 0;
-        }
-        .chat-title { font-size: 0.9rem; font-weight: 900; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .chat-header-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
-        .chat-action-btn {
-          background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #38bdf8;
-          padding: 6px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-          cursor: pointer; transition: background 0.2s;
-        }
-
-        .chat-messages-area {
-          flex: 1; overflow-y: auto; padding: 10px 2px; display: flex;
-          flex-direction: column; gap: 10px; scroll-behavior: smooth;
-        }
-        .chat-msg-row {
-          display: flex; align-items: flex-end; gap: 6px; width: 100%;
-        }
-        .chat-msg-row.mine { justify-content: flex-end; }
-        .chat-msg-row.peer { justify-content: flex-start; }
-
-        .chat-msg {
-          max-width: 82%; padding: 8px 12px; border-radius: 14px;
-          font-size: 0.82rem; line-height: 1.4; word-break: break-word;
-          position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-        .chat-msg.mine {
-          background: linear-gradient(135deg, #0284c7, #0369a1);
-          color: #fff; border-bottom-right-radius: 2px; border: 1px solid rgba(56, 189, 248, 0.4);
-        }
-        .chat-msg.peer {
-          background: #1e293b; color: #cbd5e1;
-          border-bottom-left-radius: 2px; border: 1px solid #334155;
-        }
-        .chat-time-wrapper {
-          display: flex; align-items: center; justify-content: flex-end; gap: 3px; margin-top: 3px; opacity: 0.75;
-        }
-        .chat-time { font-size: 0.62rem; }
-        .check-marks { font-size: 0.7rem; color: #38bdf8; font-weight: bold; }
-
-        .btn-delete-msg {
-          background: none; border: none; color: #ef4444; font-size: 0.75rem;
-          cursor: pointer; opacity: 0.5; padding: 2px;
-        }
-
-        .preview-staged-box {
-          background: rgba(2, 132, 201, 0.2); border: 1px solid #38bdf8;
-          border-radius: 12px; padding: 6px 10px; margin-bottom: 6px;
-          display: none; justify-content: space-between; align-items: center; font-size: 0.75rem;
-        }
-        .chat-footer {
-          display: flex; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; flex-direction: column; flex-shrink: 0;
-        }
-        
-        .chat-input-row {
-          display: flex; gap: 6px; width: 100%; align-items: center; box-sizing: border-box;
-        }
-        .chat-input {
-          flex: 1; min-width: 0; padding: 10px 12px; background: #030308; border: 1px solid #334155;
-          border-radius: 20px; color: #fff; outline: none; font-size: 0.82rem;
-          box-sizing: border-box;
-        }
-        .chat-input:focus { border-color: #38bdf8; }
-        .chat-icon-btn {
-          width: 38px; height: 38px; border-radius: 50%; background: #1e293b;
-          border: 1px solid rgba(255,255,255,0.12); color: #38bdf8; display: flex; align-items: center;
-          justify-content: center; cursor: pointer; flex-shrink: 0;
-        }
-        .chat-icon-btn.recording { background: #ef4444; border-color: #ef4444; color: #fff; }
-        .chat-send-btn {
-          width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #0284c7, #0369a1);
-          border: none; color: #fff; display: flex; align-items: center; justify-content: center;
-          cursor: pointer; flex-shrink: 0;
-        }
-        .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-        .image-lightbox {
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-          background: rgba(0,0,0,0.95); z-index: 999999; display: flex;
-          align-items: center; justify-content: center; padding: 15px; box-sizing: border-box;
-        }
-        .image-lightbox img { max-width: 100%; max-height: 90vh; border-radius: 12px; }
-      </style>
-
       <div class="chat-overlay" id="chat-overlay-container">
         <div class="chat-box" id="chat-box-el">
           <div class="chat-header">
             <div class="chat-title-container">
-              <button id="btn-back-chat" style="background:none; border:none; color:#38bdf8; font-size:1.2rem; cursor:pointer; padding:0 4px;">
+              <button id="btn-back-chat" style="background:none; border:none; color:var(--violet-lit); font-size:1.2rem; cursor:pointer; padding:0 4px;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
               </button>
               <div class="chat-avatar">${(this.peerUser.username || 'A')[0].toUpperCase()}</div>
               <div>
                 <div class="chat-title">${this.peerUser.username}</div>
-                <div style="font-size: 0.65rem; color: #34d399; font-weight: 600;">En Direct</div>
+                <div style="font-size: 0.65rem; color: var(--success); font-weight: 600;">En Direct</div>
               </div>
             </div>
 
@@ -196,18 +89,18 @@ export class BerthoChat {
               <button class="chat-action-btn" id="btn-chat-view-profile" title="Voir le Profil">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               </button>
-              <button id="btn-close-chat" style="background:none; border:none; color:#94a3b8; font-size:1.1rem; cursor:pointer; padding:2px;">✕</button>
+              <button id="btn-close-chat" style="background:none; border:none; color:var(--ink-3); font-size:1.1rem; cursor:pointer; padding:2px;" aria-label="Fermer"><svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
             </div>
           </div>
 
           <div class="chat-messages-area" id="chat-msgs-list">
-            <p style="text-align:center; color:#64748b; font-size:0.8rem; margin: auto;">Chargement de la causerie...</p>
+            <p style="text-align:center; color:var(--ink-4); font-size:0.8rem; margin: auto;">Chargement de la causerie...</p>
           </div>
 
           <div class="chat-footer">
             <div id="chat-staged-box" class="preview-staged-box">
               <span id="staged-preview-text">Vocal prêt</span>
-              <button id="btn-cancel-staged" style="background:none; border:none; color:#ef4444; font-weight:bold; cursor:pointer;">✕ ANNULER</button>
+              <button id="btn-cancel-staged" style="background:none; border:none; color:var(--danger); font-weight:bold; cursor:pointer;" aria-label="Annuler la pièce jointe">Annuler</button>
             </div>
 
             <div class="chat-input-row">
@@ -293,7 +186,7 @@ export class BerthoChat {
       if (file) {
         this.compressImage(file, (compressedBase64) => {
           this.pendingImageData = compressedBase64;
-          this.showStagedPreview(`📷 Image prête à l'envoi`);
+          this.showStagedPreview(`Image prête à l'envoi`);
         });
       }
     });
@@ -351,12 +244,12 @@ export class BerthoChat {
     if (!this.isRecordingVoice) {
       this.voiceRecorder = new BerthoVoiceRecorder(
         (timeStr) => {
-          if (inputMsg) inputMsg.placeholder = `🔴 Vocal... ${timeStr}`;
+          if (inputMsg) inputMsg.placeholder = `Enregistrement… ${timeStr}`;
         },
         async (res) => {
           if (res.success && res.audioBase64) {
             this.pendingVoiceData = { audioBase64: res.audioBase64, durationFormatted: res.durationFormatted };
-            this.showStagedPreview(`🎙️ Vocal (${res.durationFormatted}) — Cliquez sur ENVOYER`);
+            this.showStagedPreview(`Vocal (${res.durationFormatted}) — Cliquez sur ENVOYER`);
           } else if (res.error) {
             BerthoUI.error("MICROPHONE", res.error);
           }
@@ -449,7 +342,7 @@ export class BerthoChat {
   openImageLightbox(src) {
     const lightbox = document.createElement('div');
     lightbox.className = 'image-lightbox';
-    lightbox.innerHTML = `<img src="${src}" /><span style="position:absolute; top:20px; right:20px; color:#fff; font-size:1.8rem; cursor:pointer;">✕</span>`;
+    lightbox.innerHTML = `<img src="${src}" /><span style="position:absolute; top:20px; right:20px; color:#fff; font-size:1.8rem; cursor:pointer;" aria-label="Fermer l'image"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span>`;
     lightbox.onclick = () => document.body.removeChild(lightbox);
     document.body.appendChild(lightbox);
   }
@@ -481,12 +374,12 @@ export class BerthoChat {
 
           return `
             <div class="chat-msg-row ${isMine ? 'mine' : 'peer'}">
-              ${isMine ? `<button class="btn-delete-msg" data-msg-id="${m.id}" title="Supprimer">✕</button>` : ''}
+              ${isMine ? `<button class="btn-delete-msg" data-msg-id="${m.id}" title="Supprimer" aria-label="Supprimer le message"><svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>` : ''}
               <div class="chat-msg ${isMine ? 'mine' : 'peer'}">
                 ${contentHTML}
                 <div class="chat-time-wrapper">
                   <span class="chat-time">${timeStr}</span>
-                  ${isMine ? `<span class="check-marks">✓✓</span>` : ''}
+                  ${isMine ? `<span class="check-marks" aria-label="Message lu"><svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 13 4 4L15 8"/><path d="m9 13 4 4L22 8"/></svg></span>` : ''}
                 </div>
               </div>
             </div>
@@ -512,8 +405,8 @@ export class BerthoChat {
         }
       } else if (!isSilent) {
         list.innerHTML = `
-          <div style="text-align:center; color:#64748b; font-size:0.8rem; margin:auto;">
-            💬 Démarrer la causerie avec <strong>${this.escapeHtml(this.peerUser.username)}</strong> !
+          <div style="text-align:center; color:var(--ink-4); font-size:0.8rem; margin:auto;">
+            Démarrer la causerie avec <strong>${this.escapeHtml(this.peerUser.username)}</strong> !
           </div>
         `;
       }

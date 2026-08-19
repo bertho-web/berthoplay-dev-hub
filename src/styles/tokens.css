@@ -1,0 +1,189 @@
+/* ==========================================================================
+   BERTHOPLAY — JETONS DE DESIGN (SOURCE DE VÉRITÉ UNIQUE)
+   Thème : Obsidienne + Sang + Or. Sombre exclusivement — pas de thème clair.
+   Toute couleur, espacement, rayon, durée ou z-index de l'application
+   DOIT provenir d'ici. Aucune valeur en dur dans les vues.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* --- SURFACES : rampe d'élévation obsidienne ------------------------- */
+  --void:        #0A0810;   /* fond absolu, derrière la vidéo             */
+  --bg:          #0D0A14;   /* fond applicatif                            */
+  --surface-1:   #14101C;   /* cartes, panneaux                           */
+  --surface-2:   #1C1626;   /* champs, survol, éléments soulevés          */
+  --surface-3:   #251E32;   /* menus, popovers, feuilles                  */
+  --surface-4:   #2F2740;   /* crête : bordures actives, pistes           */
+
+  /* --- ENCRE : rampe os -> cendre -------------------------------------- */
+  --ink:         #EDE7DC;   /* texte principal      15.9:1 sur --bg       */
+  --ink-2:       #B6AEC2;   /* texte secondaire      8.8:1 sur --surface-1*/
+  --ink-3:       #8A8296;   /* texte tertiaire       5.1:1 sur --surface-1*/
+  --ink-4:       #6B6478;   /* désactivé             3.1:1                */
+
+  /* --- SANG : action principale, état actif ---------------------------- */
+  --blood:       #C1121F;   /* remplissage CTA                            */
+  --blood-deep:  #8E0D17;   /* pressé, ombre                              */
+  --blood-lit:   #F2596B;   /* texte / icône sur sombre   5.7:1           */
+  --on-blood:    #FFF4F4;   /* texte sur remplissage sang 6.0:1           */
+
+  /* --- VITRAIL : structure, sélection, second rôle --------------------- */
+  --violet:      #6D28D9;
+  --violet-deep: #4C1D95;
+  --violet-lit:  #A78BFA;   /* 6.9:1 sur --surface-1                      */
+  --on-violet:   #F5F0FF;
+
+  /* --- OR VIEILLI : récompenses, Berthocoins, victoire ------------------ */
+  --gold:        #C9A227;
+  --gold-lit:    #E8C558;   /* 11.2:1 sur --surface-1                     */
+  --on-gold:     #0D0A14;
+
+  /* --- ÉTATS SÉMANTIQUES ------------------------------------------------ */
+  --success:     #4ADE80;
+  --success-bg:  rgba(74, 222, 128, 0.12);
+  --warn:        #FBBF24;
+  --warn-bg:     rgba(251, 191, 36, 0.12);
+  --danger:      #F87171;
+  --danger-bg:   rgba(248, 113, 113, 0.12);
+  --info:        #A78BFA;
+  --info-bg:     rgba(167, 139, 250, 0.12);
+
+  /* --- BORDURES & SÉPARATEURS ------------------------------------------ */
+  --line:        rgba(237, 231, 220, 0.10);  /* séparateur discret        */
+  --line-strong: rgba(237, 231, 220, 0.18);  /* bordure de carte          */
+  --line-blood:  rgba(242, 89, 107, 0.38);
+  --line-violet: rgba(167, 139, 250, 0.32);
+  --line-gold:   rgba(232, 197, 88, 0.32);
+
+  /* --- ANNEAU DE FOCUS (accessibilité clavier — jamais supprimé) -------- */
+  --ring:        #E8C558;
+  --ring-w:      2px;
+  --ring-offset: 2px;
+
+  /* --- VOILES (scrims) -------------------------------------------------- */
+  --scrim-video: rgba(10, 8, 16, 0.82);  /* garantit 4.5:1 sur la vidéo   */
+  --scrim-modal: rgba(6, 5, 10, 0.78);   /* isole le premier plan          */
+
+  /* --- TYPOGRAPHIE ------------------------------------------------------ */
+  --font-display: "Cinzel", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-ui:      "Chakra Petch", ui-sans-serif, -apple-system, BlinkMacSystemFont,
+                  "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
+                  Menlo, Consolas, monospace;
+
+  /* Échelle fixe en rem (registre produit : pas de clamp fluide).
+     Ratio 1.2. Base 16px — jamais en dessous de 12px pour du texte lisible. */
+  --text-2xs:  0.6875rem; /* 11px — badges numériques uniquement           */
+  --text-xs:   0.75rem;   /* 12px — libellés, méta                         */
+  --text-sm:   0.8125rem; /* 13px — texte dense, UI secondaire             */
+  --text-base: 0.9375rem; /* 15px — corps                                  */
+  --text-md:   1.0625rem; /* 17px — corps proéminent                       */
+  --text-lg:   1.25rem;   /* 20px — titre de section                       */
+  --text-xl:   1.5rem;    /* 24px — titre d'écran                          */
+  --text-2xl:  1.875rem;  /* 30px — titre display                          */
+  --text-3xl:  2.375rem;  /* 38px — signature de marque                    */
+
+  --leading-tight: 1.15;
+  --leading-snug:  1.35;
+  --leading-body:  1.55;
+
+  --tracking-display: 0.02em;   /* Cinzel respire, capitales lapidaires    */
+  --tracking-label:   0.06em;
+  --tracking-normal:  0;
+
+  /* --- ESPACEMENT : rythme 4/8 ------------------------------------------ */
+  --sp-1:  0.25rem;  /*  4px */
+  --sp-2:  0.5rem;   /*  8px */
+  --sp-3:  0.75rem;  /* 12px */
+  --sp-4:  1rem;     /* 16px */
+  --sp-5:  1.25rem;  /* 20px */
+  --sp-6:  1.5rem;   /* 24px */
+  --sp-8:  2rem;     /* 32px */
+  --sp-10: 2.5rem;   /* 40px */
+  --sp-12: 3rem;     /* 48px */
+  --sp-16: 4rem;     /* 64px */
+
+  /* --- RAYONS : arêtes taillées, pas de bulles -------------------------- */
+  --r-xs:   4px;
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-xl:   22px;
+  --r-full: 999px;
+
+  /* --- OMBRES & LUEURS --------------------------------------------------- */
+  --shadow-sm:   0 1px 2px rgba(0,0,0,0.5);
+  --shadow-md:   0 4px 14px rgba(0,0,0,0.55);
+  --shadow-lg:   0 12px 34px rgba(0,0,0,0.65);
+  --shadow-sheet: 0 -18px 46px rgba(0,0,0,0.75);
+  --glow-blood:  0 0 20px rgba(193, 18, 31, 0.42);
+  --glow-gold:   0 0 18px rgba(201, 162, 39, 0.35);
+  --glow-violet: 0 0 20px rgba(109, 40, 217, 0.38);
+
+  /* --- CIBLES TACTILES : 44pt iOS / 48dp Android ------------------------ */
+  --tap-min:     48px;
+  --tap-min-ios: 44px;
+
+  /* --- MOUVEMENT : 150-250ms, sortie exponentielle, jamais de rebond ---- */
+  --dur-instant: 90ms;
+  --dur-fast:    150ms;
+  --dur-base:    220ms;
+  --dur-slow:    340ms;
+  --dur-sheet:   420ms;
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);   /* out-quint           */
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);  /* out-expo            */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* --- ÉCHELLE Z SÉMANTIQUE (jamais de 9999 arbitraire) ----------------- */
+  --z-ambience:  0;    /* vidéo de fond                                    */
+  --z-canvas:    1;    /* canvas WebGL des jeux                            */
+  --z-content:   10;   /* contenu applicatif                               */
+  --z-sticky:    20;   /* en-tête collant                                  */
+  --z-nav:       30;   /* barre de navigation / rail                       */
+  --z-overlay:   40;   /* superpositions plein écran (sélecteurs de jeu)   */
+  --z-scrim:     50;   /* voile de modale                                  */
+  --z-modal:     60;   /* modale / feuille                                 */
+  --z-toast:     70;   /* toasts, notifications                            */
+  --z-tooltip:   80;   /* infobulles                                       */
+  --z-splash:    90;   /* écran de démarrage                               */
+
+  /* --- MISE EN PAGE ------------------------------------------------------ */
+  --content-max:  32rem;   /* 512px — colonne téléphone                    */
+  --content-wide: 68rem;   /* 1088px — grille ordinateur portable          */
+  --gutter:       var(--sp-4);
+  --nav-h:        58px;
+  --rail-w:       15rem;   /* rail latéral ≥1024px                         */
+
+  /* Insets système, avec repli 0 pour les navigateurs sans safe-area */
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+
+  /* Hauteur totale de la barre du bas, safe-area comprise. Utilisée comme
+     inset de défilement pour que le contenu ne finisse jamais dessous. */
+  --nav-total: calc(var(--nav-h) + var(--safe-b));
+}
+
+/* Écrans larges : gouttières plus généreuses, la barre du bas devient rail */
+@media (min-width: 1024px) {
+  :root {
+    --gutter:      var(--sp-8);
+    --nav-total:   0px;
+    /* Une colonne de 512px au milieu d'un écran 1440 est une maquette
+       téléphone posée sur un portable, pas une mise en page. */
+    --content-max: 46rem;
+  }
+}
+
+/* Respect du mouvement réduit — appliqué globalement dans base.css */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 1ms;
+    --dur-fast:    1ms;
+    --dur-base:    1ms;
+    --dur-slow:    1ms;
+    --dur-sheet:   1ms;
+  }
+}

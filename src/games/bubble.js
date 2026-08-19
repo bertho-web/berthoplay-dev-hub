@@ -282,24 +282,24 @@ export class BubbleShooterGame {
           position: fixed; top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
           width: 92%; max-width: 480px; z-index: 1000; display: flex; justify-content: space-between; align-items: center;
         }
-        .bub-back { background: rgba(15, 23, 42, 0.92); border: 1px solid #06b6d4; color: #fff; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; backdrop-filter: blur(8px); }
-        .bub-card { background: rgba(15, 23, 42, 0.92); border: 1px solid #06b6d4; color: #fff; padding: 6px 14px; border-radius: 10px; font-weight: bold; font-family: monospace; font-size: 0.85rem; backdrop-filter: blur(8px); display: flex; gap: 10px; align-items: center; }
-        .bub-sound { background: #1e293b; border: 1px solid #334155; color: #fff; padding: 3px 6px; border-radius: 6px; cursor: pointer; }
+        .bub-back { background: rgba(15, 23, 42, 0.92); border: 1px solid var(--violet-lit); color: #fff; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; backdrop-filter: blur(8px); }
+        .bub-card { background: rgba(15, 23, 42, 0.92); border: 1px solid var(--violet-lit); color: #fff; padding: 6px 14px; border-radius: 10px; font-weight: bold; font-family: monospace; font-size: 0.85rem; backdrop-filter: blur(8px); display: flex; gap: 10px; align-items: center; }
+        .bub-sound { background: var(--surface-2); border: 1px solid var(--line-strong); color: #fff; padding: 3px 6px; border-radius: 6px; cursor: pointer; }
         
-        .bub-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.97); border: 1px solid #06b6d4; padding: 25px; border-radius: 20px; text-align: center; z-index: 3000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 85%; max-width: 360px; color: #fff; backdrop-filter: blur(10px); }
-        .bub-modal button { margin-top: 10px; padding: 12px 20px; background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; font-weight: 800; border: none; border-radius: 20px; font-size: 0.9rem; text-transform: uppercase; cursor: pointer; width: 100%; }
+        .bub-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.97); border: 1px solid var(--violet-lit); padding: 25px; border-radius: 20px; text-align: center; z-index: 3000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 85%; max-width: 360px; color: #fff; backdrop-filter: blur(10px); }
+        .bub-modal button { margin-top: 10px; padding: 12px 20px; background: linear-gradient(135deg, var(--blood), var(--blood-deep)); color: #fff; font-weight: 800; border: none; border-radius: 20px; font-size: 0.9rem; text-transform: uppercase; cursor: pointer; width: 100%; }
         
-        .stars-container { font-size: 2.5rem; margin: 10px 0; text-shadow: 0 0 15px #f59e0b; letter-spacing: 6px; }
+        .stars-container { font-size: 2.5rem; margin: 10px 0; text-shadow: 0 0 15px var(--gold); letter-spacing: 6px; }
 
-        .btn-swap-hint { position: fixed; bottom: 25px; right: 20px; background: rgba(15, 23, 42, 0.85); border: 1px solid #06b6d4; color: #06b6d4; border-radius: 15px; padding: 8px 14px; font-size: 0.8rem; font-weight: 900; z-index: 1000; cursor: pointer; backdrop-filter: blur(8px); }
+        .btn-swap-hint { position: fixed; bottom: 25px; right: 20px; background: rgba(15, 23, 42, 0.85); border: 1px solid var(--violet-lit); color: var(--violet-lit); border-radius: 15px; padding: 8px 14px; font-size: 0.8rem; font-weight: 900; z-index: 1000; cursor: pointer; backdrop-filter: blur(8px); }
       </style>
 
       <div class="bub-top">
         <button class="bub-back" id="btn-back-bub">◀ Cartes</button>
         <div class="bub-card">
-          <span id="txt-level" style="color:#06b6d4;">ÉTAPES 1</span>
-          <span id="txt-shots" style="color:#f59e0b;">🎯 45</span>
-          <span id="txt-coins" style="color:#fbbf24;">🪙 0</span>
+          <span id="txt-level" style="color:var(--violet-lit);">ÉTAPES 1</span>
+          <span id="txt-shots" style="color:var(--gold);">🎯 45</span>
+          <span id="txt-coins" style="color:var(--gold-lit);">🪙 0</span>
           <button class="bub-sound" id="btn-sound-bub">🔊</button>
         </div>
       </div>
@@ -307,12 +307,12 @@ export class BubbleShooterGame {
       <div class="btn-swap-hint" id="btn-swap">🔄 ÉCHANGER</div>
 
       <div class="bub-modal" id="modal-bub">
-        <h2 id="bub-modal-title" style="color:#06b6d4; font-size:1.5rem; margin-bottom:4px;">VICTOIRE !</h2>
+        <h2 id="bub-modal-title" style="color:var(--violet-lit); font-size:1.5rem; margin-bottom:4px;">VICTOIRE !</h2>
         <div class="stars-container" id="bub-stars">⭐ ⭐ ⭐</div>
-        <p id="bub-modal-sub" style="color:#cbd5e1; font-size:0.85rem; margin-bottom:12px;">Étape validée !</p>
-        <button id="btn-next-bub" style="background:#06b6d4; color:#0f172a;">ÉTAPE SUIVANTE ➔</button>
-        <button id="btn-replay-bub" style="background:#1e293b; border:1px solid #334155;">REJOUER 🔄</button>
-        <button id="btn-hub-bub" style="background:#0f172a; border:1px solid #1e293b;">MENU ÉTAPES 🗺️</button>
+        <p id="bub-modal-sub" style="color:var(--ink-2); font-size:0.85rem; margin-bottom:12px;">Étape validée !</p>
+        <button id="btn-next-bub" style="background:var(--violet-lit); color:var(--surface-1);">ÉTAPE SUIVANTE ➔</button>
+        <button id="btn-replay-bub" style="background:var(--surface-2); border:1px solid var(--line-strong);">REJOUER 🔄</button>
+        <button id="btn-hub-bub" style="background:var(--surface-1); border:1px solid var(--surface-2);">MENU ÉTAPES 🗺️</button>
       </div>
     `;
 
@@ -776,10 +776,12 @@ export class BubbleShooterGame {
   }
 
   drawBackground() {
+    // Fond de jeu accordé à la console : obsidienne en haut, vitrail en bas.
+    // Les bulles gardent leurs couleurs vives — elles portent la jouabilité.
     const grad = this.ctx.createLinearGradient(0, 0, 0, this.height);
-    grad.addColorStop(0, '#021027');
-    grad.addColorStop(0.5, '#082f49');
-    grad.addColorStop(1, '#0284c7');
+    grad.addColorStop(0, '#0A0810');
+    grad.addColorStop(0.55, '#1B1030');
+    grad.addColorStop(1, '#3B1560');
     this.ctx.fillStyle = grad;
     this.ctx.fillRect(0, 0, this.width, this.height);
 

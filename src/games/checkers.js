@@ -111,14 +111,14 @@ export class CheckersGame {
     this.modal.id = 'checkers-modal';
     this.modal.innerHTML = `
       <style>
-        .chk-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(10, 14, 23, 0.96); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px); padding: 20px; color: #e2e8f0; box-sizing: border-box; }
-        .chk-title { font-size: 1.8rem; font-weight: 800; color: #f1f5f9; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); text-align: center; }
+        .chk-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(10, 14, 23, 0.96); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px); padding: 20px; color: var(--ink); box-sizing: border-box; }
+        .chk-title { font-size: 1.8rem; font-weight: 800; color: var(--ink); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); text-align: center; }
         .chk-group { width: 100%; max-width: 380px; margin-bottom: 18px; }
-        .chk-group label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
+        .chk-group label { display: block; font-size: 0.75rem; color: var(--ink-3); margin-bottom: 8px; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
         .chk-opts { display: flex; gap: 10px; }
-        .chk-btn { flex: 1; padding: 13px 8px; background: #1e293b; border: 1px solid #334155; border-radius: 12px; color: #94a3b8; font-size: 0.85rem; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.25s ease; }
-        .chk-btn.active { border-color: #38bdf8; background: #0f172a; color: #38bdf8; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25); }
-        .chk-start { margin-top: 22px; width: 100%; max-width: 380px; padding: 16px; background: linear-gradient(135deg, #0284c7, #0d9488); border: none; border-radius: 25px; color: #fff; font-weight: 800; font-size: 1rem; text-transform: uppercase; cursor: pointer; letter-spacing: 2px; box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3); transition: transform 0.2s; }
+        .chk-btn { flex: 1; padding: 13px 8px; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 12px; color: var(--ink-3); font-size: 0.85rem; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.25s ease; }
+        .chk-btn.active { border-color: var(--violet-lit); background: var(--surface-1); color: var(--violet-lit); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25); }
+        .chk-start { margin-top: 22px; width: 100%; max-width: 380px; padding: 16px; background: linear-gradient(135deg, var(--blood), var(--success)); border: none; border-radius: 25px; color: #fff; font-weight: 800; font-size: 1rem; text-transform: uppercase; cursor: pointer; letter-spacing: 2px; box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3); transition: transform 0.2s; }
         .chk-start:active { transform: scale(0.98); }
       </style>
 
@@ -223,7 +223,7 @@ export class CheckersGame {
         .chk-game-panel {
           position: fixed; top: 0; left: 0;
           width: 100vw; height: 100dvh;
-          background: #0b0f19;
+          background: var(--void);
           display: flex; flex-direction: column;
           align-items: center; justify-content: flex-start;
           gap: min(1.2vh, 10px);
@@ -237,29 +237,29 @@ export class CheckersGame {
         }
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 460px; }
-        .brand-badge { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05rem; color: #f8fafc; letter-spacing: 1px; }
-        .pro-tag { background: #38bdf8; color: #0f172a; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 900; }
+        .brand-badge { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05rem; color: var(--ink); letter-spacing: 1px; }
+        .pro-tag { background: var(--violet-lit); color: var(--surface-1); font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 900; }
         .nav-actions { display: flex; gap: 8px; }
-        .icon-btn { background: #1e293b; border: 1px solid #334155; color: #f8fafc; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .icon-btn { background: var(--surface-2); border: 1px solid var(--line-strong); color: var(--ink); padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
 
         .stats-bar { display: flex; justify-content: space-between; width: 100%; max-width: 460px; }
-        .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 6px 12px; width: 47%; text-align: center; }
-        .stat-lbl { font-size: 0.65rem; color: #94a3b8; font-weight: 800; letter-spacing: 1px; display: block; }
-        .stat-val { font-size: 0.9rem; color: #f8fafc; font-weight: 900; font-family: monospace; }
+        .stat-card { background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 10px; padding: 6px 12px; width: 47%; text-align: center; }
+        .stat-lbl { font-size: 0.65rem; color: var(--ink-3); font-weight: 800; letter-spacing: 1px; display: block; }
+        .stat-val { font-size: 0.9rem; color: var(--ink); font-weight: 900; font-family: monospace; }
 
         .chk-status-group { text-align: center; }
-        .chk-turn { font-size: 0.85rem; font-weight: 800; color: #38bdf8; letter-spacing: 1.5px; text-transform: uppercase; }
-        .chk-alert { font-size: 0.85rem; font-weight: 800; color: #f43f5e; text-transform: uppercase; min-height: 1.1em; }
+        .chk-turn { font-size: 0.85rem; font-weight: 800; color: var(--violet-lit); letter-spacing: 1.5px; text-transform: uppercase; }
+        .chk-alert { font-size: 0.85rem; font-weight: 800; color: var(--blood-lit); text-transform: uppercase; min-height: 1.1em; }
 
         .chk-board-wrapper {
           position: relative;
           width: min(90vw, 48dvh, 440px);
           height: min(90vw, 48dvh, 440px);
-          border: 3.5px solid #334155;
+          border: 3.5px solid var(--line-strong);
           border-radius: 14px;
           box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 2px rgba(255,255,255,0.1);
           overflow: hidden;
-          background: #1e293b;
+          background: var(--surface-2);
           margin-top: auto;
           margin-bottom: auto;
         }
@@ -267,13 +267,13 @@ export class CheckersGame {
         .chk-board { display: grid; width: 100%; height: 100%; }
 
         .cell { display: flex; align-items: center; justify-content: center; position: relative; touch-action: manipulation; cursor: pointer; user-select: none; }
-        .cell.light { background: #2b384e; }
-        .cell.dark { background: #151d2a; }
+        .cell.light { background: var(--surface-4); }
+        .cell.dark { background: var(--surface-2); }
         .cell.selected { background: rgba(56, 189, 248, 0.35) !important; }
         .cell.last-move { background: rgba(168, 85, 247, 0.25) !important; }
 
-        .cell.valid-move::after { content: ''; width: 26%; height: 26%; background: #34d399; border-radius: 50%; position: absolute; z-index: 10; opacity: 0.85; }
-        .cell.valid-capture::after { content: ''; width: 82%; height: 82%; border: 3px solid #f43f5e; border-radius: 50%; position: absolute; z-index: 10; opacity: 0.85; }
+        .cell.valid-move::after { content: ''; width: 26%; height: 26%; background: var(--success); border-radius: 50%; position: absolute; z-index: 10; opacity: 0.85; }
+        .cell.valid-capture::after { content: ''; width: 82%; height: 82%; border: 3px solid var(--blood-lit); border-radius: 50%; position: absolute; z-index: 10; opacity: 0.85; }
 
         /* PIONS EN BOIS / MARBRE 3D LUXUEUX */
         .piece {
@@ -283,12 +283,12 @@ export class CheckersGame {
           transition: transform 0.15s ease;
         }
         .piece.white {
-          background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 60%, #94a3b8 100%);
-          border: 2px solid #f8fafc;
+          background: radial-gradient(circle at 35% 35%, #ffffff 0%, var(--ink-2) 60%, var(--ink-3) 100%);
+          border: 2px solid var(--ink);
           box-shadow: inset 0 3px 6px rgba(255,255,255,0.8), inset 0 -3px 6px rgba(0,0,0,0.4), 0 6px 12px rgba(0,0,0,0.6);
         }
         .piece.red {
-          background: radial-gradient(circle at 35% 35%, #fb7185 0%, #e11d48 60%, #881337 100%);
+          background: radial-gradient(circle at 35% 35%, var(--blood-lit) 0%, #e11d48 60%, #881337 100%);
           border: 2px solid #fda4af;
           box-shadow: inset 0 3px 6px rgba(255,255,255,0.6), inset 0 -3px 6px rgba(0,0,0,0.6), 0 6px 12px rgba(0,0,0,0.6);
         }
@@ -312,8 +312,8 @@ export class CheckersGame {
         }
 
         @keyframes pulse-capture {
-          0% { box-shadow: 0 0 5px #f43f5e; }
-          100% { box-shadow: 0 0 20px #f43f5e, 0 0 30px #f43f5e; }
+          0% { box-shadow: 0 0 5px var(--blood-lit); }
+          100% { box-shadow: 0 0 20px var(--blood-lit), 0 0 30px var(--blood-lit); }
         }
 
         @media (orientation: landscape) and (max-height: 550px) {
@@ -324,14 +324,14 @@ export class CheckersGame {
           .chk-board-wrapper { width: min(84vh, 380px); height: min(84vh, 380px); margin: 0; }
         }
 
-        .end-modal { position: fixed; top: 22%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.95); border: 1px solid #38bdf8; padding: 20px 24px; border-radius: 18px; text-align: center; z-index: 3000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 85%; max-width: 360px; color: #f8fafc; backdrop-filter: blur(10px); }
-        .end-modal h2 { font-size: 1.4rem; color: #38bdf8; margin-bottom: 6px; text-transform: uppercase; font-weight: 800; }
-        .end-modal p { font-size: 0.85rem; color: #94a3b8; margin-bottom: 16px; }
+        .end-modal { position: fixed; top: 22%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.95); border: 1px solid var(--violet-lit); padding: 20px 24px; border-radius: 18px; text-align: center; z-index: 3000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 85%; max-width: 360px; color: var(--ink); backdrop-filter: blur(10px); }
+        .end-modal h2 { font-size: 1.4rem; color: var(--violet-lit); margin-bottom: 6px; text-transform: uppercase; font-weight: 800; }
+        .end-modal p { font-size: 0.85rem; color: var(--ink-3); margin-bottom: 16px; }
         .end-btns { display: flex; gap: 10px; flex-wrap: wrap; }
         .end-btn { flex: 1; padding: 12px; border-radius: 16px; border: none; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-replay { background: #38bdf8; color: #0f172a; }
-        .btn-hub { background: #1e293b; color: #f8fafc; border: 1px solid #334155; }
-        .btn-toggle-view { width: 100%; background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8; color: #38bdf8; margin-top: 6px; }
+        .btn-replay { background: var(--violet-lit); color: var(--surface-1); }
+        .btn-hub { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line-strong); }
+        .btn-toggle-view { width: 100%; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--violet-lit); color: var(--violet-lit); margin-top: 6px; }
       </style>
 
       <div class="chk-game-panel">

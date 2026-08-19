@@ -231,7 +231,7 @@ export class HordeGame {
         }
 
         .custom-back-btn {
-          background: rgba(15, 23, 42, 0.92); border: 1px solid #38bdf8;
+          background: rgba(15, 23, 42, 0.92); border: 1px solid var(--violet-lit);
           color: #fff; border-radius: 10px; padding: 6px 12px; font-size: 0.8rem; font-weight: bold;
           cursor: pointer; backdrop-filter: blur(8px);
         }
@@ -239,14 +239,14 @@ export class HordeGame {
         .hud-stats-card {
           display: flex; gap: 12px; align-items: center; color: #fff;
           font-family: monospace; font-weight: bold; font-size: 0.8rem;
-          background: rgba(15, 23, 42, 0.92); padding: 6px 12px; border-radius: 10px; border: 1px solid #38bdf8;
+          background: rgba(15, 23, 42, 0.92); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--violet-lit);
           backdrop-filter: blur(8px);
         }
         
         .bars-container { display: flex; flex-direction: column; gap: 4px; width: 100%; }
         .bar-wrapper { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
-        .hp-fill { height: 100%; background: linear-gradient(90deg, #f43f5e, #fb7185); width: 100%; transition: width 0.15s; }
-        .xp-fill { height: 100%; background: linear-gradient(90deg, #38bdf8, #34d399); width: 0%; transition: width 0.15s; }
+        .hp-fill { height: 100%; background: linear-gradient(90deg, var(--blood-lit), var(--blood-lit)); width: 100%; transition: width 0.15s; }
+        .xp-fill { height: 100%; background: linear-gradient(90deg, var(--violet-lit), var(--success)); width: 0%; transition: width 0.15s; }
 
         .joystick-zone {
           position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
@@ -254,33 +254,33 @@ export class HordeGame {
           border-radius: 50%; z-index: 2000; touch-action: none; backdrop-filter: blur(8px);
           display: flex; align-items: center; justify-content: center; user-select: none;
         }
-        .joystick-knob { width: 48px; height: 48px; background: radial-gradient(circle, #38bdf8, #0284c7); border-radius: 50%; box-shadow: 0 0 15px #38bdf8; pointer-events: none; }
+        .joystick-knob { width: 48px; height: 48px; background: radial-gradient(circle, var(--violet-lit), var(--blood)); border-radius: 50%; box-shadow: 0 0 15px var(--violet-lit); pointer-events: none; }
 
-        .icon-btn-sound { background: #1e293b; border: 1px solid #334155; color: #fff; padding: 3px 6px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .icon-btn-sound { background: var(--surface-2); border: 1px solid var(--line-strong); color: #fff; padding: 3px 6px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
 
         .modal {
           position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-          background: rgba(15, 23, 42, 0.97); border: 1px solid #38bdf8; padding: 24px;
+          background: rgba(15, 23, 42, 0.97); border: 1px solid var(--violet-lit); padding: 24px;
           border-radius: 20px; z-index: 4000; width: 85%; max-width: 380px; text-align: center;
           color: #fff; backdrop-filter: blur(20px); box-shadow: 0 10px 40px rgba(0,0,0,0.9);
         }
         .upgrade-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 10px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px; }
-        .upgrade-card:active { background: rgba(56, 189, 248, 0.25); border-color: #38bdf8; }
+        .upgrade-card:active { background: rgba(56, 189, 248, 0.25); border-color: var(--violet-lit); }
         .up-icon { font-size: 1.8rem; }
-        .up-title { font-weight: 800; color: #38bdf8; font-size: 0.9rem; }
-        .up-desc { font-size: 0.72rem; color: #94a3b8; }
+        .up-title { font-weight: 800; color: var(--violet-lit); font-size: 0.9rem; }
+        .up-desc { font-size: 0.72rem; color: var(--ink-3); }
 
-        .btn-action { margin-top: 15px; width: 100%; padding: 14px; background: linear-gradient(135deg, #0284c7, #0d9488); border: none; border-radius: 25px; color: #fff; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; cursor: pointer; }
+        .btn-action { margin-top: 15px; width: 100%; padding: 14px; background: linear-gradient(135deg, var(--blood), var(--success)); border: none; border-radius: 25px; color: #fff; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; cursor: pointer; }
       </style>
 
       <div class="hud-top">
         <div class="hud-row-top">
           <button class="custom-back-btn" id="horde-custom-back">◀ Quitter</button>
           <div class="hud-stats-card">
-            <span>SCORE: <b id="txt-score" style="color:#38bdf8;">0</b></span>
-            <span>🪙 <b id="txt-coins" style="color:#fbbf24;">0</b></span>
+            <span>SCORE: <b id="txt-score" style="color:var(--violet-lit);">0</b></span>
+            <span>🪙 <b id="txt-coins" style="color:var(--gold-lit);">0</b></span>
             <span><button class="icon-btn-sound" id="btn-sound">🔊</button></span>
-            <span>NV.<b id="txt-lvl" style="color:#34d399;">1</b></span>
+            <span>NV.<b id="txt-lvl" style="color:var(--success);">1</b></span>
           </div>
         </div>
         <div class="bars-container">
@@ -295,8 +295,8 @@ export class HordeGame {
 
       <!-- TUTORIEL INITIAL 100% CLIQUABLE -->
       <div class="modal" id="tut-modal" style="display:block;">
-        <h2 style="color:#38bdf8; font-size:1.4rem; margin-bottom:12px;">COMMENT JOUER ? 👾</h2>
-        <div style="text-align:left; font-size:0.8rem; color:#cbd5e1; display:flex; flex-direction:column; gap:10px; margin-bottom:18px;">
+        <h2 style="color:var(--violet-lit); font-size:1.4rem; margin-bottom:12px;">COMMENT JOUER ? 👾</h2>
+        <div style="text-align:left; font-size:0.8rem; color:var(--ink-2); display:flex; flex-direction:column; gap:10px; margin-bottom:18px;">
           <div>🕹️ <b>Déplacement :</b> Glisse ton doigt sur le Joystick pour déplacer ton Héros.</div>
           <div>⚡ <b>Tir Automatique :</b> Tes armes tirent automatiquement sur les monstres.</div>
           <div>💎 <b>Orbes d'XP & Coins :</b> Ramasse les gemmes vertes pour monter de niveau et gagner des BerthoCoins !</div>
@@ -307,17 +307,17 @@ export class HordeGame {
 
       <!-- MODALE LEVEL UP -->
       <div class="modal" id="up-modal" style="display:none;">
-        <h2 style="color:#38bdf8; margin-bottom:12px; font-size:1.3rem;">NIVEAU SUPÉRIEUR ! ⚡</h2>
+        <h2 style="color:var(--violet-lit); margin-bottom:12px; font-size:1.3rem;">NIVEAU SUPÉRIEUR ! ⚡</h2>
         <div id="up-list"></div>
       </div>
 
       <!-- MODALE GAME OVER -->
-      <div class="modal" id="go-modal" style="display:none; border-color:#f43f5e;">
-        <h2 style="color:#f43f5e; font-size:1.5rem; margin-bottom:10px;">GAME OVER ! 💥</h2>
+      <div class="modal" id="go-modal" style="display:none; border-color:var(--blood-lit);">
+        <h2 style="color:var(--blood-lit); font-size:1.5rem; margin-bottom:10px;">GAME OVER ! 💥</h2>
         <p style="color:#eee; font-size:0.85rem;" id="go-stats">Score : 0 | Niveau : 1</p>
         <div style="display:flex; gap:10px; margin-top:18px;">
-          <button id="btn-replay-horde" style="flex:1; padding:12px; background:#38bdf8; color:#0f172a; border:none; border-radius:20px; font-weight:900; cursor:pointer;">REJOUER 🔄</button>
-          <button id="btn-hub-horde" style="flex:1; padding:12px; background:#1e293b; color:#fff; border:1px solid #334155; border-radius:20px; font-weight:bold; cursor:pointer;">MENU 🏠</button>
+          <button id="btn-replay-horde" style="flex:1; padding:12px; background:var(--violet-lit); color:var(--surface-1); border:none; border-radius:20px; font-weight:900; cursor:pointer;">REJOUER 🔄</button>
+          <button id="btn-hub-horde" style="flex:1; padding:12px; background:var(--surface-2); color:#fff; border:1px solid var(--line-strong); border-radius:20px; font-weight:bold; cursor:pointer;">MENU 🏠</button>
         </div>
       </div>
     `;

@@ -1,5 +1,5 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — MOTEUR D'APPELS AUDIO & VIDÉO (SRC/SERVICES/WEBRTC-SERVICE.JS) [DEV HUB]
+// BERTHOPLAY — MOTEUR D'APPELS AUDIO & VIDÉO (SRC/SERVICES/WEBRTC-SERVICE.JS) [DEV HUB]
 // ============================================================================
 
 // Mode Sandbox : Signalisation WebRTC simulée sans solliciter le Worker

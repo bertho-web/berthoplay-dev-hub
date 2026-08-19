@@ -1,5 +1,5 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — INTERFACE VISUELLE D'APPELS (SRC/CALLS.JS) [DEV HUB SANDBOX]
+// BERTHOPLAY — INTERFACE VISUELLE D'APPELS (SRC/CALLS.JS) [DEV HUB SANDBOX]
 // ============================================================================
 
 import { BerthoWebRTCService } from './services/webrtc-service.js';
@@ -40,55 +40,6 @@ export class BerthoCallUI {
     const modal = document.createElement('div');
     modal.id = 'call-ui-modal-overlay';
     modal.innerHTML = `
-      <style>
-        .call-overlay {
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-          background: #030308; z-index: 999999; display: flex; flex-direction: column;
-          align-items: center; justify-content: space-between; padding: max(20px, env(safe-area-inset-top)) 15px max(30px, env(safe-area-inset-bottom));
-          color: #fff; box-sizing: border-box; font-family: -apple-system, sans-serif;
-        }
-        .call-video-container {
-          position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden;
-        }
-        .remote-video-element {
-          width: 100%; height: 100%; object-fit: cover; background: #070a14;
-        }
-        .local-video-element {
-          position: absolute; top: max(20px, env(safe-area-inset-top)); right: 20px;
-          width: 100px; height: 140px; border-radius: 16px; border: 2px solid #38bdf8;
-          object-fit: cover; z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.8); background: #000;
-        }
-        .call-header-info {
-          position: relative; z-index: 20; text-align: center; margin-top: 20px;
-          background: rgba(15, 23, 42, 0.85); padding: 15px 25px; border-radius: 20px;
-          border: 1px solid rgba(56, 189, 248, 0.3); backdrop-filter: blur(15px);
-        }
-        .call-avatar {
-          width: 60px; height: 60px; border-radius: 50%; background: #0284c7;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 1.8rem; font-weight: 900; margin: 0 auto 10px; border: 2px solid #38bdf8;
-        }
-        .call-username { font-size: 1.2rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
-        .call-status-lbl { font-size: 0.8rem; color: #38bdf8; font-weight: bold; }
-        .call-timer-lbl { font-size: 0.8rem; color: #34d399; font-weight: bold; margin-top: 4px; }
-        
-        .call-controls-row {
-          position: relative; z-index: 20; display: flex; gap: 14px; align-items: center;
-          background: rgba(15, 23, 42, 0.9); padding: 12px 20px; border-radius: 30px;
-          border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(20px);
-        }
-        .call-btn-circle {
-          width: 50px; height: 50px; border-radius: 50%; border: none;
-          display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-          cursor: pointer; color: #fff; font-weight: bold; transition: transform 0.15s;
-        }
-        .call-btn-circle:active { transform: scale(0.92); }
-        .btn-call-end { background: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
-        .btn-call-answer { background: #22c55e; box-shadow: 0 0 20px rgba(34, 197, 94, 0.5); }
-        .btn-call-ctrl { background: #1e293b; border: 1px solid #334155; }
-        .btn-call-ctrl.active { background: #0284c7; border-color: #38bdf8; }
-      </style>
-
       <div class="call-overlay">
         <div class="call-video-container">
           <video id="remote-video-element" class="remote-video-element" autoplay playsinline></video>
@@ -99,20 +50,20 @@ export class BerthoCallUI {
           <div class="call-avatar">${(this.peerUser.username || 'A')[0].toUpperCase()}</div>
           <div class="call-username">${this.peerUser.username}</div>
           <div class="call-status-lbl" id="call-status-text">
-            ${this.isIncoming ? (this.isVideo ? '📹 Appel Vidéo Entrant...' : '📞 Appel Audio Entrant...') : '📞 Sonnerie en cours...'}
+            ${this.isIncoming ? (this.isVideo ? 'Appel vidéo entrant…' : 'Appel audio entrant…') : 'Sonnerie en cours…'}
           </div>
           <div class="call-timer-lbl" id="call-timer-display" style="display:none;">00:00</div>
         </div>
 
         <div class="call-controls-row" id="call-controls-container">
           ${this.isIncoming ? `
-            <button class="call-btn-circle btn-call-answer" id="btn-answer-call" title="Répondre">📞</button>
-            <button class="call-btn-circle btn-call-end" id="btn-decline-call" title="Décliner">✖</button>
+            <button class="call-btn-circle btn-call-answer" id="btn-answer-call" title="Répondre" aria-label="Répondre à l'appel"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.6 4.2 2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.6 9.7a16 16 0 0 0 6 6l1.1-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2"/></svg></button>
+            <button class="call-btn-circle btn-call-end" id="btn-decline-call" title="Décliner" aria-label="Décliner l'appel"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
           ` : `
-            <button class="call-btn-circle btn-call-ctrl" id="btn-toggle-mic" title="Microphone">🎙️</button>
-            ${this.isVideo ? `<button class="call-btn-circle btn-call-ctrl" id="btn-toggle-cam" title="Caméra">📹</button>` : ''}
-            ${this.isVideo ? `<button class="call-btn-circle btn-call-ctrl" id="btn-flip-cam" title="Changer Caméra">🔄</button>` : ''}
-            <button class="call-btn-circle btn-call-end" id="btn-hangup-call" title="Raccrocher">🛑</button>
+            <button class="call-btn-circle btn-call-ctrl" id="btn-toggle-mic" title="Microphone" aria-label="Activer ou couper le microphone" aria-pressed="false"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg></button>
+            ${this.isVideo ? `<button class="call-btn-circle btn-call-ctrl" id="btn-toggle-cam" title="Caméra" aria-label="Activer ou couper la caméra" aria-pressed="false"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="m15 10.5 6-3.5v10l-6-3.5z"/></svg></button>` : ''}
+            ${this.isVideo ? `<button class="call-btn-circle btn-call-ctrl" id="btn-flip-cam" title="Changer de caméra" aria-label="Basculer entre caméra avant et arrière"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11A8 8 0 0 0 6.3 6.3L3 9.5"/><path d="M3 4v5.5h5.5"/><path d="M4 13a8 8 0 0 0 13.7 4.7L21 14.5"/><path d="M21 20v-5.5h-5.5"/></svg></button>` : ''}
+            <button class="call-btn-circle btn-call-end" id="btn-hangup-call" title="Raccrocher" aria-label="Raccrocher"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.6 4.2 2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.6 9.7a16 16 0 0 0 6 6l1.1-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2" transform="rotate(135 12 12)"/></svg></button>
           `}
         </div>
       </div>
@@ -163,7 +114,7 @@ export class BerthoCallUI {
   
   async acceptIncomingCall() {
     const statusLbl = document.getElementById('call-status-text');
-    if (statusLbl) statusLbl.innerText = "🟢 Connexion établie";
+    if (statusLbl) statusLbl.innerText = "Connexion établie";
     
     this.webrtc = new BerthoWebRTCService(
       this.currentUser.id,
@@ -185,10 +136,10 @@ export class BerthoCallUI {
     const row = document.getElementById('call-controls-container');
     if (row) {
       row.innerHTML = `
-        <button class="call-btn-circle btn-call-ctrl" id="btn-toggle-mic" title="Microphone">🎙️</button>
-        ${this.isVideo ? `<button class="call-btn-circle btn-call-ctrl" id="btn-toggle-cam" title="Caméra">📹</button>` : ''}
-        ${this.isVideo ? `<button class="call-btn-circle btn-call-ctrl" id="btn-flip-cam" title="Changer Caméra">🔄</button>` : ''}
-        <button class="call-btn-circle btn-call-end" id="btn-hangup-call" title="Raccrocher">🛑</button>
+        <button class="call-btn-circle btn-call-ctrl" id="btn-toggle-mic" title="Microphone" aria-label="Activer ou couper le microphone" aria-pressed="false"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg></button>
+        ${this.isVideo ? `<button class="call-btn-circle btn-call-ctrl" id="btn-toggle-cam" title="Caméra" aria-label="Activer ou couper la caméra" aria-pressed="false"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="m15 10.5 6-3.5v10l-6-3.5z"/></svg></button>` : ''}
+        ${this.isVideo ? `<button class="call-btn-circle btn-call-ctrl" id="btn-flip-cam" title="Changer de caméra" aria-label="Basculer entre caméra avant et arrière"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11A8 8 0 0 0 6.3 6.3L3 9.5"/><path d="M3 4v5.5h5.5"/><path d="M4 13a8 8 0 0 0 13.7 4.7L21 14.5"/><path d="M21 20v-5.5h-5.5"/></svg></button>` : ''}
+        <button class="call-btn-circle btn-call-end" id="btn-hangup-call" title="Raccrocher" aria-label="Raccrocher"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.6 4.2 2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.6 9.7a16 16 0 0 0 6 6l1.1-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2" transform="rotate(135 12 12)"/></svg></button>
       `;
       this.bindControls();
     }
@@ -207,7 +158,7 @@ export class BerthoCallUI {
     const statusLbl = document.getElementById('call-status-text');
     const timerLbl = document.getElementById('call-timer-display');
     
-    if (statusLbl) statusLbl.innerText = "🟢 En communication";
+    if (statusLbl) statusLbl.innerText = "En communication";
     if (timerLbl) timerLbl.style.display = 'block';
     
     if (remoteVideo) {

@@ -1,5 +1,5 @@
 // ============================================================================
-// 📁 BERTHOPLAY — MODULE D'AUTHENTIFICATION (SRC/AUTH.JS) [DEV HUB SANDBOX]
+// BERTHOPLAY — MODULE D'AUTHENTIFICATION (SRC/AUTH.JS) [DEV HUB SANDBOX]
 // ============================================================================
 
 import { BerthoUI } from './ui-dialogs.js';
@@ -8,9 +8,9 @@ import { BerthoUI } from './ui-dialogs.js';
 const IS_SANDBOX = true;
 
 // --- ICÔNES VECTORIELLES SVG PURS (0 EMOJI TEXTE DANS L'UI) ---
-const SVG_EYE_OPEN = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
-const SVG_EYE_OFF = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
-const SVG_SETTINGS_GEAR = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
+const SVG_EYE_OPEN = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+const SVG_EYE_OFF = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+const SVG_SETTINGS_GEAR = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
 
 // --- MOTS STRICTEMENT INTERDITS (RENFORCÉ : SALUTATIONS, PRONOMS, TROLLS & VULGARITÉS) ---
 const BLOCKED_WORDS = [
@@ -295,26 +295,14 @@ export class BerthoAuth {
 
     if (user) {
       modal.innerHTML = `
-        <style>
-          .auth-overlay { position:fixed; top:0; left:0; width:100vw; height:100dvh; background:rgba(3,3,10,0.96); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; color:#fff; backdrop-filter:blur(20px); box-sizing:border-box; }
-          .auth-box { background:rgba(15,23,42,0.95); border:1px solid #38bdf8; border-radius:24px; padding:25px; width:92%; max-width:380px; text-align:center; box-shadow:0 15px 35px rgba(0,0,0,0.8), 0 0 15px rgba(56,189,248,0.2); }
-          .auth-title { font-size:1.1rem; font-weight:900; color:#38bdf8; margin-bottom:5px; letter-spacing:0.5px; display:flex; align-items:center; justify-content:center; gap:8px; }
-          .auth-badge { font-size:0.75rem; background:rgba(56,189,248,0.15); color:#38bdf8; padding:4px 12px; border-radius:12px; display:inline-block; margin-bottom:15px; font-weight:bold; }
-          .auth-group { text-align:left; margin-bottom:12px; }
-          .auth-group label { display:block; font-size:0.75rem; color:#94a3b8; font-weight:bold; margin-bottom:5px; }
-          .auth-toggle { display:flex; justify-content:space-between; align-items:center; background:#0f172a; padding:12px 14px; border-radius:12px; border:1px solid #334155; margin-bottom:10px; }
-          .auth-toggle span { font-size:0.85rem; font-weight:bold; }
-          .auth-btn { width:100%; min-height:48px; padding:12px; background:linear-gradient(135deg, #0284c7, #0369a1); border:none; border-radius:12px; color:#fff; font-weight:900; cursor:pointer; margin-top:10px; transition:opacity 0.2s; }
-          .auth-btn:disabled { opacity:0.5; cursor:not-allowed; }
-        </style>
         <div class="auth-overlay" id="auth-backdrop">
           <div class="auth-box">
             <div class="auth-title">
               ${SVG_SETTINGS_GEAR}
-              ÉDITION PROFIL
+              Édition du profil
             </div>
-            <div class="auth-badge">ALLIÉ BERTHOPLAY</div>
-            <p id="acc-username-display" style="font-size:1.2rem; font-weight:900; color:#34d399; margin-bottom:15px;"></p>
+            <div class="auth-badge">Allié BerthoPlay</div>
+            <p id="acc-username-display" style="font-size:1.2rem; font-weight:900; color:var(--success); margin-bottom:15px;"></p>
 
             <div class="auth-toggle">
               <span>Profil Privé (Amis seuls)</span>
@@ -328,11 +316,11 @@ export class BerthoAuth {
 
             <div class="auth-group">
               <label for="acc-bio">MA BIO / CITATION JOUEUR</label>
-              <input type="text" id="acc-bio" aria-label="Votre bio ou citation de joueur" style="width:100%; min-height:48px; padding:12px; background:#0f172a; border:1px solid #334155; color:#fff; border-radius:10px; outline:none; box-sizing:border-box;" placeholder="Votre citation de gamer..." />
+              <input type="text" id="acc-bio" aria-label="Votre bio ou citation de joueur" style="width:100%; min-height:48px; padding:12px; background:var(--surface-1); border:1px solid var(--line-strong); color:#fff; border-radius:10px; outline:none; box-sizing:border-box;" placeholder="Votre citation de gamer..." />
             </div>
 
-            <button class="auth-btn" id="btn-save-acc" aria-label="Enregistrer mes préférences de profil">ENREGISTRER MES PRÉFÉRENCES</button>
-            <button class="auth-btn" id="btn-close-acc" aria-label="Annuler l'édition de profil" style="background:#1e293b; margin-top:8px;">ANNULER</button>
+            <button class="auth-btn" id="btn-save-acc" aria-label="Enregistrer mes préférences de profil">Enregistrer</button>
+            <button class="auth-btn btn-dark" id="btn-close-acc" type="button" style="width:100%; margin-top:var(--sp-2);">Annuler</button>
           </div>
         </div>
       `;
@@ -342,32 +330,13 @@ export class BerthoAuth {
       ).join('');
 
       modal.innerHTML = `
-        <style>
-          .auth-overlay { position:fixed; top:0; left:0; width:100vw; height:100dvh; background:rgba(3,3,10,0.96); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; color:#fff; backdrop-filter:blur(20px); box-sizing:border-box; }
-          .auth-box { background:rgba(15,23,42,0.95); border:1px solid #38bdf8; border-radius:24px; padding:25px; width:92%; max-width:380px; text-align:center; box-shadow:0 15px 35px rgba(0,0,0,0.8), 0 0 15px rgba(56,189,248,0.2); }
-          .auth-prompt-tag { background:rgba(56,189,248,0.15); color:#38bdf8; font-size:0.78rem; padding:8px 14px; border-radius:12px; font-weight:bold; margin-bottom:14px; display:${isNewPrompt ? 'block' : 'none'}; border:1px solid rgba(56,189,248,0.3); }
-          .auth-tabs { display:flex; gap:10px; margin-bottom:18px; }
-          .auth-tab { flex:1; min-height:48px; padding:12px; background:#0f172a; border:1px solid #334155; color:#94a3b8; border-radius:12px; font-weight:900; cursor:pointer; font-size:0.85rem; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
-          .auth-tab.active { border-color:#38bdf8; color:#38bdf8; background:#1e293b; box-shadow:0 0 10px rgba(56,189,248,0.2); }
-          
-          .phone-group { display:flex; gap:8px; margin-bottom:12px; width:100%; }
-          .auth-select { background:#0f172a; border:1px solid #334155; border-radius:12px; color:#fff; padding:12px 10px; font-weight:bold; font-size:0.9rem; outline:none; width:115px; cursor:pointer; min-height:48px; }
-          .auth-input { width:100%; min-height:48px; padding:12px; background:#0f172a; border:1px solid #334155; border-radius:12px; color:#fff; font-size:0.9rem; outline:none; box-sizing:border-box; margin-bottom:12px; }
-          .phone-group .auth-input { margin-bottom:0; flex:1; }
-
-          .input-pass-wrapper { position:relative; width:100%; margin-bottom:12px; }
-          .input-pass-wrapper .auth-input { margin-bottom:0; padding-right:48px; }
-          .btn-eye { position:absolute; right:4px; top:50%; transform:translateY(-50%); width:44px; height:44px; background:none; border:none; color:#38bdf8; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-          .auth-btn { width:100%; min-height:48px; padding:12px; background:linear-gradient(135deg, #0284c7, #0369a1); border:none; border-radius:12px; color:#fff; font-weight:900; cursor:pointer; margin-top:6px; font-size:0.9rem; letter-spacing:0.5px; transition:opacity 0.2s; }
-          .auth-btn:disabled { opacity:0.5; cursor:not-allowed; }
-        </style>
-
         <div class="auth-overlay" id="auth-backdrop">
-          <div class="auth-box">
-            <div class="auth-prompt-tag">Rejoignez la communauté BerthoPlay !</div>
+          <div class="auth-box" role="dialog" aria-modal="true" aria-labelledby="auth-heading">
+            <h2 class="auth-title" id="auth-heading" style="margin-bottom:var(--sp-4);">Rejoindre la console</h2>
+            <div class="auth-prompt-tag"${isNewPrompt ? '' : ' hidden'}>Rejoignez la communauté BerthoPlay.</div>
             <div class="auth-tabs">
-              <div class="auth-tab active" id="tab-login" role="button" aria-label="Onglet Connexion">CONNEXION</div>
-              <div class="auth-tab" id="tab-reg" role="button" aria-label="Onglet Créer un compte">CRÉER COMPTE</div>
+              <div class="auth-tab active" id="tab-login" role="button" aria-label="Onglet Connexion">Connexion</div>
+              <div class="auth-tab" id="tab-reg" role="button" aria-label="Onglet Créer un compte">Créer un compte</div>
             </div>
 
             <!-- FORMULAIRE DE CONNEXION -->
@@ -382,7 +351,7 @@ export class BerthoAuth {
                 <input type="password" id="login-pass" class="auth-input" aria-label="Mot de passe de connexion" placeholder="Mot de passe" />
                 <button type="button" class="btn-eye" id="toggle-pass-login" aria-label="Afficher ou masquer le mot de passe" title="Afficher ou masquer le mot de passe">${SVG_EYE_OPEN}</button>
               </div>
-              <button class="auth-btn" id="btn-do-login" aria-label="Se connecter à votre compte BerthoPlay">SE CONNECTER</button>
+              <button class="auth-btn" id="btn-do-login" aria-label="Se connecter à votre compte BerthoPlay">Se connecter</button>
             </div>
 
             <!-- FORMULAIRE D'INSCRIPTION -->
@@ -398,10 +367,10 @@ export class BerthoAuth {
                 <input type="password" id="reg-pass" class="auth-input" aria-label="Mot de passe d'inscription" placeholder="Mot de passe (Min 6 caractères)" />
                 <button type="button" class="btn-eye" id="toggle-pass-reg" aria-label="Afficher ou masquer le mot de passe d'inscription" title="Afficher ou masquer le mot de passe">${SVG_EYE_OPEN}</button>
               </div>
-              <button class="auth-btn" id="btn-do-reg" aria-label="S'inscrire et créer un compte joueur">S'INSCRIRE</button>
+              <button class="auth-btn" id="btn-do-reg" aria-label="S'inscrire et créer un compte joueur">Créer mon compte</button>
             </div>
 
-            <button class="auth-btn" id="btn-close-auth-modal" aria-label="Annuler et fermer la fenêtre d'authentification" style="background:#1e293b; margin-top:12px;">ANNULER</button>
+            <button class="auth-btn btn-dark" id="btn-close-auth-modal" type="button" style="width:100%; margin-top:var(--sp-3);">Annuler</button>
           </div>
         </div>
       `;
@@ -502,7 +471,7 @@ export class BerthoAuth {
           coins: 500,
           is_private: 0,
           hide_subscribers: 0,
-          bio: 'Joueur BerthoPlay 🎮',
+          bio: 'Joueur BerthoPlay',
           is_verified: 0
         };
 
@@ -549,7 +518,7 @@ export class BerthoAuth {
           coins: 750,
           is_private: 0,
           hide_subscribers: 0,
-          bio: 'Joueur BerthoPlay 🎮',
+          bio: 'Joueur BerthoPlay',
           is_verified: 0
         };
 

@@ -1,314 +1,193 @@
+// ============================================================================
+// BERTHOPLAY — INFRASTRUCTURES BERTHO
+// ----------------------------------------------------------------------------
+// Panneau des autres produits de l'écosystème. Les emojis d'origine sont
+// remplacés par des icônes vectorielles : un emoji change de dessin selon
+// la plateforme et ne peut pas prendre la couleur du thème.
+// ============================================================================
+
+import { icon } from './components/icons.js';
+import { BerthoSoundEffects } from './services/sound-effects.js';
+
 export const BERTHO_ECOSYSTEM_DATA = [
-  // --- EN LIGNE & EN FINITION ---
   {
-    id: 'web',
-    name: 'Web',
-    tagline: 'Site Officiel & Présence Digitale',
-    desc: 'Portail central et vitrine technologique officielle du groupe Bertho.',
+    id: 'web', name: 'Web', glyph: 'globe',
+    tagline: 'Site officiel & présence digitale',
+    desc: 'Portail central et vitrine technologique du groupe Bertho.',
     url: 'https://bertho-web.pages.dev',
     status: 'online',
-    langs: '5 Langues (Lingala, FR, EN...)',
-    features: ['🌗 Sombre/Clair', '⚡ Web'],
-    color: 'linear-gradient(135deg, #f59e0b, #d97706)',
-    icon: '🌐'
+    tags: ['5 langues', 'Thème clair/sombre']
   },
   {
-    id: 'docs',
-    name: 'Docs',
-    tagline: 'Diagnostics & Analyses d\'Entreprises',
-    desc: 'E-commerce spécialisé dans les audits, diagnostics et études d\'entreprises.',
+    id: 'docs', name: 'Docs', glyph: 'edit',
+    tagline: "Diagnostics & analyses d'entreprises",
+    desc: "E-commerce spécialisé dans les audits, diagnostics et études d'entreprises.",
     url: 'https://bertho-docs.pages.dev',
     status: 'online',
-    langs: '3 Langues (Lingala, FR, EN)',
-    features: ['🌗 Sombre/Clair', '📄 Audits PME'],
-    color: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-    icon: '📄'
+    tags: ['3 langues', 'Audits PME']
   },
   {
-    id: 'pay',
-    name: 'Pay',
-    tagline: 'Passerelle de Paiement Haute Performance',
-    desc: 'Solution de paiement sécurisée PWA utilisable même sans connexion internet.',
+    id: 'pay', name: 'Pay', glyph: 'coin',
+    tagline: 'Passerelle de paiement haute performance',
+    desc: 'Solution de paiement sécurisée, utilisable même sans connexion.',
     url: 'https://berthopay.pages.dev',
     status: 'finishing',
-    langs: '🌍 14 Langues (Lingala, FR, EN...)',
-    features: ['📱 PWA Hors-Ligne', '🌗 Sombre/Clair'],
-    color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
-    icon: '💳'
+    tags: ['14 langues', 'PWA hors-ligne']
   },
   {
-    id: 'marketplace',
-    name: 'Marketplace',
-    tagline: 'E-Commerce Global Multi-Vendeurs',
-    desc: 'Plateforme commerciale style Amazon réunissant des milliers de marchands.',
+    id: 'marketplace', name: 'Marketplace', glyph: 'grid',
+    tagline: 'E-commerce global multi-vendeurs',
+    desc: 'Place de marché multi-vendeurs à couverture internationale.',
     url: 'https://bertho-markeplace.pages.dev',
     status: 'finishing',
-    langs: '🌍 14 Langues (Lingala, FR, EN...)',
-    features: ['🛍️ Multi-Vendeurs', '🌗 Sombre/Clair'],
-    color: 'linear-gradient(135deg, #10b981, #047857)',
-    icon: '🛒'
+    tags: ['14 langues', 'Multi-vendeurs']
   },
   {
-    id: 'play',
-    name: 'Play',
-    tagline: 'Console Web 3D & Gaming Hub',
-    desc: 'Console Web PWA de jeux vidéo 3D haute performance et synchronisation BerthoCoins.',
+    id: 'play', name: 'Play', glyph: 'gamepad',
+    tagline: 'Console web 3D & hub de jeu',
+    desc: 'Vous y êtes : jeux 3D, clans, messagerie et classements.',
     url: '#',
     status: 'current',
-    langs: '🎮 Jeux 3D & IA',
-    features: ['📱 PWA Hors-Ligne', '🪙 BerthoCoins Sync'],
-    color: 'linear-gradient(135deg, #00f2fe, #ff0055)',
-    icon: '🎮'
-  },
-
-  // --- FUTURES INFRASTRUCTURES À VENIR ---
-  {
-    id: 'id',
-    name: 'ID',
-    tagline: 'Identité Numérique Unifiée',
-    desc: 'Authentification SSO unique permettant de se connecter à tous les services Bertho.',
-    url: '#',
-    status: 'upcoming',
-    langs: '🔐 Connexion Unique',
-    features: ['🛡️ SSO Sécurisé', '🆔 Pass Universel'],
-    color: 'linear-gradient(135deg, #ec4899, #be185d)',
-    icon: '🆔'
+    tags: ['Jeux 3D', 'Berthocoins']
   },
   {
-    id: 'cloud',
-    name: 'Cloud',
-    tagline: 'Stockage & Infrastructures Sécurisées',
-    desc: 'Espace de stockage cloud haute disponibilité et hébergement de données.',
+    id: 'id', name: 'ID', glyph: 'shield',
+    tagline: 'Identité numérique unifiée',
+    desc: 'Connexion unique à tous les services de l\'écosystème.',
     url: '#',
     status: 'upcoming',
-    langs: '☁️ Stockage Chiffré',
-    features: ['⚡ High-Speed', '🛡️ Données Chiffrées'],
-    color: 'linear-gradient(135deg, #06b6d4, #0891b2)',
-    icon: '☁️'
+    tags: ['SSO sécurisé', 'Pass universel']
   },
   {
-    id: 'wallet',
-    name: 'Wallet',
-    tagline: 'Portefeuille d\'Actifs Numériques',
-    desc: 'Gestion centralisée de vos devises, BerthoCoins et actifs numériques.',
+    id: 'cloud', name: 'Cloud', glyph: 'download',
+    tagline: 'Stockage & infrastructures sécurisées',
+    desc: 'Stockage chiffré et infrastructure haute disponibilité.',
     url: '#',
     status: 'upcoming',
-    langs: '👛 Fiat & Crypto',
-    features: ['🪙 BerthoCoins Hub', '🔒 Coffre-Fort'],
-    color: 'linear-gradient(135deg, #eab308, #ca8a04)',
-    icon: '👛'
+    tags: ['Chiffré', 'Haute vitesse']
   },
   {
-    id: 'ia',
-    name: 'IA',
-    tagline: 'Intelligence Artificielle Générative',
-    desc: 'Suite d\'outils IA avancés pour l\'automatisation, le traitement et l\'analyse de données.',
+    id: 'wallet', name: 'Wallet', glyph: 'lock',
+    tagline: "Portefeuille d'actifs numériques",
+    desc: 'Coffre-fort pour vos actifs, monnaie courante et Berthocoins.',
     url: '#',
     status: 'upcoming',
-    langs: '🤖 IA & Machine Learning',
-    features: ['⚡ Multi-Model', '🧠 Modèles Sur Mesure'],
-    color: 'linear-gradient(135deg, #a855f7, #7e22ce)',
-    icon: '🤖'
+    tags: ['Fiat & crypto', 'Coffre-fort']
+  },
+  {
+    id: 'ia', name: 'IA', glyph: 'target',
+    tagline: 'Intelligence artificielle générative',
+    desc: "Outils d'automatisation, de traitement et d'analyse de données.",
+    url: '#',
+    status: 'upcoming',
+    tags: ['Multi-modèles', 'Modèles sur mesure']
   }
 ];
+
+// Le statut se lit au texte autant qu'à la couleur.
+const STATUS = {
+  online:    { label: 'En ligne',   badge: 'badge--success' },
+  finishing: { label: 'En finition', badge: 'badge--warn' },
+  current:   { label: 'Vous êtes ici', badge: 'badge--blood' },
+  upcoming:  { label: 'À venir',    badge: 'badge--neutral' }
+};
 
 export class BerthoEcosystem {
   constructor(onClose) {
     this.onClose = onClose;
     this.modal = null;
-    this.isClosing = false;
+    this.previouslyFocused = null;
   }
 
   open() {
+    this.previouslyFocused = document.activeElement;
+
     this.modal = document.createElement('div');
     this.modal.id = 'eco-selector-modal';
+    this.modal.className = 'overlay-view';
+    this.modal.setAttribute('role', 'dialog');
+    this.modal.setAttribute('aria-modal', 'true');
+    this.modal.setAttribute('aria-labelledby', 'eco-title');
+
     this.modal.innerHTML = `
-      <style>
-        .eco-overlay {
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-          background: rgba(3, 3, 10, 0.96); z-index: 5000; display: flex;
-          flex-direction: column; align-items: center; justify-content: flex-start;
-          backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-          padding: max(16px, env(safe-area-inset-top)) 15px max(20px, env(safe-area-inset-bottom));
-          box-sizing: border-box; overflow-y: auto; color: #fff;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-          animation: fadeInBg 0.35s ease-out forwards;
-        }
-
-        .eco-overlay.closing {
-          animation: fadeOutBg 0.25s ease-in forwards;
-        }
-
-        @keyframes fadeInBg {
-          from { opacity: 0; backdrop-filter: blur(0px); }
-          to { opacity: 1; backdrop-filter: blur(25px); }
-        }
-
-        @keyframes fadeOutBg {
-          from { opacity: 1; }
-          to { opacity: 0; }
-        }
-
-        .eco-top-bar-header {
-          display: flex; justify-content: space-between; align-items: center;
-          width: 100%; max-width: 520px; margin-bottom: 15px;
-          animation: slideDownHeader 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes slideDownHeader {
-          from { opacity: 0; transform: translateY(-15px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .eco-main-title { font-size: 1.5rem; font-weight: 900; color: #fff; text-align: left; }
-        .eco-main-title .bertho { color: #fff; font-weight: 900; }
-        .eco-main-title .sub { font-family: "Georgia", serif; font-style: italic; color: #38bdf8; }
-
-        .eco-close-top {
-          background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e;
-          color: #fff; width: 38px; height: 38px; border-radius: 50%;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 1.1rem; font-weight: 900; cursor: pointer;
-          box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3); transition: transform 0.15s ease;
-        }
-        .eco-close-top:active { transform: scale(0.9); }
-
-        .eco-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 520px; }
-        
-        .eco-card {
-          background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between;
-          align-items: center; backdrop-filter: blur(10px); gap: 12px;
-          opacity: 0; transform: translateY(20px) scale(0.97);
-          animation: slideUpCard 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes slideUpCard {
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .eco-card:nth-child(1) { animation-delay: 0.04s; }
-        .eco-card:nth-child(2) { animation-delay: 0.08s; }
-        .eco-card:nth-child(3) { animation-delay: 0.12s; }
-        .eco-card:nth-child(4) { animation-delay: 0.16s; }
-        .eco-card:nth-child(5) { animation-delay: 0.20s; }
-        .eco-card:nth-child(6) { animation-delay: 0.24s; }
-        .eco-card:nth-child(7) { animation-delay: 0.28s; }
-        .eco-card:nth-child(8) { animation-delay: 0.32s; }
-        .eco-card:nth-child(9) { animation-delay: 0.36s; }
-
-        .eco-card-left { display: flex; align-items: center; gap: 12px; flex: 1; }
-        .eco-icon { font-size: 1.8rem; }
-
-        .eco-card-info h3 { font-size: 1.05rem; font-weight: 900; margin-bottom: 2px; }
-        .eco-card-info h3 .b-white { color: #ffffff; font-weight: 900; }
-        .eco-card-info h3 .b-sub { font-family: "Georgia", serif; font-style: italic; font-weight: 700; }
-        .eco-card-info .tagline { font-size: 0.7rem; color: #38bdf8; font-weight: 700; margin-bottom: 3px; }
-        .eco-card-info .desc { font-size: 0.68rem; color: #94a3b8; line-height: 1.3; margin-bottom: 6px; }
-
-        .eco-badges-row { display: flex; gap: 6px; flex-wrap: wrap; }
-        .badge-pill { font-size: 0.6rem; font-weight: 800; padding: 2px 6px; border-radius: 8px; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15); }
-        .badge-pill.lang { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.1); }
-
-        .status-pill { font-size: 0.6rem; font-weight: 800; padding: 2px 7px; border-radius: 10px; text-transform: uppercase; margin-left: 6px; display: inline-block; }
-        .status-pill.online { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
-        .status-pill.finishing { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
-        .status-pill.current { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; }
-        .status-pill.upcoming { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
-
-        .eco-btn {
-          padding: 10px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;
-          border: none; cursor: pointer; text-transform: uppercase; text-decoration: none;
-          color: #fff; display: inline-flex; align-items: center; gap: 4px;
-          white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        }
-
-        .eco-close-btn {
-          margin-top: 25px; margin-bottom: 20px; padding: 14px 36px;
-          background: rgba(244,63,94,0.25); border: 1.5px solid #f43f5e;
-          color: #fff; border-radius: 25px; font-weight: 900; font-size: 0.85rem;
-          cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-          box-shadow: 0 4px 20px rgba(244,63,94,0.3); transition: transform 0.15s ease;
-        }
-
-        .eco-close-btn:active { transform: scale(0.95); background: rgba(244,63,94,0.4); }
-      </style>
-
-      <div class="eco-overlay" id="eco-overlay-bg">
-        <div class="eco-top-bar-header">
-          <div class="eco-main-title"><span class="bertho">Écosystème</span> <span class="sub">Bertho</span></div>
-          <button class="eco-close-top eco-close-action">✖</button>
+      <header class="overlay-view__head">
+        <button class="btn btn--icon btn--ghost" id="eco-close" type="button"
+                data-sfx="back" aria-label="Fermer les infrastructures">
+          ${icon('arrow-left')}
+        </button>
+        <div class="grow">
+          <h1 class="t-screen-title" id="eco-title" style="font-size:var(--text-lg);">Infrastructures</h1>
+          <p class="t-meta">L'écosystème Bertho</p>
         </div>
+      </header>
 
-        <div class="eco-grid">
-          ${BERTHO_ECOSYSTEM_DATA.map(item => `
-            <div class="eco-card">
-              <div class="eco-card-left">
-                <div class="eco-icon">${item.icon}</div>
-                <div class="eco-card-info">
-                  <h3>
-                    <span class="b-white">Bertho</span><span class="b-sub" style="background: ${item.color}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${item.name}</span>
-                    ${item.status === 'online' ? '<span class="status-pill online">En Ligne 🟢</span>' : ''}
-                    ${item.status === 'finishing' ? '<span class="status-pill finishing">En Finition 🛠️</span>' : ''}
-                    ${item.status === 'current' ? '<span class="status-pill current">Ici 🎮</span>' : ''}
-                    ${item.status === 'upcoming' ? '<span class="status-pill upcoming">À Venir 🚀</span>' : ''}
-                  </h3>
-                  <div class="tagline">${item.tagline}</div>
-                  <div class="desc">${item.desc}</div>
-                  
-                  <div class="eco-badges-row">
-                    <span class="badge-pill lang">${item.langs}</span>
-                    ${item.features.map(f => `<span class="badge-pill">${f}</span>`).join('')}
-                  </div>
-                </div>
-              </div>
-              <div>
-                ${item.status === 'current' 
-                  ? `<span style="font-size: 0.7rem; color: #38bdf8; font-weight: 800; padding: 8px 12px; border-radius: 12px; background: rgba(56,189,248,0.1); border: 1px solid #38bdf8;">ACTIF</span>`
-                  : (item.status === 'upcoming'
-                      ? `<span style="font-size: 0.7rem; color: #c084fc; font-weight: 800; padding: 8px 12px; border-radius: 12px; background: rgba(168,85,247,0.1); border: 1px solid #a855f7;">BIENTÔT</span>`
-                      : `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="eco-btn" style="background: ${item.color};">VISITER 🔗</a>`
-                    )
-                }
-              </div>
-            </div>
-          `).join('')}
+      <div class="container--wide">
+        <div class="hub-grid">
+          ${BERTHO_ECOSYSTEM_DATA.map(item => this.card(item)).join('')}
         </div>
-
-        <button class="eco-close-btn eco-close-action">FERMER ✖</button>
       </div>
     `;
 
     document.body.appendChild(this.modal);
 
-    // DÉLÉGATION D'ÉVÉNEMENTS INFAILLIBLE : FERME AU CLIC SUR HAUT, BAS OU ARRIÈRE-PLAN
-    const handleCloseTrigger = (e) => {
-      if (e.target.closest('.eco-close-action') || e.target.id === 'eco-overlay-bg') {
-        if (e.cancelable) e.preventDefault();
-        this.close();
-      }
-    };
+    this.modal.querySelector('#eco-close')?.addEventListener('click', () => this.close());
 
-    this.modal.addEventListener('touchstart', handleCloseTrigger, { passive: false });
-    this.modal.addEventListener('click', handleCloseTrigger);
+    this.onKey = (e) => { if (e.key === 'Escape') this.close(); };
+    document.addEventListener('keydown', this.onKey);
+
+    this.modal.querySelector('#eco-close')?.focus();
+    BerthoSoundEffects.playOpen();
+  }
+
+  card(item) {
+    const status = STATUS[item.status] || STATUS.upcoming;
+    const isLive = item.status === 'online' || item.status === 'finishing';
+
+    return `
+      <article class="panel" style="display:flex; flex-direction:column; gap:var(--sp-3);">
+        <div class="row" style="gap:var(--sp-3); align-items:flex-start;">
+          <span class="tile__icon" aria-hidden="true"
+                style="color:${item.status === 'current' ? 'var(--blood-lit)' : 'var(--violet-lit)'};">
+            ${icon(item.glyph, 'icon icon--lg')}
+          </span>
+
+          <div class="grow">
+            <h2 class="wordmark wordmark--sm" style="margin-bottom:var(--sp-1);">
+              <span class="wordmark__a">Bertho</span><span class="wordmark__b">${item.name}</span>
+            </h2>
+            <p class="list-row__sub" style="white-space:normal;">${item.tagline}</p>
+          </div>
+
+          <span class="badge ${status.badge}">${status.label}</span>
+        </div>
+
+        <p class="t-body" style="font-size:var(--text-sm);">${item.desc}</p>
+
+        <div class="row" style="gap:var(--sp-2); flex-wrap:wrap;">
+          ${item.tags.map(t => `<span class="badge badge--neutral">${t}</span>`).join('')}
+        </div>
+
+        ${isLive
+          ? `<a class="btn btn--outline btn--sm" href="${item.url}" target="_blank" rel="noopener noreferrer"
+                style="align-self:flex-start;">
+               ${icon('external', 'icon icon--sm')} Visiter
+             </a>`
+          : `<span class="btn btn--secondary btn--sm" aria-disabled="true"
+                   style="align-self:flex-start; opacity:0.5; cursor:default;">
+               ${item.status === 'current' ? 'Application active' : 'Bientôt disponible'}
+             </span>`}
+      </article>`;
   }
 
   close() {
-    if (this.isClosing) return;
-    this.isClosing = true;
-
-    const overlayBg = document.getElementById('eco-overlay-bg');
-    if (overlayBg) {
-      overlayBg.classList.add('closing');
+    if (this.onKey) {
+      document.removeEventListener('keydown', this.onKey);
+      this.onKey = null;
     }
+    this.modal?.remove();
+    this.modal = null;
 
-    setTimeout(() => {
-      if (this.modal && this.modal.parentNode) {
-        this.modal.parentNode.removeChild(this.modal);
-      }
-      if (typeof this.onClose === 'function') {
-        this.onClose();
-      }
-    }, 240);
+    if (this.previouslyFocused instanceof HTMLElement) this.previouslyFocused.focus();
+    this.onClose?.();
   }
 }

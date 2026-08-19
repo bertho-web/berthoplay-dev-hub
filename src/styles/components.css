@@ -1,0 +1,838 @@
+/* ==========================================================================
+   BERTHOPLAY — VOCABULAIRE DE COMPOSANTS
+   Un composant = un jeu d'états complet : défaut, survol, focus, pressé,
+   désactivé, chargement. Aucun composant ne se livre à moitié.
+   Le survol n'existe que sous @media (hover: hover) — sur mobile c'est :active
+   qui porte tout le retour visuel.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. BOUTONS
+   ========================================================================== */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: var(--tap-min);
+  padding: 0 var(--sp-5);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color     var(--dur-fast) var(--ease-out),
+    color            var(--dur-fast) var(--ease-out),
+    box-shadow       var(--dur-fast) var(--ease-out),
+    opacity          var(--dur-fast) var(--ease-out);
+}
+
+/* Angle taillé en bas à droite : la signature gothique/gaming du bouton.
+   Purement décoratif au sens CSS, sans impact sur la zone tactile. */
+.btn--cut {
+  border-radius: var(--r-sm) var(--r-sm) var(--r-sm) 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+/* --- Variante : action principale (sang) ------------------------------- */
+.btn--primary {
+  background-color: var(--blood);
+  border-color: var(--blood);
+  color: var(--on-blood);
+  box-shadow: var(--shadow-sm);
+}
+@media (hover: hover) {
+  .btn--primary:hover:not(:disabled) {
+    background-color: #D51726;
+    border-color: var(--blood-lit);
+    box-shadow: var(--shadow-sm), var(--glow-blood);
+  }
+}
+.btn--primary:active:not(:disabled) {
+  background-color: var(--blood-deep);
+  border-color: var(--blood-deep);
+  box-shadow: none;
+}
+
+/* --- Variante : action secondaire (pierre) ----------------------------- */
+.btn--secondary {
+  background-color: var(--surface-2);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+@media (hover: hover) {
+  .btn--secondary:hover:not(:disabled) {
+    background-color: var(--surface-3);
+    border-color: var(--line-violet);
+  }
+}
+.btn--secondary:active:not(:disabled) { background-color: var(--surface-1); }
+
+/* --- Variante : fantôme (action tertiaire, barres d'outils) ------------ */
+.btn--ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--ink-2);
+}
+@media (hover: hover) {
+  .btn--ghost:hover:not(:disabled) { background-color: var(--surface-2); color: var(--ink); }
+}
+.btn--ghost:active:not(:disabled) { background-color: var(--surface-1); }
+
+/* --- Variante : contour vitrail (navigation, sélection) ---------------- */
+.btn--outline {
+  background-color: rgba(109, 40, 217, 0.10);
+  border-color: var(--line-violet);
+  color: var(--violet-lit);
+}
+@media (hover: hover) {
+  .btn--outline:hover:not(:disabled) {
+    background-color: rgba(109, 40, 217, 0.20);
+    border-color: var(--violet-lit);
+    color: var(--ink);
+  }
+}
+.btn--outline:active:not(:disabled) { background-color: rgba(109, 40, 217, 0.28); }
+
+/* --- Variante : or (récompense, achat, victoire) ----------------------- */
+.btn--gold {
+  background-color: var(--gold);
+  border-color: var(--gold);
+  color: var(--on-gold);
+}
+@media (hover: hover) {
+  .btn--gold:hover:not(:disabled) {
+    background-color: var(--gold-lit);
+    box-shadow: var(--glow-gold);
+  }
+}
+.btn--gold:active:not(:disabled) { background-color: #A8871F; }
+
+/* --- Variante : destructive -------------------------------------------- */
+.btn--danger {
+  background-color: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+@media (hover: hover) {
+  .btn--danger:hover:not(:disabled) { background-color: var(--danger); color: var(--void); }
+}
+.btn--danger:active:not(:disabled) { background-color: rgba(248,113,113,0.3); }
+
+/* --- Tailles ------------------------------------------------------------ */
+/* 44px et pas 38 : la zone tactile minimale iOS ne se négocie pas. On a
+   d'abord tenté de l'étendre par un pseudo-élément, mais .btn--cut applique
+   un clip-path qui rogne justement ce débordement. */
+.btn--sm { min-height: var(--tap-min-ios); padding: 0 var(--sp-3); font-size: var(--text-xs); }
+.btn--lg  { min-height: 56px; padding: 0 var(--sp-6); font-size: var(--text-base); }
+.btn--block { width: 100%; }
+
+/* --- Bouton-icône : la cible tactile reste à 48px même si l'icône est petite */
+.btn--icon {
+  min-width: var(--tap-min);
+  width: var(--tap-min);
+  height: var(--tap-min);
+  padding: 0;
+  border-radius: var(--r-full);
+}
+.btn--icon .icon { width: 22px; height: 22px; }
+
+/* --- États partagés ----------------------------------------------------- */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+  filter: saturate(0.4);
+}
+
+/* Chargement : le libellé s'efface, un rouet prend sa place. La largeur
+   du bouton ne bouge pas — pas de saut de mise en page. */
+.btn[data-loading="true"] { color: transparent !important; pointer-events: none; }
+.btn[data-loading="true"]::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  color: var(--on-blood);
+  animation: bp-spin 700ms linear infinite;
+}
+.btn--secondary[data-loading="true"]::after,
+.btn--ghost[data-loading="true"]::after,
+.btn--outline[data-loading="true"]::after { color: var(--ink); }
+
+@keyframes bp-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn[data-loading="true"]::after {
+    animation: bp-pulse 900ms ease-in-out infinite;
+    border-top-color: currentColor;
+  }
+}
+@keyframes bp-pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
+
+/* ==========================================================================
+   2. PANNEAUX & SURFACES
+   ========================================================================== */
+
+.panel {
+  background-color: var(--surface-1);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+}
+
+.panel--flush { padding: 0; overflow: hidden; }
+.panel--quiet { background-color: transparent; border-color: var(--line); }
+
+.panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+
+/* Panneau interactif (cliquable) */
+.panel--action { cursor: pointer; transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out); }
+@media (hover: hover) {
+  .panel--action:hover { border-color: var(--line-violet); background-color: var(--surface-2); }
+}
+.panel--action:active { background-color: var(--surface-2); border-color: var(--line-blood); }
+
+/* ==========================================================================
+   3. TUILES DE JEU — l'objet principal du hub
+   ========================================================================== */
+
+.tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 76px;
+  padding: var(--sp-3) var(--sp-4);
+  background-color: var(--surface-1);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  overflow: hidden;
+  text-align: left;
+  width: 100%;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* Lueur de braise qui monte du bas — remplace la bordure latérale bannie */
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--blood), transparent);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .tile:hover { border-color: var(--line-blood); background-color: var(--surface-2); box-shadow: var(--shadow-md); }
+  .tile:hover::before { opacity: 1; }
+}
+.tile:active { background-color: var(--surface-2); border-color: var(--blood); }
+.tile:active::before { opacity: 1; }
+
+.tile__icon {
+  flex: 0 0 auto;
+  width: 46px; height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.tile__body { flex: 1 1 auto; min-width: 0; }
+.tile__title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+  color: var(--ink);
+  text-transform: uppercase;
+  line-height: var(--leading-tight);
+  /* Deux lignes plutôt qu'une ellipse : « Conduite & Cou… » ne dit rien. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.tile__meta {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.tile__chevron { flex: 0 0 auto; color: var(--ink-4); width: 18px; height: 18px; }
+
+/* Tuile mise en avant : plus haute, portrait, image de jeu en fond.
+   Casse la grille de cartes identiques — une hiérarchie réelle. */
+.tile--feature {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-height: 168px;
+  padding: var(--sp-4);
+  border-color: var(--line-blood);
+  background:
+    linear-gradient(180deg, transparent 30%, rgba(10,8,16,0.92) 100%),
+    linear-gradient(135deg, var(--violet-deep) 0%, var(--surface-1) 60%);
+}
+.tile--feature .tile__title { font-size: var(--text-lg); white-space: normal; }
+.tile--feature .tile__icon {
+  position: absolute;
+  top: var(--sp-4); right: var(--sp-4);
+  width: 56px; height: 56px;
+  background-color: rgba(10,8,16,0.55);
+}
+
+/* Le CTA de la tuile vedette ne s'étire pas à l'infini sur grand écran */
+.tile--feature .btn--primary { max-width: 20rem; }
+
+@media (min-width: 900px) {
+  .tile--feature {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--sp-6);
+    min-height: 152px;
+    padding: var(--sp-6);
+  }
+  .tile--feature .tile__icon {
+    position: static;
+    width: 84px; height: 84px;
+  }
+  .tile--feature .tile__body { flex: 1 1 auto; }
+  .tile--feature > .row {
+    width: auto !important;
+    margin-top: 0 !important;
+    flex: 0 0 auto;
+  }
+}
+
+/* Tuile verrouillée : lisible, non cliquable, et pas seulement grisée —
+   un cadenas porte l'information en plus de la couleur. */
+.tile--locked { opacity: 0.55; cursor: not-allowed; filter: saturate(0.3); }
+.tile--locked:active { background-color: var(--surface-1); border-color: var(--line-strong); }
+
+/* ==========================================================================
+   4. CHAMPS DE FORMULAIRE
+   ========================================================================== */
+
+.field { display: flex; flex-direction: column; gap: var(--sp-2); }
+
+/* Le libellé est toujours visible. Un placeholder n'est jamais un libellé. */
+.field__label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.input, .select, .textarea {
+  width: 100%;
+  min-height: var(--tap-min);
+  padding: var(--sp-3) var(--sp-4);
+  background-color: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+
+.textarea { min-height: 96px; padding-top: var(--sp-3); resize: vertical; line-height: var(--leading-body); }
+
+/* Placeholder au même contraste que le texte secondaire — pas un gris fantôme */
+.input::placeholder, .textarea::placeholder { color: var(--ink-3); opacity: 1; }
+
+@media (hover: hover) {
+  .input:hover:not(:disabled), .select:hover:not(:disabled), .textarea:hover:not(:disabled) { border-color: var(--line-violet); }
+}
+
+.input:focus-visible, .select:focus-visible, .textarea:focus-visible {
+  background-color: var(--surface-3);
+  border-color: var(--violet-lit);
+}
+
+.input:disabled, .select:disabled, .textarea:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background-color: var(--surface-1);
+}
+
+.input[aria-invalid="true"], .textarea[aria-invalid="true"] { border-color: var(--danger); }
+
+/* Chevron dessiné, pas d'appearance native disparate entre iOS et Android */
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: var(--sp-10);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A8296' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--sp-3) center;
+  background-size: 18px;
+}
+.select option { background-color: var(--surface-3); color: var(--ink); }
+
+/* Aide et erreur : au ras du champ, jamais reléguées en haut de formulaire */
+.field__hint  { font-size: var(--text-xs); color: var(--ink-3); }
+.field__error {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-size: var(--text-xs); font-weight: 600; color: var(--danger);
+}
+.field__error .icon { width: 14px; height: 14px; flex: 0 0 auto; }
+
+/* ==========================================================================
+   5. INTERRUPTEUR
+   ========================================================================== */
+
+.switch {
+  position: relative;
+  flex: 0 0 auto;
+  width: 52px; height: 30px;
+  border-radius: var(--r-full);
+  background-color: var(--surface-4);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background-color: var(--ink-2);
+  transition: transform var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+}
+.switch[aria-checked="true"] { background-color: var(--blood); border-color: var(--blood-lit); }
+.switch[aria-checked="true"]::after { transform: translateX(22px); background-color: var(--on-blood); }
+.switch:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* La zone tactile déborde le visuel jusqu'aux 48px réglementaires */
+.switch::before {
+  content: '';
+  position: absolute;
+  inset: -9px -4px;
+}
+
+/* ==========================================================================
+   6. BADGES, PUCES, PASTILLES
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 3px var(--sp-2);
+  border-radius: var(--r-xs);
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.badge--gold    { background: rgba(201,162,39,0.14); border-color: var(--line-gold);   color: var(--gold-lit); }
+.badge--blood   { background: rgba(193,18,31,0.16);  border-color: var(--line-blood);  color: var(--blood-lit); }
+.badge--violet  { background: rgba(109,40,217,0.18); border-color: var(--line-violet); color: var(--violet-lit); }
+.badge--success { background: var(--success-bg); border-color: rgba(74,222,128,0.35); color: var(--success); }
+.badge--warn    { background: var(--warn-bg);    border-color: rgba(251,191,36,0.35); color: var(--warn); }
+.badge--neutral { background: var(--surface-2);  border-color: var(--line-strong);    color: var(--ink-3); }
+
+/* Compteur numérique (messages non lus) */
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px; height: 20px;
+  padding: 0 6px;
+  border-radius: var(--r-full);
+  background-color: var(--blood);
+  color: var(--on-blood);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pastille de présence : forme + couleur, jamais la couleur seule */
+.dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.dot--online  { background-color: var(--success); box-shadow: 0 0 8px var(--success); }
+.dot--offline { background-color: var(--ink-4); }
+.dot--alert   { background-color: var(--blood-lit); box-shadow: 0 0 8px var(--blood); }
+
+/* ==========================================================================
+   7. AVATARS
+   ========================================================================== */
+
+.avatar {
+  position: relative;
+  flex: 0 0 auto;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background-color: var(--surface-3);
+  border: 1px solid var(--line-strong);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-base);
+  color: var(--ink-2);
+  text-transform: uppercase;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar--sm { width: 32px; height: 32px; font-size: var(--text-xs); }
+.avatar--lg { width: 76px; height: 76px; font-size: var(--text-xl); }
+.avatar--ring { border-color: var(--gold); box-shadow: var(--glow-gold); }
+
+/* ==========================================================================
+   8. LISTES
+   ========================================================================== */
+
+.list { display: flex; flex-direction: column; }
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 64px;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+.list-row:last-child { border-bottom: none; }
+@media (hover: hover) { .list-row:hover { background-color: var(--surface-2); } }
+.list-row:active { background-color: var(--surface-3); }
+.list-row__body { flex: 1 1 auto; min-width: 0; }
+.list-row__title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.list-row__sub {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.list-row__end { flex: 0 0 auto; display: flex; align-items: center; gap: var(--sp-2); }
+
+/* Rangée de réglage (libellé + contrôle) — non cliquable en soi */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  min-height: var(--tap-min);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-row__label { font-size: var(--text-base); font-weight: 600; color: var(--ink); }
+.setting-row__hint  { font-size: var(--text-xs); color: var(--ink-3); margin-top: 2px; }
+
+/* ==========================================================================
+   9. CONTRÔLE SEGMENTÉ (onglets internes)
+   ========================================================================== */
+
+.segmented {
+  display: flex;
+  gap: var(--sp-1);
+  padding: var(--sp-1);
+  background-color: var(--surface-1);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+}
+.segmented__item {
+  flex: 1 1 0;
+  min-height: var(--tap-min-ios);
+  padding: 0 var(--sp-3);
+  border-radius: var(--r-xs);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background-color: transparent;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+@media (hover: hover) { .segmented__item:hover:not([aria-selected="true"]) { color: var(--ink-2); background-color: var(--surface-2); } }
+.segmented__item[aria-selected="true"] { background-color: var(--blood); color: var(--on-blood); }
+
+/* ==========================================================================
+   10. VOILE, FEUILLE, MODALE
+   ========================================================================== */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-scrim);
+  background-color: var(--scrim-modal);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.scrim[data-open="true"] { opacity: 1; pointer-events: auto; }
+
+.sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: var(--z-modal);
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 auto;
+  max-height: 88dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-1);
+  border: 1px solid var(--line-strong);
+  border-bottom: none;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  box-shadow: var(--shadow-sheet);
+  padding-bottom: var(--safe-b);
+  transform: translateY(100%);
+  transition: transform var(--dur-sheet) var(--ease-out-soft);
+}
+.sheet[data-open="true"] { transform: translateY(0); }
+
+.sheet__grip {
+  width: 40px; height: 4px;
+  margin: var(--sp-3) auto var(--sp-2);
+  border-radius: var(--r-full);
+  background-color: var(--surface-4);
+  flex: 0 0 auto;
+}
+.sheet__head {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-5) var(--sp-4);
+  flex: 0 0 auto;
+}
+.sheet__body { padding: 0 var(--sp-5) var(--sp-5); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.sheet__foot { padding: var(--sp-4) var(--sp-5) var(--sp-5); border-top: 1px solid var(--line); flex: 0 0 auto; }
+
+/* Sur grand écran la feuille devient une boîte de dialogue centrée */
+@media (min-width: 768px) {
+  .sheet {
+    top: 50%; bottom: auto;
+    border-radius: var(--r-lg);
+    border-bottom: 1px solid var(--line-strong);
+    transform: translateY(calc(-50% + 12px));
+    opacity: 0;
+    transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
+  }
+  .sheet[data-open="true"] { transform: translateY(-50%); opacity: 1; }
+}
+
+/* ==========================================================================
+   11. CHARGEMENT & ÉTATS VIDES
+   ========================================================================== */
+
+/* Squelettes plutôt qu'un rouet planté au milieu du contenu */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-1) 25%, var(--surface-3) 50%, var(--surface-1) 75%);
+  background-size: 200% 100%;
+  border-radius: var(--r-sm);
+  animation: bp-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes bp-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; background: var(--surface-2); }
+}
+.skeleton--text { height: 12px; margin-bottom: var(--sp-2); }
+.skeleton--title { height: 18px; width: 55%; margin-bottom: var(--sp-3); }
+.skeleton--tile { height: 76px; margin-bottom: var(--sp-3); border-radius: var(--r-md); }
+.skeleton--avatar { width: 44px; height: 44px; border-radius: 50%; }
+
+/* L'état vide enseigne l'interface : il dit quoi faire, pas « rien ici ». */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-3);
+  padding: var(--sp-10) var(--sp-5);
+}
+.empty__icon { width: 44px; height: 44px; color: var(--ink-4); }
+.empty__title { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; color: var(--ink-2); text-transform: uppercase; letter-spacing: var(--tracking-display); }
+.empty__text  { font-size: var(--text-sm); color: var(--ink-3); max-width: 34ch; line-height: var(--leading-body); }
+
+/* ==========================================================================
+   12. TOASTS
+   ========================================================================== */
+
+.toast-stack {
+  position: fixed;
+  left: 50%;
+  top: calc(var(--safe-t) + var(--sp-3));
+  z-index: var(--z-toast);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  width: min(92vw, 28rem);
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background-color: var(--surface-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  pointer-events: auto;
+  animation: bp-toast-in var(--dur-base) var(--ease-out);
+}
+.toast--success { border-color: rgba(74,222,128,0.4); }
+.toast--error   { border-color: var(--line-blood); }
+.toast--gold    { border-color: var(--line-gold); }
+.toast__icon { flex: 0 0 auto; width: 18px; height: 18px; }
+.toast[data-leaving="true"] { animation: bp-toast-out var(--dur-fast) var(--ease-out) forwards; }
+
+@keyframes bp-toast-in  { from { opacity: 0; transform: translateY(-10px); } }
+@keyframes bp-toast-out { to   { opacity: 0; transform: translateY(-6px); } }
+
+/* ==========================================================================
+   13. PROGRESSION
+   ========================================================================== */
+
+.progress {
+  height: 6px;
+  border-radius: var(--r-full);
+  background-color: var(--surface-3);
+  overflow: hidden;
+}
+.progress__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--blood-deep), var(--blood));
+  transition: width var(--dur-slow) var(--ease-out);
+}
+.progress--gold .progress__fill { background: linear-gradient(90deg, var(--gold), var(--gold-lit)); }
+
+/* ==========================================================================
+   14. ICÔNES
+   ========================================================================== */
+
+/* Trait unique et constant sur toute l'application : jamais de mélange
+   d'épaisseurs dans une même strate visuelle. */
+.icon {
+  width: 20px; height: 20px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon--sm { width: 16px; height: 16px; }
+.icon--lg { width: 26px; height: 26px; }
+.icon--fill { fill: currentColor; stroke: none; }
+
+/* ==========================================================================
+   15. CURSEUR (volume, réglages continus)
+   Le rendu natif d'un input[range] est blanc et clair sur toutes les
+   plateformes : il faut le repeindre, sinon il troue le thème sombre.
+   ========================================================================== */
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: var(--tap-min);   /* la zone tactile fait 48px, la piste 6px */
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--surface-4);
+}
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--surface-4);
+}
+input[type="range"]::-moz-range-progress {
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--blood);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; height: 20px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2px solid var(--blood);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2px solid var(--blood);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (hover: hover) {
+  input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.12); }
+}
+input[type="range"]:active::-webkit-slider-thumb { transform: scale(0.94); }
+
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  outline: var(--ring-w) solid var(--ring);
+  outline-offset: var(--ring-offset);
+}
+input[type="range"]:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ==========================================================================
+   16. CASES À COCHER NATIVES RÉSIDUELLES
+   Certaines vues utilisent encore un input[checkbox] : il doit au moins
+   prendre la couleur de la marque et la taille tactile réglementaire.
+   ========================================================================== */
+
+input[type="checkbox"] {
+  width: 22px; height: 22px;
+  accent-color: var(--blood);
+  cursor: pointer;
+  flex: 0 0 auto;
+}

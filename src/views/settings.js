@@ -1,14 +1,21 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — VUE RÉGLAGES (SRC/VIEWS/SETTINGS.JS) [DEV HUB SANDBOX]
+// BERTHOPLAY — VUE RÉGLAGES
 // ============================================================================
 
 import { i18n } from '../i18n.js';
 import { BerthoUI } from '../ui-dialogs.js';
 import { BerthoSoundEffects } from '../services/sound-effects.js';
 import { BerthoVoiceRecorder } from '../services/voice-recorder.js';
+import { icon } from '../components/icons.js';
 
-// Mode Sandbox : Pas d'appels externes
-const IS_SANDBOX = true;
+const LANGUAGES = [
+  ['fr', 'Français'], ['ln', 'Lingala'], ['kg', 'Kikongo'], ['sw', 'Kiswahili'],
+  ['yo', 'Yorùbá'], ['ig', 'Igbo'], ['ha', 'Hausa'], ['zu', 'isiZulu'],
+  ['en', 'English'], ['es', 'Español'], ['pt', 'Português'], ['de', 'Deutsch'],
+  ['it', 'Italiano'], ['nl', 'Nederlands'], ['ru', 'Русский'], ['zh', '中文'],
+  ['ja', '日本語'], ['ko', '한국어'], ['ar', 'العربية'], ['hi', 'हिन्दी'],
+  ['tr', 'Türkçe'], ['vi', 'Tiếng Việt']
+];
 
 export class SettingsView {
   constructor(container) {
@@ -16,179 +23,244 @@ export class SettingsView {
     this.render();
   }
 
+  isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches
+        || window.matchMedia('(display-mode: minimal-ui)').matches
+        || window.navigator.standalone === true;
+  }
+
   render() {
-    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    const currentLang = i18n.getLang();
-    const isSoundOn = BerthoSoundEffects.isSoundEnabled();
+    const isPWA = this.isStandalone();
+    const lang = i18n.getLang();
+    const soundOn = BerthoSoundEffects.isSoundEnabled();
+    const volume = Math.round(BerthoSoundEffects.getVolume() * 100);
+    const user = this.readState().currentUser;
 
     const view = document.createElement('div');
     view.className = 'tab-view-content';
+
     view.innerHTML = `
-      <style>
-        .set-page { padding: 15px; max-width: 500px; margin: 0 auto; color: #fff; box-sizing: border-box; }
-        .set-card { background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; border-radius: 18px; padding: 16px; margin-bottom: 14px; backdrop-filter: blur(10px); }
-        .set-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: bold; }
-        .set-title { font-size: 1.1rem; font-weight: 900; color: #38bdf8; margin-bottom: 15px; text-transform: uppercase; text-align: center; letter-spacing: 1px; }
-        .btn-install-pwa { width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #fff; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 8px; box-shadow: 0 0 15px rgba(56,189,248,0.3); letter-spacing: 1px; }
-        .set-select { padding: 8px 12px; background: #0f172a; border: 1px solid #38bdf8; color: #fff; border-radius: 10px; font-weight: bold; outline:none; font-size:0.85rem; max-width:180px; }
-        .btn-set-action { width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
-        .perm-btn { padding: 6px 12px; background: rgba(56,189,248,0.15); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.72rem; }
-      </style>
-
-      <div class="set-page">
-        <div class="set-title">${i18n.t('settingsTitle')}</div>
-
-        <!-- INSTALLATION PWA -->
-        <div class="set-card">
-          <div class="set-row">
-            <span>${i18n.t('pwaStatus')}</span>
-            <span style="color:${isPWA ? '#34d399' : '#fbbf24'};">${isPWA ? i18n.t('pwaInstalled') : i18n.t('pwaBrowser')}</span>
-          </div>
-          ${!isPWA ? `<button class="btn-install-pwa" id="btn-pwa-install">${i18n.t('btnInstallPWA')}</button>` : `<p style="font-size:0.7rem; color:#94a3b8; margin-top:6px;">L'application est installée en mode natif plein écran.</p>`}
-        </div>
-
-        <!-- SÉLECTEUR MULTILINGUE 22 LANGUES -->
-        <div class="set-card">
-          <div class="set-row">
-            <span>${i18n.t('langLabel')}</span>
-            <select class="set-select" id="set-lang-select">
-              <option value="fr" ${currentLang === 'fr' ? 'selected' : ''}>🇫🇷 Français</option>
-              <option value="ln" ${currentLang === 'ln' ? 'selected' : ''}>🇨🇬 Lingala</option>
-              <option value="kg" ${currentLang === 'kg' ? 'selected' : ''}>🇨🇬 Kikongo</option>
-              <option value="sw" ${currentLang === 'sw' ? 'selected' : ''}>🇨🇩 Swahili</option>
-              <option value="yo" ${currentLang === 'yo' ? 'selected' : ''}>🇳🇬 Yoruba</option>
-              <option value="ig" ${currentLang === 'ig' ? 'selected' : ''}>🇳🇬 Igbo</option>
-              <option value="ha" ${currentLang === 'ha' ? 'selected' : ''}>🇳🇬 Hausa</option>
-              <option value="zu" ${currentLang === 'zu' ? 'selected' : ''}>🇿🇦 Zulu</option>
-              <option value="en" ${currentLang === 'en' ? 'selected' : ''}>🇬🇧 English</option>
-              <option value="es" ${currentLang === 'es' ? 'selected' : ''}>🇪🇸 Español</option>
-              <option value="pt" ${currentLang === 'pt' ? 'selected' : ''}>🇵🇹 Português</option>
-              <option value="de" ${currentLang === 'de' ? 'selected' : ''}>🇩🇪 Deutsch</option>
-              <option value="it" ${currentLang === 'it' ? 'selected' : ''}>🇮🇹 Italiano</option>
-              <option value="nl" ${currentLang === 'nl' ? 'selected' : ''}>🇳🇱 Nederlands</option>
-              <option value="ru" ${currentLang === 'ru' ? 'selected' : ''}>🇷🇺 Русский</option>
-              <option value="zh" ${currentLang === 'zh' ? 'selected' : ''}>🇨🇳 中文</option>
-              <option value="ja" ${currentLang === 'ja' ? 'selected' : ''}>🇯🇵 日本語</option>
-              <option value="ko" ${currentLang === 'ko' ? 'selected' : ''}>🇰🇷 한국어</option>
-              <option value="ar" ${currentLang === 'ar' ? 'selected' : ''}>🇸🇦 العربية</option>
-              <option value="hi" ${currentLang === 'hi' ? 'selected' : ''}>🇮🇳 हिन्दी</option>
-              <option value="tr" ${currentLang === 'tr' ? 'selected' : ''}>🇹🇷 Türkçe</option>
-              <option value="vi" ${currentLang === 'vi' ? 'selected' : ''}>🇻🇳 Tiếng Việt</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- SON & EFFETS AUDIOS -->
-        <div class="set-card">
-          <div class="set-row">
-            <span>${i18n.t('soundLabel')}</span>
-            <input type="checkbox" id="set-sound" ${isSoundOn ? 'checked' : ''} />
-          </div>
-        </div>
-
-        <!-- AUTORISATIONS APPAREIL -->
-        <div class="set-card">
-          <div style="font-size:0.85rem; font-weight:bold; color:#38bdf8; margin-bottom:10px;">🛡️ AUTORISATIONS APPAREIL</div>
-          
-          <div class="set-row" style="margin-bottom:8px;">
-            <span>🎙️ Microphone (Vocaux & Appels)</span>
-            <button class="perm-btn" id="btn-perm-mic">TESTER ➔</button>
-          </div>
-
-          <div class="set-row">
-            <span>📢 Notifications Push (Sango)</span>
-            <button class="perm-btn" id="btn-perm-notif">ACTIVER ➔</button>
-          </div>
-        </div>
-
-        <!-- SUPPORT CLIENT & PLAINTES -->
-        <div class="set-card" id="btn-open-support-modal" style="cursor:pointer;">
-          <div class="set-row">
-            <span>💬 Support Client & Plaintes</span>
-            <span style="color:#34d399;">NOUS CONTACTER ➔</span>
-          </div>
-        </div>
-
-        <!-- RÈGLEMENTS & CONFIDENTIALITÉ -->
-        <div class="set-card" id="btn-open-rules" style="cursor:pointer;">
-          <div class="set-row">
-            <span>${i18n.t('rulesLabel')}</span>
-            <span style="color:#38bdf8;">${i18n.t('rulesRead')} ➔</span>
-          </div>
-        </div>
-
-        <!-- PURGE CACHE LOCAL -->
-        <div class="set-card" id="btn-clear-cache" style="cursor:pointer;">
-          <div class="set-row">
-            <span>${i18n.t('cacheLabel')}</span>
-            <span style="color:#f59e0b;">${i18n.t('cacheAction')} ➔</span>
-          </div>
-        </div>
-
-        <!-- INFRASTRUCTURE CLOUDFLARE -->
-        <div class="set-card">
-          <div class="set-row">
-            <span>${i18n.t('edgeLabel')}</span>
-            <span style="color:#38bdf8;">Cloudflare Pages Sandbox</span>
-          </div>
-        </div>
-
-        ${JSON.parse(localStorage.getItem('BERTHOPLAY_V1') || '{}').currentUser ? `<button class="btn-set-action" id="btn-set-logout">${i18n.t('logout')}</button>` : ''}
-
-        <div class="set-card" style="text-align:center; margin-top:15px;">
-          <p style="font-size:0.75rem; color:#94a3b8;">BerthoPlay Console Web &copy; 2026<br/>Tous droits réservés</p>
-        </div>
+      <div class="section">
+        <h1 class="t-screen-title">${i18n.t('settingsTitle')}</h1>
       </div>
+
+      <!-- ================= APPLICATION ================= -->
+      <section class="panel section" style="padding:var(--sp-4);" aria-labelledby="set-app">
+        <h2 class="t-label" id="set-app" style="margin-bottom:var(--sp-2);">Application</h2>
+
+        <div class="setting-row">
+          <div class="grow">
+            <p class="setting-row__label">${i18n.t('pwaStatus')}</p>
+            <p class="setting-row__hint">${isPWA
+              ? "Installée : BerthoPlay tourne en plein écran."
+              : "Vous naviguez dans un onglet. L'installation donne le plein écran et le hors-ligne."}</p>
+          </div>
+          <span class="badge ${isPWA ? 'badge--success' : 'badge--warn'}">
+            ${isPWA ? i18n.t('pwaInstalled') : i18n.t('pwaBrowser')}
+          </span>
+        </div>
+
+        ${!isPWA ? `
+          <button class="btn btn--primary btn--cut btn--block" id="btn-pwa-install" type="button" style="margin-top:var(--sp-3);">
+            ${icon('download', 'icon icon--sm')} ${i18n.t('btnInstallPWA')}
+          </button>` : ''}
+      </section>
+
+      <!-- ================= LANGUE ================= -->
+      <section class="panel section" style="padding:var(--sp-4);" aria-labelledby="set-lang">
+        <h2 class="t-label" id="set-lang" style="margin-bottom:var(--sp-3);">Langue</h2>
+        <div class="field">
+          <label class="field__label" for="set-lang-select">${i18n.t('langLabel')}</label>
+          <select class="select" id="set-lang-select">
+            ${LANGUAGES.map(([code, name]) =>
+              `<option value="${code}" ${lang === code ? 'selected' : ''}>${name}</option>`
+            ).join('')}
+          </select>
+          <p class="field__hint">22 langues disponibles. Le changement est immédiat.</p>
+        </div>
+      </section>
+
+      <!-- ================= AUDIO ================= -->
+      <section class="panel section" style="padding:var(--sp-4);" aria-labelledby="set-audio">
+        <h2 class="t-label" id="set-audio" style="margin-bottom:var(--sp-2);">Audio</h2>
+
+        <div class="setting-row">
+          <div class="grow">
+            <p class="setting-row__label">${i18n.t('soundLabel')}</p>
+            <p class="setting-row__hint">Retour sonore sur les boutons, les gains et les victoires.</p>
+          </div>
+          <button class="switch" id="set-sound" type="button" role="switch"
+                  aria-checked="${soundOn}" aria-label="${i18n.t('soundLabel')}" data-sfx="none"></button>
+        </div>
+
+        <div class="setting-row" id="volume-row" ${soundOn ? '' : 'hidden'}>
+          <div class="grow">
+            <label class="setting-row__label" for="set-volume">Volume</label>
+            <p class="setting-row__hint"><output id="volume-out">${volume}</output> %</p>
+          </div>
+          <input class="grow" type="range" id="set-volume" min="0" max="100" step="5"
+                 value="${volume}" style="max-width:11rem; accent-color: var(--blood);" />
+        </div>
+      </section>
+
+      <!-- ================= AUTORISATIONS ================= -->
+      <section class="panel section" style="padding:var(--sp-4);" aria-labelledby="set-perms">
+        <h2 class="t-label" id="set-perms" style="margin-bottom:var(--sp-2);">Autorisations de l'appareil</h2>
+
+        <div class="setting-row">
+          <div class="grow">
+            <p class="setting-row__label">Microphone</p>
+            <p class="setting-row__hint">Nécessaire pour les messages vocaux et les appels.</p>
+          </div>
+          <button class="btn btn--secondary btn--sm" id="btn-perm-mic" type="button">
+            ${icon('mic', 'icon icon--sm')} Tester
+          </button>
+        </div>
+
+        <div class="setting-row">
+          <div class="grow">
+            <p class="setting-row__label">Notifications</p>
+            <p class="setting-row__hint">Être prévenu d'un message ou d'un défi, application fermée.</p>
+          </div>
+          <button class="btn btn--secondary btn--sm" id="btn-perm-notif" type="button">
+            ${icon('bell', 'icon icon--sm')} Activer
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= ASSISTANCE ================= -->
+      <section class="panel panel--flush section" aria-labelledby="set-help">
+        <h2 class="t-label" id="set-help" style="padding:var(--sp-4) var(--sp-4) var(--sp-2);">Assistance</h2>
+
+        <button class="list-row" id="btn-open-support-modal" type="button">
+          ${icon('message')}
+          <span class="list-row__body">
+            <span class="list-row__title">Support & réclamations</span>
+            <span class="list-row__sub">Signaler un problème ou proposer une idée</span>
+          </span>
+          ${icon('chevron-right', 'icon tile__chevron')}
+        </button>
+
+        <button class="list-row" id="btn-open-rules" type="button">
+          ${icon('shield')}
+          <span class="list-row__body">
+            <span class="list-row__title">${i18n.t('rulesLabel')}</span>
+            <span class="list-row__sub">${i18n.t('rulesRead')}</span>
+          </span>
+          ${icon('chevron-right', 'icon tile__chevron')}
+        </button>
+
+        <button class="list-row" id="btn-clear-cache" type="button">
+          ${icon('refresh')}
+          <span class="list-row__body">
+            <span class="list-row__title">${i18n.t('cacheLabel')}</span>
+            <span class="list-row__sub">${i18n.t('cacheAction')}</span>
+          </span>
+          ${icon('chevron-right', 'icon tile__chevron')}
+        </button>
+      </section>
+
+      <!-- ================= COMPTE ================= -->
+      ${user ? `
+        <section class="section">
+          <button class="btn btn--danger btn--block" id="btn-set-logout" type="button" data-sfx="none">
+            ${icon('logout', 'icon icon--sm')} ${i18n.t('logout')}
+          </button>
+        </section>` : ''}
+
+      <footer class="section" style="text-align:center; padding-bottom:var(--sp-10);">
+        <p class="t-meta">${i18n.t('edgeLabel')} · Cloudflare Pages</p>
+        <p class="t-meta" style="margin-top:var(--sp-2);">BerthoPlay Console Web &copy; 2026 — Tous droits réservés</p>
+      </footer>
     `;
 
     this.container.innerHTML = '';
     this.container.appendChild(view);
+    this.bind();
+  }
 
+  // --------------------------------------------------------------------------
+
+  readState() {
+    try { return JSON.parse(localStorage.getItem('BERTHOPLAY_V1') || '{}'); }
+    catch (e) { return {}; }
+  }
+
+  writeState(patch) {
+    try {
+      localStorage.setItem('BERTHOPLAY_V1', JSON.stringify({ ...this.readState(), ...patch }));
+    } catch (e) {}
+  }
+
+  bind() {
+    // --- Langue -------------------------------------------------------------
     document.getElementById('set-lang-select')?.addEventListener('change', (e) => {
       i18n.setLang(e.target.value);
       this.render();
     });
 
-    document.getElementById('set-sound')?.addEventListener('change', (e) => {
-      const isChecked = e.target.checked;
-      try {
-        const data = JSON.parse(localStorage.getItem('BERTHOPLAY_V1') || '{}');
-        data.soundEnabled = isChecked;
-        localStorage.setItem('BERTHOPLAY_V1', JSON.stringify(data));
-      } catch(e) {}
-      if (isChecked) BerthoSoundEffects.playNotificationChime();
+    // --- Son ----------------------------------------------------------------
+    const soundSwitch = document.getElementById('set-sound');
+    soundSwitch?.addEventListener('click', () => {
+      const next = soundSwitch.getAttribute('aria-checked') !== 'true';
+      soundSwitch.setAttribute('aria-checked', String(next));
+      this.writeState({ soundEnabled: next });
+      document.getElementById('volume-row')?.toggleAttribute('hidden', !next);
+      // Le son de confirmation ne peut se jouer que si on vient de l'activer.
+      if (next) BerthoSoundEffects.playToggleOn();
     });
 
-    document.getElementById('btn-perm-mic')?.addEventListener('click', async () => {
+    const volume = document.getElementById('set-volume');
+    const volumeOut = document.getElementById('volume-out');
+    volume?.addEventListener('input', () => {
+      volumeOut.textContent = volume.value;
+      BerthoSoundEffects.setVolume(volume.value / 100);
+    });
+    // Un aperçu au relâchement seulement : pas à chaque pixel du curseur.
+    volume?.addEventListener('change', () => BerthoSoundEffects.playTap());
+
+    // --- Autorisations ------------------------------------------------------
+    document.getElementById('btn-perm-mic')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      btn.dataset.loading = 'true';
       const res = await BerthoVoiceRecorder.requestMicPermission();
+      delete btn.dataset.loading;
+
       if (res.success) {
-        BerthoUI.alert("MICROPHONE", "Permission du microphone accordée avec succès ! 🎙️");
+        BerthoUI.toast('Microphone autorisé', 'Vocaux et appels sont prêts.', 'success');
       } else {
-        BerthoUI.error("MICROPHONE", res.error);
+        BerthoUI.error('Microphone', res.error);
       }
     });
 
-    document.getElementById('btn-perm-notif')?.addEventListener('click', async () => {
-      if ('Notification' in window) {
-        const perm = await Notification.requestPermission();
-        if (perm === 'granted') {
-          BerthoUI.alert("NOTIFICATIONS", "Notifications Push système activées avec succès ! 📢");
-        } else {
-          BerthoUI.alert("NOTIFICATIONS", "Les notifications push ont été refusées par le navigateur.");
-        }
+    document.getElementById('btn-perm-notif')?.addEventListener('click', async (e) => {
+      if (!('Notification' in window)) {
+        BerthoUI.alert('Notifications', "Ce navigateur ne gère pas les notifications système.");
+        return;
+      }
+      const btn = e.currentTarget;
+      btn.dataset.loading = 'true';
+      const perm = await Notification.requestPermission();
+      delete btn.dataset.loading;
+
+      if (perm === 'granted') {
+        BerthoUI.toast('Notifications activées', 'Vous serez prévenu des nouveaux messages.', 'success');
       } else {
-        BerthoUI.alert("NOTIFICATIONS", "Votre navigateur ne supporte pas les notifications système.");
+        BerthoUI.alert(
+          'Notifications refusées',
+          "Le navigateur a bloqué les notifications. Vous pouvez les réactiver dans ses réglages de site."
+        );
       }
     });
 
+    // --- Assistance ---------------------------------------------------------
     document.getElementById('btn-open-support-modal')?.addEventListener('click', () => {
       BerthoUI.prompt(
-        "💬 SUPPORT & PLAINTES BERTHOPLAY",
-        "Décrivez votre problème ou suggestion...",
-        (msgText) => {
-          if (!msgText) return;
-          BerthoUI.alert("SUPPORT TRANSMIS", "Votre message a été enregistré en Sandbox ! 🙏");
-        }
+        'Support & réclamations',
+        'Décrivez le problème rencontré…',
+        () => BerthoUI.toast('Message transmis', "L'équipe BerthoPlay vous répondra.", 'success'),
+        null,
+        { label: 'Votre message', maxLength: 500, hint: 'Soyez précis : écran concerné, action tentée, ce qui est arrivé.' }
       );
     });
 
@@ -196,33 +268,61 @@ export class SettingsView {
       try {
         const module = await import('./legale.js');
         new module.LegaleView();
-      } catch(e) { console.error(e); }
+      } catch (e) {
+        BerthoUI.error('Règlements', e);
+      }
     });
 
     document.getElementById('btn-clear-cache')?.addEventListener('click', () => {
       BerthoUI.confirm(
         i18n.t('confirmClearCacheTitle'),
         i18n.t('confirmClearCacheMsg'),
-        () => {
-          localStorage.removeItem('BERTHOPLAY_PROMPT_SHOWN');
-          BerthoUI.alert(i18n.t('confirmClearCacheTitle'), i18n.t('cacheSuccess'));
-        }
+        async () => {
+          try {
+            localStorage.removeItem('BERTHOPLAY_PROMPT_SHOWN');
+            localStorage.removeItem('BERTHOPLAY_PWA_DISMISSED');
+            // Vider aussi les caches du service worker, sinon « purger » ment.
+            if ('caches' in window) {
+              const keys = await caches.keys();
+              await Promise.all(keys.map(k => caches.delete(k)));
+            }
+            BerthoUI.toast('Cache purgé', i18n.t('cacheSuccess'), 'success');
+          } catch (e) {
+            BerthoUI.error('Purge du cache', e);
+          }
+        },
+        null,
+        { confirmLabel: 'Purger' }
       );
     });
 
+    // --- Déconnexion --------------------------------------------------------
     document.getElementById('btn-set-logout')?.addEventListener('click', () => {
-      const state = JSON.parse(localStorage.getItem('BERTHOPLAY_V1') || '{}');
-      state.currentUser = null;
-      localStorage.setItem('BERTHOPLAY_V1', JSON.stringify(state));
-      BerthoUI.alert(i18n.t('settingsTitle'), "Vous êtes déconnecté.");
-      this.render();
+      BerthoUI.confirm(
+        i18n.t('logout'),
+        'Vos parties restent enregistrées sur cet appareil. Vous pourrez vous reconnecter à tout moment.',
+        () => {
+          this.writeState({ currentUser: null });
+          BerthoUI.toast('Déconnecté', 'À bientôt sur BerthoPlay.');
+          this.render();
+        },
+        null,
+        { confirmLabel: 'Se déconnecter' }
+      );
     });
 
+    // --- Installation -------------------------------------------------------
     document.getElementById('btn-pwa-install')?.addEventListener('click', () => {
       if (window.deferredPWA_Prompt) {
         window.deferredPWA_Prompt.prompt();
+        window.deferredPWA_Prompt.userChoice?.finally(() => {
+          window.deferredPWA_Prompt = null;
+          this.render();
+        });
       } else {
-        BerthoUI.alert("INSTALLATION PWA", "Pour installer : Appuyez sur 'Partager' dans votre navigateur, puis 'Sur l'écran d'accueil'.");
+        // Sur iOS il n'y a pas d'invite : la feuille explique le geste exact.
+        // C'est main.js qui la remplit, il connaît la plateforme détectée.
+        window.dispatchEvent(new CustomEvent('bertho:open-pwa-sheet'));
       }
     });
   }

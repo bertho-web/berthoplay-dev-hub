@@ -1,5 +1,5 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — CLIENT API UNIFIÉ (SRC/SERVICES/API.JS) [DEV HUB SANDBOX]
+// BERTHOPLAY — CLIENT API UNIFIÉ (SRC/SERVICES/API.JS) [DEV HUB SANDBOX]
 // ============================================================================
 
 // 💾 Clé de stockage local pour le simulateur de base de données
@@ -22,11 +22,11 @@ class SandboxDatabase {
   static seedInitialData() {
     const initialDB = {
       users: [
-        { id: 'usr_bertho', username: 'Bertho', phone: '+242060000001', coins: 1650, bio: 'Joueur BerthoPlay 🎮', theme_color: '#38bdf8', is_verified: 1, is_private: 0, hide_subscribers: 0 },
-        { id: 'usr_gervis', username: 'Gervis', phone: '+242060000002', coins: 1200, bio: 'Champion BerthoPlay', theme_color: '#34d399', is_verified: 0, is_private: 0, hide_subscribers: 0 },
-        { id: 'usr_mum', username: 'Mum', phone: '+242060000003', coins: 950, bio: 'Joueuse Pro', theme_color: '#a855f7', is_verified: 0, is_private: 0, hide_subscribers: 0 },
-        { id: 'usr_saint', username: 'Saint', phone: '+242060000004', coins: 740, bio: 'Allié BerthoPlay', theme_color: '#38bdf8', is_verified: 0, is_private: 0, hide_subscribers: 0 },
-        { id: 'usr_mohamed', username: 'Mohamed', phone: '+243000000005', coins: 820, bio: 'Gamer Elite', theme_color: '#ef4444', is_verified: 0, is_private: 0, hide_subscribers: 0 }
+        { id: 'usr_bertho', username: 'Bertho', phone: '+242060000001', coins: 1650, bio: 'Joueur BerthoPlay', theme_color: '#6D28D9', is_verified: 1, is_private: 0, hide_subscribers: 0 },
+        { id: 'usr_gervis', username: 'Gervis', phone: '+242060000002', coins: 1200, bio: 'Champion BerthoPlay', theme_color: '#4ADE80', is_verified: 0, is_private: 0, hide_subscribers: 0 },
+        { id: 'usr_mum', username: 'Mum', phone: '+242060000003', coins: 950, bio: 'Joueuse Pro', theme_color: '#6D28D9', is_verified: 0, is_private: 0, hide_subscribers: 0 },
+        { id: 'usr_saint', username: 'Saint', phone: '+242060000004', coins: 740, bio: 'Allié BerthoPlay', theme_color: '#6D28D9', is_verified: 0, is_private: 0, hide_subscribers: 0 },
+        { id: 'usr_mohamed', username: 'Mohamed', phone: '+243000000005', coins: 820, bio: 'Gamer Elite', theme_color: '#C1121F', is_verified: 0, is_private: 0, hide_subscribers: 0 }
       ],
       clans: [
         { id: 'clan_1', name: 'WARRIORS 242', tag: 'W242', logo: '🛡️', total_coins: 1500, owner_id: 'usr_gervis', username: 'Gervis' },
@@ -82,8 +82,8 @@ export const API = {
           username: 'Joueur_' + phone.slice(-4),
           phone: phone,
           coins: 500,
-          bio: 'Joueur BerthoPlay 🎮',
-          theme_color: '#38bdf8',
+          bio: 'Joueur BerthoPlay',
+          theme_color: '#6D28D9',
           is_verified: 0,
           is_private: 0,
           hide_subscribers: 0
@@ -105,8 +105,8 @@ export const API = {
         username: username,
         phone: phone,
         coins: 500,
-        bio: 'Joueur BerthoPlay 🎮',
-        theme_color: '#38bdf8',
+        bio: 'Joueur BerthoPlay',
+        theme_color: '#6D28D9',
         is_verified: 0,
         is_private: 0,
         hide_subscribers: 0

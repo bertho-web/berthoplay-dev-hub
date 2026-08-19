@@ -1,0 +1,13 @@
+/* ==========================================================================
+   BERTHOPLAY — FEUILLE MAÎTRESSE
+   Ordre d'import volontaire : fontes -> jetons -> socle -> composants -> coque.
+   Toute vue de l'application consomme ces classes ; aucune ne redéclare
+   ses propres couleurs.
+   ========================================================================== */
+
+@import './fonts.css';
+@import './tokens.css';
+@import './base.css';
+@import './components.css';
+@import './layout.css';
+@import './views.css';

@@ -559,7 +559,7 @@ export class CarGame {
           position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
           background: rgba(10, 14, 23, 0.96); z-index: 5000; display: none;
           flex-direction: column; align-items: center; justify-content: center;
-          color: #38bdf8; font-size: 1.2rem; font-weight: 800; text-align: center; padding: 20px;
+          color: var(--violet-lit); font-size: 1.2rem; font-weight: 800; text-align: center; padding: 20px;
         }
         @media (orientation: portrait) {
           .rotate-prompt { display: flex !important; }
@@ -567,15 +567,15 @@ export class CarGame {
 
         .hud-countdown {
           position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-          font-size: 5rem; font-weight: 900; color: #38bdf8;
+          font-size: 5rem; font-weight: 900; color: var(--violet-lit);
           text-shadow: 0 0 30px rgba(56, 189, 248, 0.8); z-index: 2500;
           display: flex; align-items: center; justify-content: center; pointer-events: none;
         }
 
         .hud-notify-badge {
           position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
-          background: rgba(245, 158, 11, 0.95); border: 2px solid #fbbf24;
-          padding: 8px 18px; border-radius: 20px; color: #0f172a; font-size: 1rem;
+          background: rgba(245, 158, 11, 0.95); border: 2px solid var(--gold-lit);
+          padding: 8px 18px; border-radius: 20px; color: var(--surface-1); font-size: 1rem;
           font-weight: 900; z-index: 2000; display: none; box-shadow: 0 0 25px rgba(245, 158, 11, 0.8);
           animation: pop-notify 0.3s ease-out; pointer-events: none;
         }
@@ -587,38 +587,38 @@ export class CarGame {
 
         .hud-back-btn {
           background: rgba(15, 23, 42, 0.9); padding: 8px 14px; border-radius: 10px;
-          border: 1px solid #38bdf8; color: #fff; font-size: 0.8rem; font-weight: bold;
+          border: 1px solid var(--violet-lit); color: #fff; font-size: 0.8rem; font-weight: bold;
           cursor: pointer; backdrop-filter: blur(8px);
         }
 
         .hud-step-badge {
           background: rgba(15, 23, 42, 0.9); padding: 8px 12px; border-radius: 10px;
-          border: 1px solid #38bdf8; color: #38bdf8; font-size: 0.8rem; font-weight: 900;
+          border: 1px solid var(--violet-lit); color: var(--violet-lit); font-size: 0.8rem; font-weight: 900;
           backdrop-filter: blur(8px);
         }
 
         .hud-minimap-bar {
           position: fixed; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
           width: min(38vw, 220px); height: 16px; background: rgba(15, 23, 42, 0.95);
-          border: 1.5px solid #38bdf8; border-radius: 10px; z-index: 1000;
+          border: 1.5px solid var(--violet-lit); border-radius: 10px; z-index: 1000;
           overflow: hidden; backdrop-filter: blur(8px); display: flex; align-items: center;
         }
-        .minimap-progress { height: 100%; background: linear-gradient(90deg, #0284c7, #10b981); width: 0%; transition: width 0.1s linear; }
+        .minimap-progress { height: 100%; background: linear-gradient(90deg, var(--blood), var(--success)); width: 0%; transition: width 0.1s linear; }
         .minimap-icon-player { position: absolute; font-size: 10px; transform: translateX(-50%); transition: left 0.1s linear; }
 
         .hud-panel {
           position: fixed; top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right));
           background: rgba(15, 23, 42, 0.9); padding: 10px 16px; border-radius: 14px;
-          border: 1px solid #38bdf8; color: #fff; font-family: monospace; z-index: 1000;
+          border: 1px solid var(--violet-lit); color: #fff; font-family: monospace; z-index: 1000;
           box-shadow: 0 8px 25px rgba(0,0,0,0.5); backdrop-filter: blur(10px); text-align: right;
         }
-        .hud-speed { font-size: 1.4rem; font-weight: 900; color: #38bdf8; }
-        .hud-gear { font-size: 0.8rem; color: #f43f5e; font-weight: bold; }
-        .hud-nitro { font-size: 0.75rem; color: #34d399; font-weight: bold; margin-top: 1px; }
-        .hud-coins { font-size: 0.75rem; font-weight: 800; color: #fbbf24; margin-top: 1px; }
+        .hud-speed { font-size: 1.4rem; font-weight: 900; color: var(--violet-lit); }
+        .hud-gear { font-size: 0.8rem; color: var(--blood-lit); font-weight: bold; }
+        .hud-nitro { font-size: 0.75rem; color: var(--success); font-weight: bold; margin-top: 1px; }
+        .hud-coins { font-size: 0.75rem; font-weight: 800; color: var(--gold-lit); margin-top: 1px; }
 
         .hud-actions-row { display: flex; gap: 6px; justify-content: flex-end; margin-bottom: 4px; }
-        .icon-btn-hud { background: #1e293b; border: 1px solid #334155; color: #fff; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+        .icon-btn-hud { background: var(--surface-2); border: 1px solid var(--line-strong); color: #fff; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
 
         .touch-container {
           position: fixed; bottom: max(18px, env(safe-area-inset-bottom)); left: 0;
@@ -633,18 +633,18 @@ export class CarGame {
           backdrop-filter: blur(10px); user-select: none; touch-action: none;
         }
         .t-btn:active { transform: scale(0.90); }
-        .t-btn-gas { background: rgba(52, 211, 153, 0.35); border-color: #34d399; }
-        .t-btn-brake { background: rgba(244, 63, 94, 0.35); border-color: #f43f5e; }
-        .t-btn-nitro { background: rgba(56, 189, 248, 0.35); border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+        .t-btn-gas { background: rgba(52, 211, 153, 0.35); border-color: var(--success); }
+        .t-btn-brake { background: rgba(244, 63, 94, 0.35); border-color: var(--blood-lit); }
+        .t-btn-nitro { background: rgba(56, 189, 248, 0.35); border-color: var(--violet-lit); box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
 
         .modal {
           position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-          background: #0f172a; border: 1px solid #38bdf8; padding: 25px;
+          background: var(--surface-1); border: 1px solid var(--violet-lit); padding: 25px;
           border-radius: 20px; text-align: center; z-index: 3000; display: none;
           box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 85%; max-width: 360px; color: #fff;
         }
         .modal button {
-          margin-top: 18px; padding: 14px 24px; background: linear-gradient(135deg, #0284c7, #0d9488);
+          margin-top: 18px; padding: 14px 24px; background: linear-gradient(135deg, var(--blood), var(--success));
           color: #fff; font-weight: 800; border: none; border-radius: 25px; font-size: 0.95rem;
           text-transform: uppercase; cursor: pointer; letter-spacing: 1px;
         }
@@ -676,7 +676,7 @@ export class CarGame {
         <div class="hud-gear" id="hud-gear">RAPPORT : D1</div>
         <div class="hud-nitro" id="hud-nitro">NITRO : 100%</div>
         <div class="hud-coins" id="hud-coins">🪙 0 COINS</div>
-        <div style="color:#34d399; font-size:0.9rem; margin-top:3px;" id="hud-timer">${this.timeLeft}S</div>
+        <div style="color:var(--success); font-size:0.9rem; margin-top:3px;" id="hud-timer">${this.timeLeft}S</div>
       </div>
 
       <div class="touch-container">
@@ -692,15 +692,15 @@ export class CarGame {
       </div>
 
       <div class="modal" id="win-modal">
-        <h2 style="color:#38bdf8; font-size:1.5rem; margin-bottom:10px;">VICTOIRE ! 🏆</h2>
+        <h2 style="color:var(--violet-lit); font-size:1.5rem; margin-bottom:10px;">VICTOIRE ! 🏆</h2>
         <p style="color:#eee;">Niveau ${this.level} validé avec succès !</p>
         <button id="btn-next-level">${this.level < 10 ? 'NIVEAU SUIVANT ▶' : 'TERMINER LE JEU 🏁'}</button>
       </div>
 
-      <div class="modal" id="fail-modal" style="border-color:#f43f5e;">
-        <h2 style="color:#f43f5e; font-size:1.5rem; margin-bottom:10px;">ÉCHEC ! 💥</h2>
+      <div class="modal" id="fail-modal" style="border-color:var(--blood-lit);">
+        <h2 style="color:var(--blood-lit); font-size:1.5rem; margin-bottom:10px;">ÉCHEC ! 💥</h2>
         <p style="color:#eee;" id="fail-reason">Temps écoulé !</p>
-        <button id="btn-retry" style="background:#f43f5e;">RÉESSAYER 🔄</button>
+        <button id="btn-retry" style="background:var(--blood-lit);">RÉESSAYER 🔄</button>
       </div>
     `;
     document.body.appendChild(this.ui);

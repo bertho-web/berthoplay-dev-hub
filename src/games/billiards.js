@@ -126,13 +126,13 @@ export class BilliardsGame {
     this.modal.innerHTML = `
       <style>
         .bil-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(3, 3, 10, 0.96); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px); padding: 20px; color: #fff; box-sizing: border-box; }
-        .bil-title { font-size: 1.8rem; font-weight: 900; color: #34d399; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); text-align: center; }
+        .bil-title { font-size: 1.8rem; font-weight: 900; color: var(--success); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); text-align: center; }
         .bil-group { width: 100%; max-width: 380px; margin-bottom: 18px; }
-        .bil-group label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
+        .bil-group label { display: block; font-size: 0.75rem; color: var(--ink-3); margin-bottom: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
         .bil-opts { display: flex; gap: 10px; }
-        .bil-btn { flex: 1; padding: 14px 8px; background: #1e293b; border: 1px solid #334155; border-radius: 12px; color: #94a3b8; font-size: 0.85rem; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.25s ease; }
-        .bil-btn.active { border-color: #34d399; background: #0f172a; color: #34d399; box-shadow: 0 4px 12px rgba(52, 211, 153, 0.25); }
-        .bil-start { margin-top: 22px; width: 100%; max-width: 380px; padding: 16px; background: linear-gradient(135deg, #059669, #0d9488); border: none; border-radius: 25px; color: #fff; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer; letter-spacing: 2px; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3); transition: transform 0.2s; }
+        .bil-btn { flex: 1; padding: 14px 8px; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 12px; color: var(--ink-3); font-size: 0.85rem; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.25s ease; }
+        .bil-btn.active { border-color: var(--success); background: var(--surface-1); color: var(--success); box-shadow: 0 4px 12px rgba(52, 211, 153, 0.25); }
+        .bil-start { margin-top: 22px; width: 100%; max-width: 380px; padding: 16px; background: linear-gradient(135deg, var(--success), var(--success)); border: none; border-radius: 25px; color: #fff; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer; letter-spacing: 2px; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3); transition: transform 0.2s; }
         .bil-start:active { transform: scale(0.98); }
       </style>
 
@@ -553,17 +553,17 @@ export class BilliardsGame {
         }
         .hud-row-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .custom-back-btn {
-          background: rgba(15, 23, 42, 0.92); border: 1px solid #34d399;
+          background: rgba(15, 23, 42, 0.92); border: 1px solid var(--success);
           color: #fff; border-radius: 10px; padding: 6px 12px; font-size: 0.8rem; font-weight: bold;
           cursor: pointer; backdrop-filter: blur(8px);
         }
         .hud-stats-card {
           display: flex; gap: 10px; align-items: center; color: #fff;
           font-family: monospace; font-weight: bold; font-size: 0.78rem;
-          background: rgba(15, 23, 42, 0.92); padding: 6px 12px; border-radius: 10px; border: 1px solid #34d399;
+          background: rgba(15, 23, 42, 0.92); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--success);
           backdrop-filter: blur(8px);
         }
-        .icon-btn-sound { background: #1e293b; border: 1px solid #334155; color: #fff; padding: 3px 6px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .icon-btn-sound { background: var(--surface-2); border: 1px solid var(--line-strong); color: #fff; padding: 3px 6px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
         .power-vertical-container {
           position: fixed; right: max(6px, env(safe-area-inset-right)); top: 50%; transform: translateY(-50%);
           width: 32px; height: 210px; background: rgba(15, 23, 42, 0.55); border: 1.5px solid rgba(52, 211, 153, 0.5);
@@ -572,41 +572,41 @@ export class BilliardsGame {
           pointer-events: auto; touch-action: none;
         }
         .power-track { width: 6px; height: 150px; background: rgba(255,255,255,0.15); border-radius: 3px; position: relative; }
-        .power-fill-v { position: absolute; bottom: 0; width: 100%; height: 50%; background: linear-gradient(0deg, #34d399, #f59e0b, #f43f5e); border-radius: 3px; }
-        .power-knob-v { position: absolute; bottom: 50%; left: 50%; transform: translate(-50%, 50%); width: 18px; height: 18px; border-radius: 50%; background: #34d399; box-shadow: 0 0 10px #34d399; cursor: pointer; }
+        .power-fill-v { position: absolute; bottom: 0; width: 100%; height: 50%; background: linear-gradient(0deg, var(--success), var(--gold), var(--blood-lit)); border-radius: 3px; }
+        .power-knob-v { position: absolute; bottom: 50%; left: 50%; transform: translate(-50%, 50%); width: 18px; height: 18px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success); cursor: pointer; }
         .controls-panel {
           position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
           width: 92%; max-width: 440px; z-index: 1000; display: flex; justify-content: space-between; align-items: center;
           pointer-events: none;
         }
         .aim-group { display: flex; gap: 10px; pointer-events: auto; }
-        .aim-btn { width: 55px; height: 55px; border-radius: 50%; background: rgba(15, 23, 42, 0.92); border: 2px solid #34d399; color: #fff; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; touch-action: none; }
-        .btn-shoot { padding: 14px 24px; background: linear-gradient(135deg, #059669, #0d9488); border: none; border-radius: 25px; color: #fff; font-weight: 900; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; pointer-events: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.97); border: 1px solid #34d399; padding: 25px; border-radius: 20px; text-align: center; z-index: 3000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 85%; max-width: 360px; color: #fff; backdrop-filter: blur(10px); }
-        .modal button { margin-top: 18px; padding: 14px 24px; background: linear-gradient(135deg, #059669, #0d9488); color: #fff; font-weight: 800; border: none; border-radius: 25px; font-size: 0.95rem; text-transform: uppercase; cursor: pointer; }
-        .btn-replay { background: #34d399; color: #0f172a; border: none; }
-        .btn-hub-modal { background: #1e293b; color: #fff; border: 1px solid #334155; }
-        .btn-toggle-view { width: 100%; background: rgba(52, 211, 153, 0.15); border: 1px solid #34d399; color: #34d399; margin-top: 8px; }
+        .aim-btn { width: 55px; height: 55px; border-radius: 50%; background: rgba(15, 23, 42, 0.92); border: 2px solid var(--success); color: #fff; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; touch-action: none; }
+        .btn-shoot { padding: 14px 24px; background: linear-gradient(135deg, var(--success), var(--success)); border: none; border-radius: 25px; color: #fff; font-weight: 900; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; pointer-events: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.97); border: 1px solid var(--success); padding: 25px; border-radius: 20px; text-align: center; z-index: 3000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 85%; max-width: 360px; color: #fff; backdrop-filter: blur(10px); }
+        .modal button { margin-top: 18px; padding: 14px 24px; background: linear-gradient(135deg, var(--success), var(--success)); color: #fff; font-weight: 800; border: none; border-radius: 25px; font-size: 0.95rem; text-transform: uppercase; cursor: pointer; }
+        .btn-replay { background: var(--success); color: var(--surface-1); border: none; }
+        .btn-hub-modal { background: var(--surface-2); color: #fff; border: 1px solid var(--line-strong); }
+        .btn-toggle-view { width: 100%; background: rgba(52, 211, 153, 0.15); border: 1px solid var(--success); color: var(--success); margin-top: 8px; }
       </style>
 
       <div class="hud-top">
         <div class="hud-row-top">
           <button class="custom-back-btn" id="btn-back-billiards">◀ Quitter</button>
           <div class="hud-stats-card">
-            <span id="txt-turn" style="color:#34d399;">TOUR : JOUEUR 1</span>
-            <span id="txt-score-hud" style="color:#fbbf24; font-size:0.75rem;">J1 [Libre]: 0/7 | 0/7 : [Libre] IA</span>
+            <span id="txt-turn" style="color:var(--success);">TOUR : JOUEUR 1</span>
+            <span id="txt-score-hud" style="color:var(--gold-lit); font-size:0.75rem;">J1 [Libre]: 0/7 | 0/7 : [Libre] IA</span>
             <span><button class="icon-btn-sound" id="btn-sound">🔊</button></span>
           </div>
         </div>
       </div>
 
       <div class="power-vertical-container" id="power-container">
-        <span style="font-size:0.5rem; color:#38bdf8; font-weight:900;">⚡</span>
+        <span style="font-size:0.5rem; color:var(--violet-lit); font-weight:900;">⚡</span>
         <div class="power-track">
           <div class="power-fill-v" id="power-fill" style="height: 50%;"></div>
           <div class="power-knob-v" id="power-knob" style="bottom: 50%;"></div>
         </div>
-        <span style="font-size:0.5rem; color:#94a3b8; font-weight:900;">MIN</span>
+        <span style="font-size:0.5rem; color:var(--ink-3); font-weight:900;">MIN</span>
       </div>
 
       <div class="controls-panel">
@@ -619,8 +619,8 @@ export class BilliardsGame {
       </div>
 
       <div class="modal" id="win-modal">
-        <h2 style="color:#34d399; font-size:1.5rem; margin-bottom:8px;" id="win-title">VICTOIRE ! 🏆</h2>
-        <p style="color:#cbd5e1; font-size:0.85rem; margin-bottom:12px;" id="win-sub">Félicitations !</p>
+        <h2 style="color:var(--success); font-size:1.5rem; margin-bottom:8px;" id="win-title">VICTOIRE ! 🏆</h2>
+        <p style="color:var(--ink-2); font-size:0.85rem; margin-bottom:12px;" id="win-sub">Félicitations !</p>
         <div style="display:flex; gap:10px; margin-top:12px;">
           <button class="btn-replay" id="btn-replay" style="flex:1;">REJOUER 🔄</button>
           <button class="btn-hub-modal" id="btn-hub-bill" style="flex:1;">MENU 🏠</button>

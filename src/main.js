@@ -1,56 +1,67 @@
 import { i18n } from './i18n.js';
 import { BerthoUI } from './ui-dialogs.js';
+import { Ambience } from './services/ambience.js';
+import { BerthoSoundEffects } from './services/sound-effects.js';
+import { icon } from './components/icons.js';
 
 // Mode Sandbox local pour le Dev Hub (évite de toucher à la vraie base D1)
 const IS_SANDBOX = true;
 const API_URL = IS_SANDBOX ? '' : 'https://berthoplay.bertho.workers.dev';
 
-// Registre de métadonnées visuelles 3D / Relief Métallique AAA pour tous les jeux
-const HIGH_END_GAME_ICONS = {
+// Emblèmes des jeux — palette verrouillée sur les jetons du design system
+// (obsidienne, sang, vitrail, or). Aucune couleur hors palette.
+const GAME_EMBLEMS = {
   billiards: {
     title: 'Billard 3D Pro',
+    tagline: 'Table de pierre, huit boules',
     infoKey: 'gameVictories',
     defaultVal: state => state.billiardsWins || 0,
-    svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><defs><radialGradient id="billiardGrad" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="60%" stop-color="#0284c7"/><stop offset="100%" stop-color="#030308"/></radialGradient></defs><circle cx="20" cy="20" r="18" fill="url(#billiardGrad)" stroke="#38bdf8" stroke-width="1.5"/><circle cx="20" cy="20" r="8" fill="#ffffff"/><text x="20" y="24" font-size="11" font-weight="900" fill="#0f172a" text-anchor="middle">8</text></svg>`
+    svg: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="16" fill="#0A0810" stroke="#C1121F" stroke-width="2"/><circle cx="20" cy="19" r="7.5" fill="#EDE7DC"/><text x="20" y="23" font-family="Cinzel,serif" font-size="10" font-weight="900" fill="#0A0810" text-anchor="middle">8</text><path d="M11 11a13 13 0 0 1 7-4" stroke="#EDE7DC" stroke-width="1.6" stroke-linecap="round" opacity="0.45"/></svg>`
   },
   bubble: {
-    title: 'Bubble Shooter AAA',
+    title: 'Bubble Shooter',
+    tagline: '50 nefs à briser',
     infoKey: 'gameStage',
     suffix: '/50',
     defaultVal: state => state.bubbleLevel || 1,
-    svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><defs><radialGradient id="bubGrad" cx="30%" cy="30%" r="70%"><stop offset="0%" stop-color="#a855f7"/><stop offset="50%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#030308"/></radialGradient></defs><circle cx="20" cy="20" r="17" fill="url(#bubGrad)" stroke="#06b6d4" stroke-width="1.5"/><ellipse cx="14" cy="14" rx="4" ry="2" fill="#ffffff" opacity="0.6"/></svg>`
+    svg: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none" aria-hidden="true"><circle cx="20" cy="23" r="11" fill="#6D28D9" stroke="#A78BFA" stroke-width="1.8"/><circle cx="12" cy="12" r="6" fill="#0A0810" stroke="#C1121F" stroke-width="1.8"/><circle cx="29" cy="13" r="5" fill="#0A0810" stroke="#C9A227" stroke-width="1.8"/><ellipse cx="16" cy="19" rx="3" ry="1.6" fill="#EDE7DC" opacity="0.4"/></svg>`
   },
   car: {
     title: 'Conduite & Course',
+    tagline: 'Dix circuits nocturnes',
     infoKey: 'gameProgression',
     suffix: '/10',
     defaultVal: state => state.carLevel || 1,
-    svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="carBody3D" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="50%" stop-color="#e60000"/><stop offset="100%" stop-color="#660000"/></linearGradient><linearGradient id="carGlass" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#0284c7"/></linearGradient></defs><path d="M6 24 C6 20, 10 17, 13 16 C15 13, 17 11, 20 11 C23 11, 25 13, 27 16 C30 17, 34 20, 34 24 L34 26 C34 27.5, 32.5 28.5, 31 28.5 L29 28.5 C29 27, 27.5 25.5, 26 25.5 C24.5 25.5, 23 27, 23 28.5 L17 28.5 C17 27, 15.5 25.5, 14 25.5 C12.5 25.5, 11 27, 11 28.5 L9 28.5 C7.5 28.5, 6 27.5, 6 26 Z" fill="url(#carBody3D)" stroke="#ff8080" stroke-width="0.8"/><path d="M14.5 16 C16 13.5, 17.5 12.5, 20 12.5 C22.5 12.5, 24 13.5, 25.5 16 Z" fill="url(#carGlass)" opacity="0.9"/><circle cx="14" cy="28" r="3.5" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/><circle cx="26" cy="28" r="3.5" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/><circle cx="14" cy="28" r="1.2" fill="#ffffff"/><circle cx="26" cy="28" r="1.2" fill="#ffffff"/><ellipse cx="20" cy="18" rx="8" ry="1" fill="#ffffff" opacity="0.3"/></svg>`
+    svg: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none" aria-hidden="true"><path d="M5 25c0-3 4-6 7-7 2-3 4-5 8-5s6 2 8 5c3 1 7 4 7 7v2h-30z" fill="#C1121F" stroke="#F2596B" stroke-width="1.4" stroke-linejoin="round"/><path d="M14 17c1.6-2.6 3-3.6 6-3.6s4.4 1 6 3.6z" fill="#0A0810" opacity="0.75"/><circle cx="13" cy="28" r="3.6" fill="#0A0810" stroke="#EDE7DC" stroke-width="1.6"/><circle cx="27" cy="28" r="3.6" fill="#0A0810" stroke="#EDE7DC" stroke-width="1.6"/></svg>`
   },
   bike: {
     title: 'Moto Superbike',
+    tagline: 'Dix étapes, plein gaz',
     infoKey: 'gameStage',
     suffix: '/10',
     defaultVal: state => state.bikeLevel || 1,
-    svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="bikeBody3D" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f59e0b"/><stop offset="50%" stop-color="#d97706"/><stop offset="100%" stop-color="#78350f"/></linearGradient><linearGradient id="bikeWheel" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#334155"/><stop offset="100%" stop-color="#0f172a"/></linearGradient><linearGradient id="bikeVisor" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#0284c7"/></linearGradient></defs><circle cx="9" cy="25" r="6" fill="url(#bikeWheel)" stroke="#fbbf24" stroke-width="1.8"/><circle cx="9" cy="25" r="2.5" fill="#38bdf8"/><circle cx="31" cy="25" r="6" fill="url(#bikeWheel)" stroke="#fbbf24" stroke-width="1.8"/><circle cx="31" cy="25" r="2.5" fill="#38bdf8"/><path d="M9 25 L18 20 L31 25" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/><path d="M14 20 L21 11 L27 18" stroke="#38bdf8" stroke-width="2"/><path d="M12 21 L16 13 L26 12 L30 18 L25 21 L19 22 Z" fill="url(#bikeBody3D)" stroke="#fef3c7" stroke-width="0.8"/><path d="M22 10 C24 8, 27 8, 29 12 L24 14 Z" fill="url(#bikeVisor)"/><path d="M10 26 L17 23" stroke="#f43f5e" stroke-width="2" stroke-linecap="round"/><ellipse cx="23" cy="11" rx="2" ry="0.6" fill="#ffffff" opacity="0.6"/></svg>`
+    svg: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none" aria-hidden="true"><circle cx="10" cy="26" r="6" fill="#0A0810" stroke="#C9A227" stroke-width="2"/><circle cx="30" cy="26" r="6" fill="#0A0810" stroke="#C9A227" stroke-width="2"/><path d="M10 26l8-5 12 5" stroke="#EDE7DC" stroke-width="1.8" stroke-linecap="round"/><path d="M12 21l5-8 10-1 4 6-5 3z" fill="#C1121F" stroke="#F2596B" stroke-width="1.2" stroke-linejoin="round"/><path d="M23 11c2-2 5-2 6 2l-5 2z" fill="#6D28D9"/></svg>`
   },
   checkers: {
     title: 'Dames Pro',
+    tagline: 'Le damier de la nef',
     infoKey: 'gameVictories',
     defaultVal: state => state.checkersWins || 0,
-    svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><defs><radialGradient id="checkers3D" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffffff"/><stop offset="50%" stop-color="#cbd5e1"/><stop offset="85%" stop-color="#64748b"/><stop offset="100%" stop-color="#1e293b"/></radialGradient></defs><circle cx="20" cy="22" r="16" fill="#0f172a" opacity="0.4"/><circle cx="20" cy="20" r="16" fill="url(#checkers3D)" stroke="#38bdf8" stroke-width="1.5"/><circle cx="20" cy="20" r="11" fill="none" stroke="#64748b" stroke-width="1.5"/><circle cx="20" cy="20" r="7" fill="#0284c7" stroke="#38bdf8" stroke-width="1"/><ellipse cx="15" cy="14" rx="4" ry="2" fill="#ffffff" opacity="0.6"/></svg>`
+    svg: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none" aria-hidden="true"><circle cx="20" cy="22" r="15" fill="#0A0810" opacity="0.6"/><circle cx="20" cy="20" r="15" fill="#251E32" stroke="#EDE7DC" stroke-width="1.8"/><circle cx="20" cy="20" r="10" fill="none" stroke="#8A8296" stroke-width="1.4"/><path d="M13 17l3.5 5 3.5-7 3.5 7 3.5-5v6.5h-14z" fill="#C9A227"/></svg>`
   },
   chess: {
     title: 'Échecs Danger',
+    tagline: 'Le roi ne recule pas',
     infoKey: 'gameVictories',
     defaultVal: state => state.chessWins || 0,
-    svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="chessCrown3D" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#581c87"/></linearGradient></defs><ellipse cx="20" cy="34" rx="11" ry="2" fill="#000000" opacity="0.4"/><path d="M11 32 h18 v2 c0 1.5 -2 2.5 -9 2.5 c-7 0 -9 -1 -9 -2.5 z" fill="#fbbf24"/><path d="M12 30 h16 l-2 -12 h-12 z" fill="url(#chessCrown3D)"/><path d="M10 18 L13 22 L20 15 L27 22 L30 18 L26 28 L14 28 Z" fill="url(#chessCrown3D)" stroke="#fbbf24" stroke-width="1"/><path d="M19 8 h2 v6 h-2 z M17 10 h6 v2 h-6 z" fill="#fbbf24"/><circle cx="20" cy="6" r="1.5" fill="#ffffff"/><ellipse cx="17" cy="20" rx="1.5" ry="3" fill="#ffffff" opacity="0.4"/></svg>`
+    svg: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none" aria-hidden="true"><path d="M11 32h18v3H11z" fill="#C9A227"/><path d="M13 30l1.5-9h11l1.5 9z" fill="#EDE7DC"/><path d="M9 18l4 4 7-8 7 8 4-4-4 11H13z" fill="#6D28D9" stroke="#A78BFA" stroke-width="1.4" stroke-linejoin="round"/><path d="M19 5h2v6h-2z M17 7h6v2h-6z" fill="#C1121F"/></svg>`
   },
   horde: {
     title: 'Horde Survivor 3D',
+    tagline: "Tenir jusqu'à l'aube",
     infoKey: 'gameBest',
     defaultVal: state => state.hordeScore || 0,
-    svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><defs><radialGradient id="horde3D" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#4ade80"/><stop offset="50%" stop-color="#16a34a"/><stop offset="100%" stop-color="#052e16"/></radialGradient></defs><circle cx="20" cy="20" r="17" fill="url(#horde3D)" stroke="#22c55e" stroke-width="1.5"/><circle cx="20" cy="20" r="10" stroke="#000000" stroke-width="1.5" opacity="0.6"/><circle cx="20" cy="20" r="4" fill="#ef4444" stroke="#ffffff" stroke-width="1"/><line x1="20" y1="3" x2="20" y2="37" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="3" y1="20" x2="37" y2="20" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="3 2"/><ellipse cx="14" cy="13" rx="4" ry="2" fill="#ffffff" opacity="0.5"/></svg>`
+    svg: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="16" fill="#0A0810" stroke="#C1121F" stroke-width="2"/><circle cx="20" cy="20" r="9" stroke="#8A8296" stroke-width="1.4" opacity="0.7"/><circle cx="20" cy="20" r="3.4" fill="#C1121F"/><path d="M20 2v7M20 31v7M2 20h7M31 20h7" stroke="#C9A227" stroke-width="1.8" stroke-linecap="round"/></svg>`
   }
 };
 
@@ -95,6 +106,7 @@ class SafeState {
       checkersWins: 0,
       chessWins: 0,
       hordeScore: 0,
+      lastPlayed: null,
       rules: 'french'
     };
   }
@@ -102,26 +114,33 @@ class SafeState {
 
 class BerthoPlay {
   constructor() {
-    this.hub = document.getElementById('hub-menu');
+    this.hub = document.getElementById('app-shell');
     this.canvas = document.getElementById('canvas-webgl');
     this.backBtn = document.getElementById('btn-back-hub');
     this.currentGame = null;
     this.currentTab = 'home';
     this.chatPollTimer = null;
-    
+
+    // Retour tactile et sonore sur toute l'application, en un seul câblage.
+    BerthoSoundEffects.bindGlobalFeedback();
+
+    // Ambiance vidéo : elle décide seule si elle a le droit de tourner.
+    Ambience.init();
+
+    this.dismissSplash();
     this.logAnalytics('page_view', 'hub');
 
     window.addEventListener('appinstalled', () => {
       this.logAnalytics('pwa_install');
-      if (typeof BerthoUI !== 'undefined') {
-        BerthoUI.toast("PWA INSTALLÉE", "Merci d'avoir installé BerthoPlay ! 🎮");
-      }
+      BerthoSoundEffects.playSuccess();
+      BerthoUI?.toast?.('Console installée', 'BerthoPlay est sur votre écran d\'accueil.');
+      this.renderWebPWABanner();
     });
 
     this.bindBottomNavbar();
     this.initAuthModule();
     this.renderWebPWABanner();
-    this.bindPWAModalEvents();
+    this.bindPWASheet();
     this.initAppSequence();
 
     window.addEventListener('languageChanged', () => {
@@ -135,10 +154,64 @@ class BerthoPlay {
       this.renderWebPWABanner();
     });
 
-    if (this.backBtn) {
-      this.backBtn.style.display = 'none';
-      this.backBtn.addEventListener('click', () => this.showHub());
-    }
+    // Les réglages peuvent réclamer la marche à suivre d'installation.
+    window.addEventListener('bertho:open-pwa-sheet', () => this.openPWASheet());
+
+    this.backBtn?.addEventListener('click', () => this.showHub());
+    document.getElementById('header-brand')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showTab('home');
+    });
+
+    // Échap ferme ce qui est ouvert : feuille, sinon retour au hub depuis un jeu.
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (document.getElementById('pwa-sheet')?.dataset.open === 'true') {
+        this.closePWASheet();
+      } else if (this.currentGame) {
+        this.showHub();
+      }
+    });
+  }
+
+  /**
+   * L'écran d'entrée s'efface tout seul, ou au premier geste. Il ne bloque
+   * jamais : le contenu est déjà monté derrière lui.
+   */
+  dismissSplash() {
+    const splash = document.getElementById('intro-splash');
+    if (!splash) return;
+
+    let done = false;
+    const hide = () => {
+      if (done) return;
+      done = true;
+      splash.dataset.hidden = 'true';
+      clearTimeout(timer);
+      setTimeout(() => splash.remove(), 600);
+    };
+
+    const timer = setTimeout(hide, 2400);
+    splash.addEventListener('click', hide, { once: true });
+  }
+
+  // ------------------------------------------------------------------------
+  // BASCULE JEU <-> COQUE
+  // ------------------------------------------------------------------------
+
+  /** Entre en mode jeu : la coque disparaît, le canvas et le retour arrivent. */
+  enterGame() {
+    document.body.dataset.gameActive = 'true';
+    if (this.backBtn) this.backBtn.dataset.visible = 'true';
+    // Le WebGL doit avoir la machine pour lui : on coupe la vidéo de fond.
+    Ambience.setScene('game');
+  }
+
+  /** Revient à la coque applicative. */
+  exitGame() {
+    delete document.body.dataset.gameActive;
+    if (this.backBtn) delete this.backBtn.dataset.visible;
+    if (this.canvas) this.canvas.style.display = 'none';
   }
 
   async initAppSequence() {
@@ -156,13 +229,17 @@ class BerthoPlay {
     if (!view) return false;
     window.history.replaceState({}, document.title, window.location.pathname);
 
+    const TABS = ['home', 'feed', 'stats', 'account', 'settings'];
+
     try {
       if (view === 'game' && id) {
         this.showTab('home');
         this.startSelectedGame(id);
         return true;
-      } else if (view === 'feed') {
-        this.showTab('feed');
+      }
+      // Chaque onglet est adressable : un lien partagé doit ouvrir le bon écran.
+      if (TABS.includes(view)) {
+        this.showTab(view);
         return true;
       }
     } catch (e) {}
@@ -170,150 +247,260 @@ class BerthoPlay {
     return false;
   }
 
-  bindPWAModalEvents() {
-    document.getElementById('btn-close-pwa-modal')?.addEventListener('click', () => this.closePWAModal());
-    document.getElementById('btn-confirm-pwa')?.addEventListener('click', () => this.closePWAModal());
-    document.getElementById('pwa-modal-overlay')?.addEventListener('click', (e) => {
-      if (e.target.id === 'pwa-modal-overlay') this.closePWAModal();
-    });
+  // ------------------------------------------------------------------------
+  // INSTALLATION PWA
+  // ------------------------------------------------------------------------
+
+  bindPWASheet() {
+    document.getElementById('btn-close-pwa-sheet')?.addEventListener('click', () => this.closePWASheet());
+    document.getElementById('btn-confirm-pwa')?.addEventListener('click', () => this.closePWASheet());
+    document.getElementById('pwa-scrim')?.addEventListener('click', () => this.closePWASheet());
   }
 
+  /**
+   * Android et desktop exposent une vraie invite d'installation. iOS non :
+   * il faut expliquer le geste, et l'explication diffère selon le navigateur.
+   */
   triggerPWAInstall() {
     if (window.deferredPWA_Prompt) {
       window.deferredPWA_Prompt.prompt();
-    } else {
-      const modal = document.getElementById('pwa-modal-overlay');
-      if (modal) modal.classList.add('active');
-    }
-  }
-
-  closePWAModal() {
-    const modal = document.getElementById('pwa-modal-overlay');
-    if (modal) modal.classList.remove('active');
-  }
-
-  renderWebPWABanner() {
-    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    let banner = document.getElementById('web-pwa-banner');
-
-    if (!isPWA) {
-      if (!banner) {
-        banner = document.createElement('div');
-        banner.id = 'web-pwa-banner';
-        banner.style.cssText = 'position:fixed; top:0; left:0; width:100vw; background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff; z-index:9990; padding:8px 15px; display:flex; justify-content:space-between; align-items:center; box-sizing:border-box; font-size:0.75rem; font-weight:bold; border-bottom:1px solid #38bdf8;';
-        document.body.appendChild(banner);
-      }
-
-      banner.innerHTML = `
-        <span>${i18n.t('pwaBannerText')}</span>
-        <button id="btn-banner-pwa" style="background:#fff; color:#0f172a; border:none; padding:5px 12px; border-radius:12px; font-weight:900; cursor:pointer; font-size:0.7rem; text-transform:uppercase;">${i18n.t('btnInstallPWA')}</button>
-      `;
-
-      document.getElementById('btn-banner-pwa')?.addEventListener('click', () => {
-        this.triggerPWAInstall();
+      window.deferredPWA_Prompt.userChoice?.finally(() => {
+        window.deferredPWA_Prompt = null;
+        this.renderWebPWABanner();
       });
-    } else if (banner) {
-      banner.style.display = 'none';
+      return;
+    }
+    this.openPWASheet();
+  }
+
+  openPWASheet() {
+    const sheet = document.getElementById('pwa-sheet');
+    const scrim = document.getElementById('pwa-scrim');
+    const list = document.getElementById('pwa-steps');
+    if (!sheet || !list) return;
+
+    list.innerHTML = this.pwaSteps().map((step, i) => `
+      <li class="panel" style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3);">
+        <span class="count" style="background:var(--violet); color:var(--on-violet);">${i + 1}</span>
+        <span style="font-size:var(--text-sm); line-height:var(--leading-snug);">${step}</span>
+      </li>
+    `).join('');
+
+    scrim?.setAttribute('data-open', 'true');
+    sheet.dataset.open = 'true';
+    sheet.setAttribute('aria-hidden', 'false');
+    document.getElementById('btn-confirm-pwa')?.focus();
+  }
+
+  closePWASheet() {
+    const sheet = document.getElementById('pwa-sheet');
+    document.getElementById('pwa-scrim')?.removeAttribute('data-open');
+    if (sheet) {
+      delete sheet.dataset.open;
+      sheet.setAttribute('aria-hidden', 'true');
     }
   }
 
-  hideBottomNav() {
-    const nav = document.getElementById('bottom-nav-bar');
-    if (nav) nav.style.display = 'none';
+  /** Marche à suivre, adaptée à la plateforme réellement détectée. */
+  pwaSteps() {
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isFirefox = /Firefox/.test(ua);
+
+    if (isIOS) {
+      return [
+        'Ouvrez le menu <strong>Partager</strong> en bas de Safari.',
+        'Faites défiler jusqu\'à <strong>« Sur l\'écran d\'accueil »</strong>.',
+        'Appuyez sur <strong>Ajouter</strong> en haut à droite.'
+      ];
+    }
+    if (isFirefox) {
+      return [
+        'Ouvrez le menu <strong>⋮</strong> de Firefox.',
+        'Choisissez <strong>Installer</strong> ou <strong>Ajouter à l\'écran d\'accueil</strong>.',
+        'Confirmez pour épingler BerthoPlay.'
+      ];
+    }
+    return [
+      'Ouvrez le menu <strong>⋮</strong> de votre navigateur.',
+      'Choisissez <strong>Installer l\'application</strong>.',
+      'Confirmez : BerthoPlay s\'ouvrira en plein écran.'
+    ];
   }
 
-  showBottomNav() {
-    const nav = document.getElementById('bottom-nav-bar');
-    if (nav) nav.style.display = 'flex';
+  isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches
+        || window.matchMedia('(display-mode: minimal-ui)').matches
+        || window.navigator.standalone === true;
   }
 
-  bindBottomNavbar() {
-    const nav = document.getElementById('bottom-nav-bar');
-    if (!nav) return;
+  /**
+   * Invitation à installer : discrète, refusable, et qui ne revient pas
+   * pendant une semaine une fois écartée.
+   */
+  renderWebPWABanner() {
+    const existing = document.getElementById('web-pwa-banner');
 
-    nav.querySelector('[data-tab="home"] span').innerText = i18n.t('navHome');
-    nav.querySelector('[data-tab="feed"] span').innerText = i18n.t('navActus');
-    nav.querySelector('[data-tab="stats"] span').innerText = i18n.t('navTop');
-    nav.querySelector('[data-tab="account"] span').innerText = i18n.t('navAccount');
-    nav.querySelector('[data-tab="settings"] span').innerText = i18n.t('navSettings');
+    let dismissedAt = 0;
+    try { dismissedAt = parseInt(localStorage.getItem('BERTHOPLAY_PWA_DISMISSED') || '0', 10); } catch (e) {}
+    const recentlyDismissed = Date.now() - dismissedAt < 7 * 24 * 60 * 60 * 1000;
 
-    nav.querySelectorAll('.nav-item').forEach(item => {
-      item.onclick = () => {
-        const tab = item.getAttribute('data-tab');
-        this.showTab(tab);
-      };
+    if (this.isStandalone() || recentlyDismissed) {
+      existing?.remove();
+      return;
+    }
+    if (existing) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'web-pwa-banner';
+    banner.className = 'panel';
+    // Le texte traduit peut être long : il occupe sa propre ligne, les actions
+    // la suivante. Une seule rangée finirait en colonne d'un mot par ligne.
+    banner.innerHTML = `
+      <div class="row" style="gap:var(--sp-3);">
+        <img src="/pwa-192x192.png" alt="" width="34" height="34"
+             style="border-radius:var(--r-sm); flex:0 0 auto;" />
+        <p class="grow" style="font-size:var(--text-sm); line-height:var(--leading-snug);">
+          ${i18n.t('pwaBannerText')}
+        </p>
+        <button class="btn btn--icon btn--ghost" id="btn-banner-pwa-close" type="button"
+                data-sfx="close" aria-label="Masquer la proposition d'installation">
+          ${icon('x', 'icon icon--sm')}
+        </button>
+      </div>
+      <button class="btn btn--primary btn--cut btn--sm btn--block" id="btn-banner-pwa" type="button">
+        ${icon('download', 'icon icon--sm')} ${i18n.t('btnInstallPWA')}
+      </button>
+    `;
+
+    document.body.appendChild(banner);
+
+    document.getElementById('btn-banner-pwa')?.addEventListener('click', () => this.triggerPWAInstall());
+    document.getElementById('btn-banner-pwa-close')?.addEventListener('click', () => {
+      try { localStorage.setItem('BERTHOPLAY_PWA_DISMISSED', String(Date.now())); } catch (e) {}
+      banner.remove();
     });
   }
 
+  // ------------------------------------------------------------------------
+  // NAVIGATION
+  // ------------------------------------------------------------------------
+
+  // Conservées : les lanceurs de jeu les appellent déjà.
+  hideBottomNav() { this.enterGame(); }
+  showBottomNav() { this.exitGame(); }
+
+  bindBottomNavbar() {
+    const nav = document.getElementById('bottom-nav');
+    if (!nav) return;
+
+    const labels = {
+      home: i18n.t('navHome'),
+      feed: i18n.t('navActus'),
+      stats: i18n.t('navTop'),
+      account: i18n.t('navAccount'),
+      settings: i18n.t('navSettings')
+    };
+
+    nav.querySelectorAll('.nav-item').forEach(item => {
+      const tab = item.getAttribute('data-tab');
+      const label = labels[tab];
+      const span = item.querySelector('span');
+      if (span && label) span.textContent = label;
+      // Le libellé est masqué en paysage : l'icône a besoin d'un nom propre.
+      if (label) item.setAttribute('aria-label', label);
+      item.onclick = () => this.showTab(tab);
+    });
+  }
+
+  /** Met à jour la bourse dans l'en-tête, avec une pulsation au gain. */
   updateCoinsDisplay(coins) {
-    const badge = document.getElementById('hub-coins-badge');
-    if (badge) {
-      badge.innerText = `${coins || 0} ${i18n.t('coins')}`;
+    const purse = document.getElementById('purse');
+    const value = document.getElementById('purse-value');
+    if (!value) return;
+
+    const next = Number(coins) || 0;
+    const prev = parseInt(value.textContent.replace(/\s/g, ''), 10) || 0;
+
+    value.textContent = next.toLocaleString('fr-FR');
+
+    if (purse && next > prev) {
+      purse.dataset.bump = 'true';
+      setTimeout(() => delete purse.dataset.bump, 400);
     }
   }
 
+  /** L'en-tête est statique dans le HTML : on n'y rafraîchit que la bourse. */
   renderGlobalTopHeader() {
     const state = SafeState.get();
-    let topBarHub = document.getElementById('hub-top-bar');
-    
-    if (!topBarHub && this.hub) {
-      topBarHub = document.createElement('div');
-      topBarHub.id = 'hub-top-bar';
-      topBarHub.style.cssText = 'width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; padding: max(10px, env(safe-area-inset-top)) 15px 5px; box-sizing: border-box; z-index: 100;';
-      this.hub.insertBefore(topBarHub, this.hub.firstChild);
-    }
-
-    if (topBarHub) {
-      const initialCoins = state.currentUser?.coins ?? state.coins ?? 0;
-
-      topBarHub.innerHTML = `
-        <button id="btn-user-account" style="background: rgba(15,23,42,0.9); border: 1px solid #38bdf8; color: #38bdf8; padding: 6px 14px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; cursor: pointer; backdrop-filter: blur(8px);"></button>
-        <div id="hub-coins-badge" style="background: rgba(15,23,42,0.9); border: 1px solid #fbbf24; color: #fbbf24; padding: 6px 14px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; backdrop-filter: blur(8px);">${initialCoins} ${i18n.t('coins')}</div>
-      `;
-
-      const btnUser = document.getElementById('btn-user-account');
-      if (btnUser) {
-        btnUser.textContent = state.currentUser ? state.currentUser.username : (i18n.t('btnConnexion') || "Connexion");
-        btnUser.addEventListener('click', () => {
-          if (this.auth) this.auth.openAuthModal();
-        });
-      }
-    }
+    this.updateCoinsDisplay(state.currentUser?.coins ?? state.coins ?? 0);
   }
 
   async showTab(tabName) {
     this.showBottomNav();
     this.renderGlobalTopHeader();
     this.currentTab = tabName;
-    const nav = document.getElementById('bottom-nav-bar');
-    if (nav) {
-      nav.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.toggle('active', item.getAttribute('data-tab') === tabName);
-      });
-    }
+
+    // aria-current plutôt qu'une classe : l'état est lu par les lecteurs d'écran.
+    document.querySelectorAll('#bottom-nav .nav-item').forEach(item => {
+      if (item.getAttribute('data-tab') === tabName) {
+        item.setAttribute('aria-current', 'page');
+      } else {
+        item.removeAttribute('aria-current');
+      }
+    });
+
+    // La vidéo ne tourne que sur le hub ; ailleurs elle se fige.
+    Ambience.setScene(tabName === 'home' ? 'hub' : tabName);
 
     const viewContainer = document.getElementById('main-tab-container');
     if (!viewContainer) return;
 
+    // Le hub s'étale en grille sur grand écran ; les vues denses (réglages,
+    // tchat, classements) restent dans une colonne lisible.
+    viewContainer.className = tabName === 'home' ? 'container container--wide' : 'container';
+
+    // Le contenu remonte en haut à chaque changement d'onglet.
+    document.getElementById('app-main')?.scrollTo({ top: 0, behavior: 'auto' });
+
     try {
       if (tabName === 'home') {
-        this.renderCardsView(viewContainer);
-      } else if (tabName === 'account') {
-        const module = await import('./views/account.js');
-        new module.AccountView(viewContainer, () => this.renderCards());
-      } else if (tabName === 'settings') {
-        const module = await import('./views/settings.js');
-        new module.SettingsView(viewContainer);
-      } else if (tabName === 'feed') {
-        const module = await import('./views/feed.js');
-        new module.FeedView(viewContainer);
-      } else if (tabName === 'stats') {
-        const module = await import('./views/stats.js');
-        new module.StatsView(viewContainer);
+        await this.renderCardsView(viewContainer);
+      } else {
+        // Squelette pendant l'import du module : jamais d'écran blanc.
+        viewContainer.innerHTML = `
+          <div class="tab-view-content section" aria-busy="true">
+            <div class="skeleton skeleton--title"></div>
+            <div class="skeleton skeleton--tile"></div>
+            <div class="skeleton skeleton--tile"></div>
+            <div class="skeleton skeleton--tile"></div>
+          </div>`;
+
+        if (tabName === 'account') {
+          const module = await import('./views/account.js');
+          new module.AccountView(viewContainer, () => this.renderCards());
+        } else if (tabName === 'settings') {
+          const module = await import('./views/settings.js');
+          new module.SettingsView(viewContainer);
+        } else if (tabName === 'feed') {
+          const module = await import('./views/feed.js');
+          new module.FeedView(viewContainer);
+        } else if (tabName === 'stats') {
+          const module = await import('./views/stats.js');
+          new module.StatsView(viewContainer);
+        }
       }
     } catch (err) {
       console.error("Erreur de chargement de l'onglet :", err);
-      viewContainer.innerHTML = `<p style="text-align:center; color:#ef4444; padding:20px; font-weight:bold;">Erreur de chargement. Veuillez rafraîchir.</p>`;
+      BerthoSoundEffects.playErrorSound();
+      viewContainer.innerHTML = `
+        <div class="empty tab-view-content">
+          ${icon('alert-triangle', 'icon empty__icon')}
+          <h2 class="empty__title">Onglet indisponible</h2>
+          <p class="empty__text">Ce module n'a pas pu être chargé. Vérifiez votre connexion, puis réessayez.</p>
+          <button class="btn btn--secondary" type="button" id="btn-retry-tab">Réessayer</button>
+        </div>`;
+      document.getElementById('btn-retry-tab')?.addEventListener('click', () => this.showTab(tabName));
     }
   }
 
@@ -334,7 +521,9 @@ class BerthoPlay {
   bindEcosystemButton() {
     const btn = document.getElementById('btn-open-eco');
     if (!btn) return;
-    btn.innerText = i18n.t('btnEco');
+    // Bouton-icône : le nom accessible passe par aria-label, pas par le contenu.
+    btn.setAttribute('aria-label', i18n.t('btnEco') || 'Infrastructures Bertho');
+    btn.setAttribute('title', i18n.t('btnEco') || 'Infrastructures Bertho');
 
     btn.onclick = async () => {
       try {
@@ -402,7 +591,6 @@ class BerthoPlay {
       'checkers-modal',
       'legale-modal-overlay',
       'bertho-custom-ui-overlay',
-      'pwa-modal-overlay',
       'chat-list-modal-overlay',
       'chat-widget-overlay'
     ];
@@ -415,81 +603,164 @@ class BerthoPlay {
     });
   }
 
+  // ------------------------------------------------------------------------
+  // HUB — l'écran d'accueil
+  // ------------------------------------------------------------------------
+
   async renderCardsView(container) {
     const state = SafeState.get();
     this.renderGlobalTopHeader();
     this.bindEcosystemButton();
 
     const CORE_GAMES = ['billiards', 'bubble', 'car', 'bike', 'checkers', 'chess', 'horde'];
-    let activeGamesList = [...CORE_GAMES];
 
-    const gamesCardsHTML = activeGamesList.map(gameId => {
-      const meta = HIGH_END_GAME_ICONS[gameId] || {
-        title: gameId.charAt(0).toUpperCase() + gameId.slice(1),
-        infoKey: 'gameProgression',
-        defaultVal: () => 1,
-        svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" stroke="#38bdf8" stroke-width="2.5"/><polygon points="16,12 28,20 16,28" fill="#38bdf8"/></svg>`
-      };
+    // Une vraie hiérarchie : le jeu repris en grand, les autres en liste.
+    // Sans historique, on met en avant le premier du catalogue.
+    const featuredId = CORE_GAMES.includes(state.lastPlayed) ? state.lastPlayed : CORE_GAMES[0];
+    const others = CORE_GAMES.filter(id => id !== featuredId);
 
-      const val = meta.defaultVal(state);
-      
-      let labelText = i18n.t(meta.infoKey) || 'Progression';
-      labelText = labelText.replace(/:\s*$/, '').trim();
-      const infoText = `${labelText} : ${val}${meta.suffix || ''}`;
+    const user = state.currentUser;
 
-      const rawPlay = i18n.t('btnPlay');
-      const playBtnText = (rawPlay && !rawPlay.startsWith('BTN') && !rawPlay.startsWith('btn')) ? rawPlay : 'JOUER';
-      
-      const rawRev = i18n.t('btnReviews');
-      const reviewBtnText = (rawRev && !rawRev.startsWith('btn')) ? rawRev : 'Avis & Notes';
+    container.innerHTML = `
+      <div class="tab-view-content">
 
+        ${this.renderGreeting(user)}
+
+        <section class="section" aria-labelledby="hub-resume">
+          <div class="section__head">
+            <h2 class="t-section" id="hub-resume">${state.lastPlayed ? 'Reprendre' : 'Commencer'}</h2>
+          </div>
+          <div class="hub-grid">
+            ${this.renderTile(featuredId, state, true)}
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="hub-catalog">
+          <div class="section__head">
+            <h2 class="t-section" id="hub-catalog">Catalogue</h2>
+            <span class="t-meta">${others.length + 1} jeux</span>
+          </div>
+          <div class="hub-grid">
+            ${others.map(id => this.renderTile(id, state, false)).join('')}
+          </div>
+        </section>
+
+      </div>
+    `;
+
+    this.bindHubEvents(container);
+  }
+
+  /** Bandeau d'identité : salutation si connecté, invitation sinon. */
+  renderGreeting(user) {
+    if (user) {
+      const initial = (user.username || '?').charAt(0);
       return `
-        <div class="card" data-game="${gameId}">
-          <div class="card-icon" style="display:flex; justify-content:center; align-items:center; margin-bottom:6px;">
-            ${meta.svg}
+        <div class="panel" style="display:flex; align-items:center; gap:var(--sp-3); margin-top:var(--sp-4);">
+          <span class="avatar" aria-hidden="true">${initial}</span>
+          <div class="grow">
+            <p class="t-meta">Bon retour</p>
+            <p class="list-row__title">${this.escape(user.username)}</p>
           </div>
-          <h3>${meta.title}</h3>
-          
-          <div style="margin:2px 0 6px; color:#f59e0b; font-size:0.75rem; letter-spacing:1px; display:flex; justify-content:center; gap:2px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
-
-          <p>${infoText}</p>
-
-          <div style="display:flex; gap:6px; margin-top:10px; width:100%; box-sizing:border-box;">
-            <button class="btn-play-action" data-id="${gameId}" style="flex:1; background:linear-gradient(135deg, #0284c7, #0369a1); border:none; color:#fff; padding:8px 6px; border-radius:12px; font-size:0.75rem; font-weight:900; cursor:pointer; text-transform:uppercase;">
-              ${playBtnText}
-            </button>
-            <button class="btn-cmt-card" data-id="${gameId}" data-title="${meta.title}" style="flex:1; background:rgba(56,189,248,0.12); border:1px solid #38bdf8; color:#38bdf8; padding:8px 6px; border-radius:12px; font-size:0.72rem; font-weight:bold; cursor:pointer;">
-              ${reviewBtnText}
-            </button>
-          </div>
+          <button class="btn btn--ghost btn--sm" type="button" data-goto="account">Profil</button>
+        </div>`;
+    }
+    return `
+      <div class="panel" style="display:flex; align-items:center; gap:var(--sp-3); margin-top:var(--sp-4);">
+        <span class="avatar" aria-hidden="true">${icon('user')}</span>
+        <div class="grow">
+          <p class="list-row__title">Jouez en invité</p>
+          <p class="t-meta">Connectez-vous pour garder vos scores et vos Berthocoins.</p>
         </div>
-      `;
-    }).join('');
-    
-    container.innerHTML = `<div class="hub-grid" id="hub-grid">${gamesCardsHTML}</div>`;
-    
-    container.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-cmt-card')) return;
-        const id = card.getAttribute('data-game');
-        if (id) this.startSelectedGame(id);
+        <button class="btn btn--primary btn--sm btn--cut" type="button" id="btn-hub-login">${i18n.t('btnConnexion') || 'Connexion'}</button>
+      </div>`;
+  }
+
+  /** Une tuile de jeu. `feature` la rend pleine largeur et plus haute. */
+  renderTile(gameId, state, feature) {
+    const meta = GAME_EMBLEMS[gameId];
+    if (!meta) return '';
+
+    const value = meta.defaultVal(state);
+    const label = (i18n.t(meta.infoKey) || 'Progression').replace(/:\s*$/, '').trim();
+
+    return `
+      <article class="tile ${feature ? 'tile--feature' : ''}" data-game="${gameId}" role="button" tabindex="0"
+               aria-label="Jouer à ${meta.title}">
+        <span class="tile__icon" aria-hidden="true">${meta.svg}</span>
+
+        <div class="tile__body">
+          <h3 class="tile__title">${meta.title}</h3>
+          <p class="tile__meta">
+            <span>${meta.tagline}</span>
+          </p>
+          <p class="tile__meta">
+            <span class="badge badge--gold">${icon('star', 'icon icon--sm')} ${label} ${value}${meta.suffix || ''}</span>
+          </p>
+        </div>
+
+        ${feature
+          ? `<div class="row" style="gap:var(--sp-2); margin-top:var(--sp-4); width:100%;">
+               <button class="btn btn--primary btn--cut grow" type="button" data-play="${gameId}">
+                 ${icon('play', 'icon icon--sm icon--fill')} ${i18n.t('btnPlay') || 'Jouer'}
+               </button>
+               <button class="btn btn--secondary btn--icon" type="button"
+                       data-reviews="${gameId}" data-title="${meta.title}"
+                       aria-label="Avis et notes sur ${meta.title}">
+                 ${icon('comment')}
+               </button>
+             </div>`
+          : `<button class="btn btn--ghost btn--icon" type="button"
+                     data-reviews="${gameId}" data-title="${meta.title}"
+                     aria-label="Avis et notes sur ${meta.title}">
+               ${icon('comment')}
+             </button>
+             ${icon('chevron-right', 'icon tile__chevron')}`}
+      </article>`;
+  }
+
+  bindHubEvents(container) {
+    // La tuile entière lance le jeu — sauf si on a visé un bouton dedans.
+    container.querySelectorAll('.tile[data-game]').forEach(tile => {
+      const launch = (e) => {
+        if (e.target.closest('[data-reviews]')) return;
+        this.startSelectedGame(tile.getAttribute('data-game'));
+      };
+      tile.addEventListener('click', launch);
+      // Une tuile est un bouton : elle doit répondre au clavier comme tel.
+      tile.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); launch(e); }
       });
     });
 
-    container.querySelectorAll('.btn-cmt-card').forEach(btn => {
+    container.querySelectorAll('[data-play]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const gId = btn.getAttribute('data-id');
-        const gTitle = btn.getAttribute('data-title');
-        this.openCommentsForGame(gId, gTitle);
+        this.startSelectedGame(btn.getAttribute('data-play'));
       });
     });
+
+    container.querySelectorAll('[data-reviews]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openCommentsForGame(btn.getAttribute('data-reviews'), btn.getAttribute('data-title'));
+      });
+    });
+
+    container.querySelector('#btn-hub-login')?.addEventListener('click', () => {
+      this.auth?.openAuthModal();
+    });
+
+    container.querySelectorAll('[data-goto]').forEach(btn => {
+      btn.addEventListener('click', () => this.showTab(btn.getAttribute('data-goto')));
+    });
+  }
+
+  /** Toute donnée venue de l'utilisateur passe par ici avant d'entrer en HTML. */
+  escape(str) {
+    return String(str ?? '').replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
   }
 
   renderCards() {
@@ -501,6 +772,7 @@ class BerthoPlay {
 
   async startSelectedGame(id) {
     this.logAnalytics('game_start', id);
+    SafeState.save({ lastPlayed: id });
 
     if (id === 'billiards') {
       this.launchBilliardsGame();
@@ -536,43 +808,34 @@ class BerthoPlay {
     for (let i = 1; i <= 50; i++) {
       const isUnlocked = i <= maxUnlocked;
       const starsEarned = starsMap[i] || 0;
-      const starDisplay = isUnlocked ? (starsEarned > 0 ? '⭐'.repeat(starsEarned) : '⭐') : '🔒';
+      // L'état verrouillé se lit à l'icône autant qu'à l'opacité : la couleur
+      // et la transparence seules ne suffisent pas à porter l'information.
+      const marks = isUnlocked
+        ? Array.from({ length: 3 }, (_, k) =>
+            icon('star', `icon icon--sm ${k < starsEarned ? 'icon--fill' : ''}`)).join('')
+        : icon('lock', 'icon icon--sm');
 
       gridHTML += `
-        <div class="bub-card-step ${isUnlocked ? 'unlocked' : 'locked'}" data-lvl="${i}">
+        <button class="bub-card-step ${isUnlocked ? 'unlocked' : 'locked'}" type="button"
+                data-lvl="${i}" ${isUnlocked ? '' : 'disabled aria-disabled="true"'}
+                aria-label="${isUnlocked ? `Niveau ${i}, ${starsEarned} étoile(s) sur 3` : `Niveau ${i} verrouillé`}">
           <span>${i}</span>
-          <small>${starDisplay}</small>
-        </div>
+          <small style="display:flex; gap:1px; color:${isUnlocked ? 'var(--gold-lit)' : 'var(--ink-4)'};">${marks}</small>
+        </button>
       `;
     }
 
     selector.innerHTML = `
-      <style>
-        .bub-sel-overlay {
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-          background: rgba(3, 3, 12, 0.96); z-index: 2000; display: flex;
-          flex-direction: column; align-items: center; justify-content: flex-start;
-          backdrop-filter: blur(20px); padding: max(16px, env(safe-area-inset-top)) 15px max(20px, env(safe-area-inset-bottom));
-          box-sizing: border-box; overflow-y: auto; color: #fff;
-        }
-        .bub-sel-top { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 520px; margin-bottom: 12px; }
-        .bub-sel-title { font-size: 1.3rem; font-weight: 900; color: #06b6d4; text-transform: uppercase; letter-spacing: 2px; }
-        .btn-hub-back { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .bub-stars-progress { color: #f59e0b; font-weight: 900; font-size: 0.9rem; margin-bottom: 15px; text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
-        .bub-sel-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; max-width: 520px; }
-        .bub-card-step { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 10px 0; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .bub-card-step.unlocked { border-color: #06b6d4; background: rgba(6, 182, 212, 0.15); box-shadow: 0 0 10px rgba(6,182,212,0.2); }
-        .bub-card-step.locked { opacity: 0.3; cursor: not-allowed; border-color: #334155; }
-        .bub-card-step span { font-size: 1rem; font-weight: 900; color: #fff; }
-        .bub-card-step small { font-size: 0.7rem; margin-top: 2px; color: #f59e0b; }
-      </style>
-
       <div class="bub-sel-overlay">
         <div class="bub-sel-top">
-          <button class="btn-hub-back" id="btn-hub-from-bub">← BerthoPlay</button>
-          <h2 class="bub-sel-title">50 ÉTAPES BUBBLE</h2>
+          <button class="btn-hub-back" id="btn-hub-from-bub" type="button" data-sfx="back">
+            ${icon('arrow-left', 'icon icon--sm')} Hub
+          </button>
+          <h2 class="bub-sel-title grow">Bubble — 50 étapes</h2>
         </div>
-        <div class="bub-stars-progress">⭐ ${totalStars} / 150 ÉTOILES OBTENUES</div>
+        <p class="bub-stars-progress">
+          ${icon('star', 'icon icon--sm icon--fill')} ${totalStars} / 150 étoiles
+        </p>
         <div class="bub-sel-grid">
           ${gridHTML}
         </div>
@@ -602,7 +865,6 @@ class BerthoPlay {
     this.cleanAllOverlays();
     this.hideBottomNav();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
-    if (this.hub) this.hub.style.display = 'none';
 
     try {
       const module = await import('./games/bubble.js');
@@ -638,7 +900,6 @@ class BerthoPlay {
     this.cleanAllOverlays();
     this.hideBottomNav();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
-    if (this.hub) this.hub.style.display = 'none';
     if (this.canvas) this.canvas.style.display = 'block';
 
     try {
@@ -673,47 +934,30 @@ class BerthoPlay {
       { lvl: 7, title: 'NIVEAU 7', desc: 'Nuit Extrême (4 min)' },
       { lvl: 8, title: 'NIVEAU 8', desc: 'Chrono Sprint (3m30)' },
       { lvl: 9, title: 'NIVEAU 9', desc: 'Boss Hypercar (4m30)' },
-      { lvl: 10, title: 'NIVEAU 10 🔥', desc: 'Grand Prix (5 min)' }
+      { lvl: 10, title: 'Niveau 10', desc: 'Grand Prix (5 min)' }
     ];
     
     const selector = document.createElement('div');
     selector.id = 'level-selector-modal';
     selector.innerHTML = `
-      <style>
-        .sel-overlay {
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-          background: rgba(3,3,10,0.95); z-index: 2000; display: flex;
-          flex-direction: column; align-items: center; justify-content: flex-start;
-          backdrop-filter: blur(15px); padding: max(16px, env(safe-area-inset-top)) 15px max(20px, env(safe-area-inset-bottom));
-          box-sizing: border-box; overflow-y: auto; color: #fff;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        .sel-top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; margin-bottom: 15px; }
-        .sel-title { font-size: 1.5rem; font-weight: 900; color: #00ffff; text-transform: uppercase; letter-spacing: 2px; }
-        .btn-hub-back { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .sel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; width: 100%; max-width: 550px; }
-        .sel-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; backdrop-filter: blur(10px); touch-action: manipulation; }
-        .sel-card.unlocked { border-color: #00ffff; background: rgba(0,255,255,0.12); }
-        .sel-card.locked { opacity: 0.35; cursor: not-allowed; border-color: #334155; }
-        .sel-card h4 { font-size: 0.9rem; color: #fff; margin-bottom: 4px; font-weight: 800; }
-        .sel-card p { font-size: 0.7rem; color: #94a3b8; font-weight: 600; }
-        .sel-close { margin-top: 20px; padding: 12px 30px; background: rgba(255,0,85,0.2); border: 1px solid #ff0055; color: #fff; border-radius: 20px; font-size: 0.85rem; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-      </style>
-
       <div class="sel-overlay">
         <div class="sel-top-bar">
-          <button class="btn-hub-back" id="btn-hub-from-car">← BerthoPlay</button>
-          <h2 class="sel-title">NIVEAUX VOITURE</h2>
+          <button class="btn-hub-back" id="btn-hub-from-car" type="button" data-sfx="back">
+          ${icon('arrow-left', 'icon icon--sm')} Hub
+        </button>
+          <h2 class="sel-title grow">Circuits</h2>
         </div>
         <div class="sel-grid">
           ${carLevelsList.map(item => `
-            <div class="sel-card ${maxUnlocked >= item.lvl ? 'unlocked' : 'locked'}" data-lvl="${item.lvl}">
+            <button class="sel-card ${maxUnlocked >= item.lvl ? 'unlocked' : 'locked'}" type="button"
+                    data-lvl="${item.lvl}" ${maxUnlocked >= item.lvl ? '' : 'disabled aria-disabled="true"'}>
               <h4>${item.title}</h4>
               <p>${item.desc}</p>
-            </div>
+              ${maxUnlocked >= item.lvl ? '' : `<span style="color:var(--ink-4);">${icon('lock', 'icon icon--sm')}</span>`}
+            </button>
           `).join('')}
         </div>
-        <button class="sel-close" id="btn-close-sel">ANNULER</button>
+        <button class="sel-close" id="btn-close-sel" type="button" data-sfx="back">Annuler</button>
       </div>
     `;
     
@@ -755,44 +999,27 @@ class BerthoPlay {
       { step: 7, title: 'ÉTAPE 7', desc: 'Nuit Urbaine (4 min)' },
       { step: 8, title: 'ÉTAPE 8', desc: 'Chrono Sprint (3m30)' },
       { step: 9, title: 'ÉTAPE 9', desc: 'Boss Rider (4m30)' },
-      { step: 10, title: 'ÉTAPE 10 🔥', desc: 'Grand Prix (5 min)' }
+      { step: 10, title: 'Étape 10', desc: 'Grand Prix (5 min)' }
     ];
     
     const selector = document.createElement('div');
     selector.id = 'bike-selector-modal';
     selector.innerHTML = `
-      <style>
-        .sel-overlay {
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-          background: rgba(3,3,10,0.95); z-index: 2000; display: flex;
-          flex-direction: column; align-items: center; justify-content: flex-start;
-          backdrop-filter: blur(15px); padding: max(16px, env(safe-area-inset-top)) 15px max(20px, env(safe-area-inset-bottom));
-          box-sizing: border-box; overflow-y: auto; color: #fff;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        .sel-top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; margin-bottom: 15px; }
-        .sel-title { font-size: 1.5rem; font-weight: 900; color: #00ffff; text-transform: uppercase; letter-spacing: 2px; }
-        .btn-hub-back { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .sel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; width: 100%; max-width: 550px; }
-        .sel-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; backdrop-filter: blur(10px); touch-action: manipulation; }
-        .sel-card.unlocked { border-color: #00ffff; background: rgba(0,255,255,0.12); }
-        .sel-card.locked { opacity: 0.35; cursor: not-allowed; border-color: #334155; }
-        .sel-card h4 { font-size: 0.9rem; color: #fff; margin-bottom: 4px; font-weight: 800; }
-        .sel-card p { font-size: 0.7rem; color: #94a3b8; font-weight: 600; }
-        .sel-close { margin-top: 20px; padding: 12px 30px; background: rgba(255,0,85,0.2); border: 1px solid #ff0055; color: #fff; border-radius: 20px; font-size: 0.85rem; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-      </style>
-
       <div class="sel-overlay">
         <div class="sel-top-bar">
-          <button class="btn-hub-back" id="btn-hub-from-bike">← BerthoPlay</button>
-          <h2 class="sel-title">ÉTAPES MOTO GP</h2>
+          <button class="btn-hub-back" id="btn-hub-from-bike" type="button" data-sfx="back">
+          ${icon('arrow-left', 'icon icon--sm')} Hub
+        </button>
+          <h2 class="sel-title grow">Étapes Moto GP</h2>
         </div>
         <div class="sel-grid">
           ${bikeStepsList.map(item => `
-            <div class="sel-card ${maxUnlocked >= item.step ? 'unlocked' : 'locked'}" data-step="${item.step}">
+            <button class="sel-card ${maxUnlocked >= item.step ? 'unlocked' : 'locked'}" type="button"
+                    data-step="${item.step}" ${maxUnlocked >= item.step ? '' : 'disabled aria-disabled="true"'}>
               <h4>${item.title}</h4>
               <p>${item.desc}</p>
-            </div>
+              ${maxUnlocked >= item.step ? '' : `<span style="color:var(--ink-4);">${icon('lock', 'icon icon--sm')}</span>`}
+            </button>
           `).join('')}
         </div>
         <button class="sel-close" id="btn-close-bike-sel">ANNULER</button>
@@ -825,7 +1052,6 @@ class BerthoPlay {
     this.cleanAllOverlays();
     this.hideBottomNav();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
-    if (this.hub) this.hub.style.display = 'none';
     
     if (this.canvas) {
       this.canvas.style.display = 'block';
@@ -865,7 +1091,6 @@ class BerthoPlay {
     this.cleanAllOverlays();
     this.hideBottomNav();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
-    if (this.hub) this.hub.style.display = 'none';
     
     if (this.canvas) {
       this.canvas.style.display = 'block';
@@ -905,7 +1130,6 @@ class BerthoPlay {
     this.cleanAllOverlays();
     this.hideBottomNav();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
-    if (this.hub) this.hub.style.display = 'none';
     
     try {
       const module = await import('./games/checkers.js');
@@ -924,7 +1148,6 @@ class BerthoPlay {
     this.cleanAllOverlays();
     this.hideBottomNav();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
-    if (this.hub) this.hub.style.display = 'none';
     
     try {
       const module = await import('./games/chess.js');
@@ -943,7 +1166,6 @@ class BerthoPlay {
     this.cleanAllOverlays();
     this.hideBottomNav();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
-    if (this.hub) this.hub.style.display = 'none';
     if (this.canvas) this.canvas.style.display = 'block';
     
     try {
@@ -972,10 +1194,9 @@ class BerthoPlay {
       this.currentGame.destroy();
       this.currentGame = null;
     }
-    
-    if (this.canvas) this.canvas.style.display = 'none';
-    if (this.backBtn) this.backBtn.style.display = 'none';
-    if (this.hub) this.hub.style.display = 'flex';
+
+    this.exitGame();
+    if (this.hub) this.hub.style.display = '';
     this.showTab('home');
   }
 }

@@ -1,5 +1,5 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — MOTEUR ANTI-TRICHE & SIGNATURE (SRC/SERVICES/ANTI-CHEAT.JS) [SANDBOX]
+// BERTHOPLAY — MOTEUR ANTI-TRICHE & SIGNATURE (SRC/SERVICES/ANTI-CHEAT.JS) [SANDBOX]
 // ============================================================================
 
 export class BerthoAntiCheat {
