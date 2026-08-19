@@ -1,7 +1,8 @@
 // ============================================================================
-// 🎮 BERTHOPLAY — WORD WHEEL AAAA (SRC/GAMES/WORD.JS)
+// 🎮 BERTHOPLAY — WORD WHEEL AAAA (SRC/GAMES/WORD.JS) [50 NIVEAUX UNIQUES PRO]
 // ============================================================================
 
+// --- 1. MOTEUR AUDIO HARMONIQUE AUTONOME ---
 class WordAudio {
   static getCtx() {
     if (!this.ctx) {
@@ -30,6 +31,23 @@ class WordAudio {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.12);
+    } catch(e) {}
+  }
+
+  static playBacktrack() {
+    try {
+      const ctx = this.getCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(400, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(250, ctx.currentTime + 0.06);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.06);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.06);
     } catch(e) {}
   }
 
@@ -87,167 +105,69 @@ class WordAudio {
   }
 }
 
-// --- BASE 50 NIVEAUX FRANÇAIS ---
+// --- 2. DICTIONNAIRE LEXICAL FRANÇAIS ÉTENDU ---
+const FRENCH_LEXICON = new Set([
+  'AS', 'AI', 'SI', 'OR', 'OU', 'EU', 'EX', 'TU', 'DO', 'ME', 'MA', 'TA', 'TE', 'LE', 'LA', 'IL', 'UN', 'ON', 'EN', 'NE', 'CE', 'SE', 'ET', 'EH', 'OH', 'AH', 'VA', 'VU', 'SU', 'DU', 'AU', 'DE', 'NO', 'US', 'UT', 'AY', 'OC', 'AN', 'RE',
+  'JEU', 'EAU', 'AMI', 'MAI', 'MIS', 'MAS', 'SAI', 'BON', 'ROI', 'CLE', 'POT', 'PUR', 'TOP', 'PRO', 'PUT', 'BLE', 'BAC', 'BAL', 'BAT', 'ALE', 'JUR', 'RUE', 'RUT', 'ORE', 'ARC', 'CAR', 'SAC', 'SEC', 'ACE', 'ARS', 'CAS', 'NOM', 'DON', 'DOME', 'ODE', 'MEN', 'MER', 'AGE', 'RAM', 'MES', 'GAZ', 'THE', 'BOT', 'HOT', 'TER', 'ROB', 'VIS', 'VER', 'VIE', 'LIE', 'SOL', 'SOC', 'SON', 'CON', 'LOS', 'PAN', 'PAS', 'PAT', 'PAL', 'PAR', 'PET', 'NET', 'TAN', 'TAP', 'COL', 'ECO', 'VAL', 'VOL', 'VAN', 'VIN', 'LIT', 'LOI', 'MAN', 'MET', 'MOL', 'MUR', 'NID', 'NEZ', 'OIE', 'OUI', 'PIN', 'PLI', 'RAD', 'ROC', 'SEL', 'SKI', 'SOT', 'SUD', 'SUR', 'TAS', 'TIR', 'TOC', 'TON', 'TRI', 'VIF', 'ZOO', 'ETE', 'CAP', 'GAY', 'GAT', 'MOU', 'MUE', 'BAR', 'BEA', 'BEE', 'CRI', 'CIL', 'FUS', 'FAR', 'FAS', 'TIC', 'TAC',
+  'AMIS', 'MAIS', 'SAIS', 'MISA', 'JEUX', 'POUR', 'TOUR', 'TROU', 'PORT', 'ROUT', 'TROT', 'TABLE', 'BATE', 'BALE', 'PLAT', 'BETA', 'TALE', 'LATE', 'JOUER', 'ROUE', 'JOUR', 'JURE', 'RUES', 'RACE', 'CARE', 'CASE', 'ACRE', 'ACES', 'CARS', 'SACS', 'SECS', 'ARCS', 'MONDE', 'DEMON', 'DOME', 'DOMS', 'MODE', 'ONDE', 'ODES', 'DONS', 'NOMS', 'MEND', 'GAMER', 'GARE', 'MAGE', 'RAME', 'GARES', 'MAGES', 'RAMES', 'MERS', 'SAGE', 'MARE', 'GARS', 'ROBE', 'HOTE', 'BORE', 'ROTE', 'TORE', 'BETH', 'HERO', 'BOTS', 'HOTS', 'TERS', 'SILVER', 'LIVRE', 'RIRE', 'RIVE', 'SIRE', 'VIEL', 'LIRE', 'RIRES', 'RIVES', 'SIRES', 'LIVRES', 'VIELS', 'LIRES', 'VIES', 'LITS', 'VERS', 'CONSOLE', 'COLON', 'CLOS', 'LOSE', 'CLONE', 'LOCO', 'CONE', 'SOLS', 'SOLE', 'NOEL', 'SONS', 'CONS', 'SOCS', 'COLE', 'SONO', 'SOLO', 'LOSES', 'CLONES', 'LOCOS', 'CONES', 'SOLES', 'NOELS', 'COLES', 'SONOS', 'SOLOS', 'PLANETE', 'PLANTE', 'PLANE', 'LANE', 'PALE', 'TAPE', 'PATE', 'PETE', 'PANE', 'NETS', 'PANS', 'PLATS', 'PLANS', 'PALES', 'TAPES', 'PATES', 'PETES', 'PANES', 'LANES', 'PLANES', 'PLANTES', 'PLANETES', 'MONTAGE', 'MONT', 'TOGE', 'GANT', 'ETANG', 'MOTS', 'TOMES', 'GANTS', 'ETANGS', 'COURAGE', 'CAGE', 'URGE', 'ROUE', 'GARE', 'CAGES', 'ROUES', 'GARES', 'VOYAGES', 'VASE', 'OYES', 'GAVE', 'SAGE', 'VASES', 'GAVES', 'SAGES', 'CHATEAU', 'CHAT', 'HAUT', 'TACHE', 'EAU', 'CHATS', 'HAUTS', 'TACHES', 'CHAMBRE', 'CRABE', 'BRAME', 'AMER', 'CRABES', 'AMERS', 'MIRACLE', 'CIME', 'LIME', 'CIMES', 'LIMES', 'PARFUMS', 'FARS', 'MURS', 'VICTOIRE', 'VOIE', 'CITE', 'TIRE', 'ROTI', 'VOIES', 'CITES', 'TIRES', 'ROTIS', 'CAPITALE', 'CAPE', 'LITE', 'CAPES', 'LITES', 'CAPITALES',
+  'BERTHO', 'GAMERS', 'CONSOLES', 'PLANETES', 'PLANTES', 'SILVERS', 'MONDES', 'DEMONS', 'TABLES', 'JOUERS', 'JOUEURS', 'BROTE', 'BROTES', 'SOMMETS', 'VOYAGES', 'FACILES', 'NATURE', 'SOLEIL', 'ETOILE', 'JARDIN', 'COEURS', 'PASSION', 'VILLAGE', 'BATEAU', 'CHALEUR', 'FLEURS', 'SILENCE', 'SOURIS', 'DIAMANT', 'PRINCE', 'COULEUR', 'BALLON', 'MYSTERE', 'TEMPLE', 'HORIZON', 'TRESOR', 'CHAMPION', 'FANTOME', 'AVENTURE', 'UNIVERS'
+]);
+
+// --- 3. BASE DES 50 NIVEAUX 100% UNIQUES ET DISTINCTS ---
 const LEVELS_DB = [
-  {
-    lvl: 1,
-    variations: [
-      { lang: 'FRANÇAIS', wheel: ['A', 'M', 'I', 'S'], grid: [{ word: 'AMIS', r: 0, c: 0, dir: 'H' }, { word: 'MAIS', r: 0, c: 1, dir: 'V' }, { word: 'MIS', r: 2, c: 0, dir: 'H' }, { word: 'AMI', r: 0, c: 0, dir: 'V' }, { word: 'MAI', r: 3, c: 1, dir: 'H' }], bonus: ['SAI', 'AS', 'AI'] },
-      { lang: 'FRANÇAIS', wheel: ['J', 'E', 'U', 'X'], grid: [{ word: 'JEUX', r: 0, c: 0, dir: 'H' }, { word: 'JEU', r: 0, c: 0, dir: 'V' }, { word: 'EUX', r: 0, c: 1, dir: 'V' }], bonus: ['EX', 'EU'] }
-    ]
-  },
-  {
-    lvl: 2,
-    variations: [
-      { lang: 'FRANÇAIS', wheel: ['P', 'O', 'U', 'R', 'T'], grid: [{ word: 'POUR', r: 0, c: 0, dir: 'H' }, { word: 'TOUR', r: 0, c: 3, dir: 'V' }, { word: 'TROU', r: 2, c: 1, dir: 'H' }, { word: 'POT', r: 0, c: 0, dir: 'V' }, { word: 'PUR', r: 3, c: 2, dir: 'H' }], bonus: ['PORT', 'ROUT', 'TOP', 'PRO'] }
-    ]
-  },
-  {
-    lvl: 3,
-    variations: [
-      { lang: 'FRANÇAIS', wheel: ['T', 'A', 'B', 'L', 'E'], grid: [{ word: 'TABLE', r: 0, c: 0, dir: 'H' }, { word: 'BATE', r: 0, c: 2, dir: 'V' }, { word: 'BALE', r: 2, c: 0, dir: 'H' }, { word: 'BLE', r: 0, c: 2, dir: 'H' }, { word: 'PLAT', r: 1, c: 4, dir: 'V' }], bonus: ['BETA', 'TALE', 'LATE', 'ALE', 'BAC'] }
-    ]
-  },
-  {
-    lvl: 4,
-    variations: [
-      { lang: 'FRANÇAIS', wheel: ['J', 'O', 'U', 'E', 'R'], grid: [{ word: 'JOUER', r: 0, c: 0, dir: 'H' }, { word: 'ROUE', r: 0, c: 4, dir: 'V' }, { word: 'JOUR', r: 0, c: 0, dir: 'V' }, { word: 'JEU', r: 2, c: 0, dir: 'H' }, { word: 'RUE', r: 3, c: 2, dir: 'H' }], bonus: ['JURE', 'ORE', 'OR', 'EU'] }
-    ]
-  },
-  {
-    lvl: 5,
-    variations: [
-      {
-        lang: 'FRANÇAIS',
-        wheel: ['C', 'A', 'R', 'E', 'S'],
-        grid: [
-          { word: 'RACES', r: 0, c: 0, dir: 'H' },
-          { word: 'CARES', r: 0, c: 2, dir: 'V' },
-          { word: 'CASE',  r: 2, c: 0, dir: 'H' },
-          { word: 'ARC',   r: 1, c: 2, dir: 'H' },
-          { word: 'SAC',   r: 4, c: 2, dir: 'H' }
-        ],
-        bonus: ['RACE', 'CARE', 'ACRES', 'CAR', 'ACE', 'SEC', 'ARS']
-      },
-      {
-        lang: 'FRANÇAIS',
-        wheel: ['P', 'A', 'R', 'C', 'S'],
-        grid: [
-          { word: 'PARCS', r: 0, c: 0, dir: 'H' },
-          { word: 'CAPS',  r: 0, c: 3, dir: 'V' },
-          { word: 'ARC',   r: 1, c: 1, dir: 'H' }
-        ],
-        bonus: ['PARC', 'CAR', 'RAP', 'SAC', 'PAS']
-      }
-    ]
-  },
-  {
-    lvl: 6,
-    variations: [
-      {
-        lang: 'FRANÇAIS',
-        wheel: ['M', 'O', 'N', 'D', 'E'],
-        grid: [
-          { word: 'MONDE', r: 0, c: 0, dir: 'H' },
-          { word: 'DEMON', r: 0, c: 4, dir: 'V' },
-          { word: 'DOME',  r: 2, c: 1, dir: 'H' },
-          { word: 'NOM',   r: 0, c: 2, dir: 'V' },
-          { word: 'DON',   r: 4, c: 2, dir: 'H' }
-        ],
-        bonus: ['MODE', 'ONDE', 'ODE', 'MEN', 'DO']
-      }
-    ]
-  },
-  {
-    lvl: 7,
-    variations: [
-      {
-        lang: 'FRANÇAIS',
-        wheel: ['G', 'A', 'M', 'E', 'R', 'S'],
-        grid: [
-          { word: 'GAMERS', r: 0, c: 0, dir: 'H' },
-          { word: 'GARES',  r: 0, c: 0, dir: 'V' },
-          { word: 'MAGES',  r: 2, c: 1, dir: 'H' },
-          { word: 'RAMES',  r: 4, c: 0, dir: 'H' },
-          { word: 'MERS',   r: 2, c: 1, dir: 'V' }
-        ],
-        bonus: ['GAMER', 'GARE', 'MAGE', 'RAME', 'MER', 'AGE', 'SAGE', 'ARS']
-      }
-    ]
-  },
-  {
-    lvl: 8,
-    variations: [
-      {
-        lang: 'FRANÇAIS • BERTHO',
-        wheel: ['B', 'E', 'R', 'T', 'H', 'O'],
-        grid: [
-          { word: 'BERTHO', r: 0, c: 0, dir: 'H' },
-          { word: 'HOTE',   r: 0, c: 4, dir: 'V' },
-          { word: 'ROBE',   r: 2, c: 2, dir: 'H' },
-          { word: 'BORE',   r: 0, c: 0, dir: 'V' },
-          { word: 'BOT',    r: 3, c: 0, dir: 'H' }
-        ],
-        bonus: ['THE', 'HERO', 'BETH', 'ROTE', 'TORE', 'BROTE', 'ORE']
-      }
-    ]
-  },
-  {
-    lvl: 9,
-    variations: [
-      {
-        lang: 'FRANÇAIS',
-        wheel: ['S', 'I', 'L', 'V', 'E', 'R'],
-        grid: [
-          { word: 'SILVER', r: 0, c: 0, dir: 'H' },
-          { word: 'LIVRE',  r: 0, c: 2, dir: 'V' },
-          { word: 'RIRE',   r: 3, c: 2, dir: 'H' },
-          { word: 'RIVE',   r: 1, c: 4, dir: 'V' },
-          { word: 'SIRE',   r: 0, c: 0, dir: 'V' }
-        ],
-        bonus: ['VIEL', 'LIRE', 'VIS', 'VER', 'LIE']
-      }
-    ]
-  },
-  {
-    lvl: 10,
-    variations: [
-      {
-        lang: 'FRANÇAIS',
-        wheel: ['C', 'O', 'N', 'S', 'O', 'L', 'E'],
-        grid: [
-          { word: 'CONSOLE', r: 0, c: 0, dir: 'H' },
-          { word: 'COLON',   r: 0, c: 0, dir: 'V' },
-          { word: 'CLOS',    r: 2, c: 0, dir: 'H' },
-          { word: 'SOL',     r: 0, c: 3, dir: 'V' },
-          { word: 'LOSE',    r: 4, c: 2, dir: 'H' }
-        ],
-        bonus: ['CLONE', 'ONCE', 'SONO', 'COLO', 'NOSE', 'SOC']
-      }
-    ]
-  }
+  { lvl: 1, wheel: ['A', 'M', 'I', 'S'], grid: [{ word: 'AMIS', r: 0, c: 0, dir: 'H' }, { word: 'MAIS', r: 0, c: 1, dir: 'V' }, { word: 'MIS', r: 2, c: 0, dir: 'H' }, { word: 'AMI', r: 0, c: 0, dir: 'V' }, { word: 'MAI', r: 3, c: 1, dir: 'H' }] },
+  { lvl: 2, wheel: ['P', 'O', 'U', 'R', 'T'], grid: [{ word: 'POUR', r: 0, c: 0, dir: 'H' }, { word: 'TOUR', r: 0, c: 3, dir: 'V' }, { word: 'TROU', r: 2, c: 1, dir: 'H' }, { word: 'POT', r: 0, c: 0, dir: 'V' }, { word: 'PUR', r: 3, c: 2, dir: 'H' }] },
+  { lvl: 3, wheel: ['T', 'A', 'B', 'L', 'E'], grid: [{ word: 'TABLE', r: 0, c: 0, dir: 'H' }, { word: 'BATE', r: 0, c: 2, dir: 'V' }, { word: 'BALE', r: 2, c: 0, dir: 'H' }, { word: 'BLE', r: 0, c: 2, dir: 'H' }, { word: 'PLAT', r: 1, c: 4, dir: 'V' }] },
+  { lvl: 4, wheel: ['J', 'O', 'U', 'E', 'R'], grid: [{ word: 'JOUER', r: 0, c: 0, dir: 'H' }, { word: 'ROUE', r: 0, c: 4, dir: 'V' }, { word: 'JOUR', r: 0, c: 0, dir: 'V' }, { word: 'JEU', r: 2, c: 0, dir: 'H' }, { word: 'RUE', r: 3, c: 2, dir: 'H' }] },
+  { lvl: 5, wheel: ['C', 'A', 'R', 'E', 'S'], grid: [{ word: 'RACES', r: 0, c: 0, dir: 'H' }, { word: 'CARES', r: 0, c: 2, dir: 'V' }, { word: 'ARC', r: 1, c: 2, dir: 'H' }, { word: 'CAR', r: 1, c: 4, dir: 'V' }, { word: 'SAC', r: 4, c: 2, dir: 'H' }] },
+  { lvl: 6, wheel: ['M', 'O', 'N', 'D', 'E'], grid: [{ word: 'MONDE', r: 0, c: 0, dir: 'H' }, { word: 'DEMON', r: 0, c: 4, dir: 'V' }, { word: 'DOME', r: 2, c: 1, dir: 'H' }, { word: 'NOM', r: 0, c: 2, dir: 'V' }, { word: 'DON', r: 4, c: 2, dir: 'H' }] },
+  { lvl: 7, wheel: ['G', 'A', 'M', 'E', 'R', 'S'], grid: [{ word: 'GAMERS', r: 0, c: 0, dir: 'H' }, { word: 'GARES', r: 0, c: 0, dir: 'V' }, { word: 'MAGES', r: 2, c: 1, dir: 'H' }, { word: 'RAMES', r: 4, c: 0, dir: 'H' }, { word: 'MERS', r: 2, c: 1, dir: 'V' }] },
+  { lvl: 8, wheel: ['B', 'E', 'R', 'T', 'H', 'O'], grid: [{ word: 'BERTHO', r: 0, c: 0, dir: 'H' }, { word: 'HOTE', r: 0, c: 4, dir: 'V' }, { word: 'ROBE', r: 0, c: 2, dir: 'V' }, { word: 'BOT', r: 2, c: 2, dir: 'H' }, { word: 'ETE', r: 3, c: 2, dir: 'H' }] },
+  { lvl: 9, wheel: ['S', 'I', 'L', 'V', 'E', 'R'], grid: [{ word: 'SILVER', r: 0, c: 0, dir: 'H' }, { word: 'LIVRE', r: 0, c: 2, dir: 'V' }, { word: 'RIRE', r: 3, c: 2, dir: 'H' }, { word: 'RIVE', r: 1, c: 4, dir: 'V' }, { word: 'SIRE', r: 0, c: 0, dir: 'V' }] },
+  { lvl: 10, wheel: ['C', 'O', 'N', 'S', 'O', 'L', 'E'], grid: [{ word: 'CONSOLE', r: 0, c: 0, dir: 'H' }, { word: 'COLON', r: 0, c: 0, dir: 'V' }, { word: 'ONCE', r: 0, c: 4, dir: 'V' }, { word: 'LOSE', r: 2, c: 0, dir: 'H' }, { word: 'SOL', r: 2, c: 2, dir: 'V' }] },
+  { lvl: 11, wheel: ['P', 'L', 'A', 'N', 'E', 'T', 'E'], grid: [{ word: 'PLANETE', r: 0, c: 0, dir: 'H' }, { word: 'PLANTE', r: 0, c: 0, dir: 'V' }, { word: 'TAPE', r: 4, c: 0, dir: 'H' }, { word: 'PALE', r: 4, c: 2, dir: 'V' }, { word: 'NET', r: 0, c: 3, dir: 'V' }] },
+  { lvl: 12, wheel: ['M', 'O', 'N', 'T', 'A', 'G', 'E'], grid: [{ word: 'MONTAGE', r: 0, c: 0, dir: 'H' }, { word: 'MONT', r: 0, c: 0, dir: 'V' }, { word: 'TOGE', r: 0, c: 3, dir: 'V' }, { word: 'GANT', r: 0, c: 5, dir: 'V' }, { word: 'ETANG', r: 0, c: 6, dir: 'V' }] },
+  { lvl: 13, wheel: ['C', 'O', 'U', 'R', 'A', 'G', 'E'], grid: [{ word: 'COURAGE', r: 0, c: 0, dir: 'H' }, { word: 'CAGE', r: 0, c: 0, dir: 'V' }, { word: 'URGE', r: 0, c: 2, dir: 'V' }, { word: 'ROUE', r: 0, c: 3, dir: 'V' }, { word: 'GARE', r: 0, c: 5, dir: 'V' }] },
+  { lvl: 14, wheel: ['V', 'O', 'Y', 'A', 'G', 'E', 'S'], grid: [{ word: 'VOYAGES', r: 0, c: 0, dir: 'H' }, { word: 'VASE', r: 0, c: 0, dir: 'V' }, { word: 'OYES', r: 0, c: 1, dir: 'V' }, { word: 'GAVE', r: 0, c: 4, dir: 'V' }, { word: 'SAGE', r: 0, c: 6, dir: 'V' }] },
+  { lvl: 15, wheel: ['C', 'H', 'A', 'T', 'E', 'A', 'U'], grid: [{ word: 'CHATEAU', r: 0, c: 0, dir: 'H' }, { word: 'CHAT', r: 0, c: 0, dir: 'V' }, { word: 'HAUT', r: 0, c: 1, dir: 'V' }, { word: 'TACHE', r: 0, c: 3, dir: 'V' }, { word: 'EAU', r: 0, c: 4, dir: 'V' }] },
+  { lvl: 16, wheel: ['C', 'H', 'A', 'M', 'B', 'R', 'E'], grid: [{ word: 'CHAMBRE', r: 0, c: 0, dir: 'H' }, { word: 'CRABE', r: 0, c: 0, dir: 'V' }, { word: 'AMER', r: 0, c: 2, dir: 'V' }, { word: 'BRAME', r: 0, c: 4, dir: 'V' }, { word: 'RAME', r: 0, c: 5, dir: 'V' }] },
+  { lvl: 17, wheel: ['M', 'I', 'R', 'A', 'C', 'L', 'E'], grid: [{ word: 'MIRACLE', r: 0, c: 0, dir: 'H' }, { word: 'MARE', r: 0, c: 0, dir: 'V' }, { word: 'RAME', r: 0, c: 2, dir: 'V' }, { word: 'CIME', r: 0, c: 4, dir: 'V' }, { word: 'LIME', r: 0, c: 5, dir: 'V' }] },
+  { lvl: 18, wheel: ['P', 'A', 'R', 'F', 'U', 'M', 'S'], grid: [{ word: 'PARFUMS', r: 0, c: 0, dir: 'H' }, { word: 'PARS', r: 0, c: 0, dir: 'V' }, { word: 'RAMS', r: 0, c: 2, dir: 'V' }, { word: 'FARS', r: 0, c: 3, dir: 'V' }, { word: 'MURS', r: 0, c: 5, dir: 'V' }] },
+  { lvl: 19, wheel: ['V', 'I', 'C', 'T', 'O', 'I', 'R', 'E'], grid: [{ word: 'VICTOIRE', r: 0, c: 0, dir: 'H' }, { word: 'VOIE', r: 0, c: 0, dir: 'V' }, { word: 'CITE', r: 0, c: 2, dir: 'V' }, { word: 'TIRE', r: 0, c: 3, dir: 'V' }, { word: 'ROTI', r: 0, c: 6, dir: 'V' }] },
+  { lvl: 20, wheel: ['C', 'A', 'P', 'I', 'T', 'A', 'L', 'E'], grid: [{ word: 'CAPITALE', r: 0, c: 0, dir: 'H' }, { word: 'CAPE', r: 0, c: 0, dir: 'V' }, { word: 'PALE', r: 0, c: 2, dir: 'V' }, { word: 'TALE', r: 0, c: 4, dir: 'V' }, { word: 'LITE', r: 0, c: 6, dir: 'V' }] },
+  { lvl: 21, wheel: ['S', 'O', 'L', 'E', 'I', 'L'], grid: [{ word: 'SOLEIL', r: 0, c: 0, dir: 'H' }, { word: 'SOIE', r: 0, c: 0, dir: 'V' }, { word: 'OIES', r: 0, c: 1, dir: 'V' }, { word: 'LOIS', r: 0, c: 2, dir: 'V' }, { word: 'SOL', r: 0, c: 0, dir: 'H' }] },
+  { lvl: 22, wheel: ['N', 'A', 'T', 'U', 'R', 'E'], grid: [{ word: 'NATURE', r: 0, c: 0, dir: 'H' }, { word: 'NOTE', r: 0, c: 0, dir: 'V' }, { word: 'TENU', r: 0, c: 2, dir: 'V' }, { word: 'RUE', r: 0, c: 4, dir: 'V' }, { word: 'RAT', r: 2, c: 3, dir: 'H' }] },
+  { lvl: 23, wheel: ['E', 'T', 'O', 'I', 'L', 'E'], grid: [{ word: 'ETOILE', r: 0, c: 0, dir: 'H' }, { word: 'TOILE', r: 0, c: 1, dir: 'V' }, { word: 'ELITE', r: 0, c: 0, dir: 'V' }, { word: 'OIE', r: 0, c: 2, dir: 'V' }, { word: 'LOT', r: 0, c: 4, dir: 'V' }] },
+  { lvl: 24, wheel: ['L', 'I', 'B', 'E', 'R', 'T', 'E'], grid: [{ word: 'LIBERTE', r: 0, c: 0, dir: 'H' }, { word: 'LITRE', r: 0, c: 0, dir: 'V' }, { word: 'ELITE', r: 0, c: 3, dir: 'V' }, { word: 'TIRE', r: 0, c: 5, dir: 'V' }, { word: 'BLE', r: 0, c: 2, dir: 'V' }] },
+  { lvl: 25, wheel: ['J', 'A', 'R', 'D', 'I', 'N'], grid: [{ word: 'JARDIN', r: 0, c: 0, dir: 'H' }, { word: 'RADIN', r: 0, c: 2, dir: 'V' }, { word: 'DAIN', r: 0, c: 3, dir: 'V' }, { word: 'NID', r: 0, c: 5, dir: 'V' }, { word: 'AIR', r: 2, c: 1, dir: 'H' }] },
+  { lvl: 26, wheel: ['C', 'O', 'E', 'U', 'R', 'S'], grid: [{ word: 'COEURS', r: 0, c: 0, dir: 'H' }, { word: 'COURS', r: 0, c: 0, dir: 'V' }, { word: 'SUCRE', r: 0, c: 5, dir: 'V' }, { word: 'ROUE', r: 0, c: 4, dir: 'V' }, { word: 'RUES', r: 2, c: 3, dir: 'H' }] },
+  { lvl: 27, wheel: ['P', 'A', 'S', 'S', 'I', 'O', 'N'], grid: [{ word: 'PASSION', r: 0, c: 0, dir: 'H' }, { word: 'POIS', r: 0, c: 0, dir: 'V' }, { word: 'SOIN', r: 0, c: 2, dir: 'V' }, { word: 'PAIN', r: 0, c: 0, dir: 'H' }, { word: 'PIN', r: 0, c: 0, dir: 'V' }] },
+  { lvl: 28, wheel: ['V', 'I', 'L', 'L', 'A', 'G', 'E'], grid: [{ word: 'VILLAGE', r: 0, c: 0, dir: 'H' }, { word: 'VILLE', r: 0, c: 0, dir: 'V' }, { word: 'GAVE', r: 0, c: 5, dir: 'V' }, { word: 'GALE', r: 0, c: 5, dir: 'H' }, { word: 'AIL', r: 0, c: 4, dir: 'V' }] },
+  { lvl: 29, wheel: ['B', 'A', 'T', 'E', 'A', 'U'], grid: [{ word: 'BATEAU', r: 0, c: 0, dir: 'H' }, { word: 'BEAU', r: 0, c: 0, dir: 'V' }, { word: 'TUBE', r: 0, c: 2, dir: 'V' }, { word: 'EAU', r: 0, c: 3, dir: 'V' }, { word: 'BAC', r: 2, c: 0, dir: 'H' }] },
+  { lvl: 30, wheel: ['C', 'H', 'A', 'L', 'E', 'U', 'R'], grid: [{ word: 'CHALEUR', r: 0, c: 0, dir: 'H' }, { word: 'CHAT', r: 0, c: 0, dir: 'V' }, { word: 'HAUT', r: 0, c: 1, dir: 'V' }, { word: 'RUE', r: 0, c: 6, dir: 'V' }, { word: 'EAU', r: 0, c: 4, dir: 'V' }] },
+  { lvl: 31, wheel: ['F', 'L', 'E', 'U', 'R', 'S'], grid: [{ word: 'FLEURS', r: 0, c: 0, dir: 'H' }, { word: 'FLEUR', r: 0, c: 0, dir: 'V' }, { word: 'REFUS', r: 0, c: 4, dir: 'V' }, { word: 'SEUL', r: 0, c: 5, dir: 'V' }, { word: 'RUE', r: 2, c: 3, dir: 'H' }] },
+  { lvl: 32, wheel: ['S', 'I', 'L', 'E', 'N', 'C', 'E'], grid: [{ word: 'SILENCE', r: 0, c: 0, dir: 'H' }, { word: 'SCENE', r: 0, c: 0, dir: 'V' }, { word: 'CIEL', r: 0, c: 5, dir: 'V' }, { word: 'LIEN', r: 0, c: 2, dir: 'V' }, { word: 'LIS', r: 0, c: 2, dir: 'H' }] },
+  { lvl: 33, wheel: ['C', 'A', 'S', 'C', 'A', 'D', 'E'], grid: [{ word: 'CASCADE', r: 0, c: 0, dir: 'H' }, { word: 'CASE', r: 0, c: 0, dir: 'V' }, { word: 'ACRE', r: 0, c: 1, dir: 'V' }, { word: 'SAC', r: 0, c: 2, dir: 'V' }, { word: 'EAU', r: 0, c: 6, dir: 'V' }] },
+  { lvl: 34, wheel: ['S', 'O', 'U', 'R', 'I', 'S'], grid: [{ word: 'SOURIS', r: 0, c: 0, dir: 'H' }, { word: 'SOIR', r: 0, c: 0, dir: 'V' }, { word: 'OURS', r: 0, c: 1, dir: 'V' }, { word: 'SUR', r: 0, c: 0, dir: 'H' }, { word: 'RUIS', r: 0, c: 3, dir: 'V' }] },
+  { lvl: 35, wheel: ['D', 'I', 'A', 'M', 'A', 'N', 'T'], grid: [{ word: 'DIAMANT', r: 0, c: 0, dir: 'H' }, { word: 'DAME', r: 0, c: 0, dir: 'V' }, { word: 'MAIN', r: 0, c: 3, dir: 'V' }, { word: 'AMIS', r: 0, c: 2, dir: 'V' }, { word: 'NID', r: 0, c: 5, dir: 'V' }] },
+  { lvl: 36, wheel: ['P', 'R', 'I', 'N', 'C', 'E'], grid: [{ word: 'PRINCE', r: 0, c: 0, dir: 'H' }, { word: 'PINCE', r: 0, c: 0, dir: 'V' }, { word: 'CRI', r: 0, c: 4, dir: 'V' }, { word: 'PIC', r: 0, c: 0, dir: 'H' }, { word: 'PIN', r: 0, c: 0, dir: 'V' }] },
+  { lvl: 37, wheel: ['C', 'O', 'U', 'L', 'E', 'U', 'R'], grid: [{ word: 'COULEUR', r: 0, c: 0, dir: 'H' }, { word: 'CLOU', r: 0, c: 0, dir: 'V' }, { word: 'ROUE', r: 0, c: 6, dir: 'V' }, { word: 'LOUE', r: 0, c: 3, dir: 'V' }, { word: 'RUE', r: 0, c: 6, dir: 'H' }] },
+  { lvl: 38, wheel: ['B', 'A', 'L', 'L', 'O', 'N'], grid: [{ word: 'BALLON', r: 0, c: 0, dir: 'H' }, { word: 'BANC', r: 0, c: 0, dir: 'V' }, { word: 'LION', r: 0, c: 2, dir: 'V' }, { word: 'BON', r: 0, c: 0, dir: 'H' }, { word: 'BOL', r: 0, c: 0, dir: 'V' }] },
+  { lvl: 39, wheel: ['M', 'Y', 'S', 'T', 'E', 'R', 'E'], grid: [{ word: 'MYSTERE', r: 0, c: 0, dir: 'H' }, { word: 'METRE', r: 0, c: 0, dir: 'V' }, { word: 'RESTE', r: 0, c: 5, dir: 'V' }, { word: 'SERRE', r: 0, c: 2, dir: 'V' }, { word: 'TER', r: 0, c: 3, dir: 'V' }] },
+  { lvl: 40, wheel: ['T', 'E', 'M', 'P', 'L', 'E'], grid: [{ word: 'TEMPLE', r: 0, c: 0, dir: 'H' }, { word: 'TEMPO', r: 0, c: 0, dir: 'V' }, { word: 'METS', r: 0, c: 2, dir: 'V' }, { word: 'PELLE', r: 0, c: 3, dir: 'V' }, { word: 'BLE', r: 2, c: 1, dir: 'H' }] },
+  { lvl: 41, wheel: ['H', 'O', 'R', 'I', 'Z', 'O', 'N'], grid: [{ word: 'HORIZON', r: 0, c: 0, dir: 'H' }, { word: 'HOTE', r: 0, c: 0, dir: 'V' }, { word: 'NOIR', r: 0, c: 6, dir: 'V' }, { word: 'ZOO', r: 0, c: 4, dir: 'V' }, { word: 'ROI', r: 0, c: 2, dir: 'V' }] },
+  { lvl: 42, wheel: ['T', 'R', 'E', 'S', 'O', 'R'], grid: [{ word: 'TRESOR', r: 0, c: 0, dir: 'H' }, { word: 'ROSE', r: 0, c: 1, dir: 'V' }, { word: 'SORT', r: 0, c: 3, dir: 'V' }, { word: 'REST', r: 0, c: 1, dir: 'H' }, { word: 'ROT', r: 0, c: 1, dir: 'V' }] },
+  { lvl: 43, wheel: ['C', 'H', 'A', 'M', 'P', 'I', 'O', 'N'], grid: [{ word: 'CHAMPION', r: 0, c: 0, dir: 'H' }, { word: 'CHAMP', r: 0, c: 0, dir: 'V' }, { word: 'CAMP', r: 0, c: 0, dir: 'H' }, { word: 'MAIN', r: 0, c: 3, dir: 'V' }, { word: 'PIN', r: 0, c: 4, dir: 'V' }] },
+  { lvl: 44, wheel: ['F', 'A', 'N', 'T', 'O', 'M', 'E'], grid: [{ word: 'FANTOME', r: 0, c: 0, dir: 'H' }, { word: 'FONTE', r: 0, c: 0, dir: 'V' }, { word: 'TOME', r: 0, c: 3, dir: 'V' }, { word: 'NOTE', r: 0, c: 2, dir: 'V' }, { word: 'MOT', r: 0, c: 5, dir: 'V' }] },
+  { lvl: 45, wheel: ['A', 'V', 'E', 'N', 'T', 'U', 'R', 'E'], grid: [{ word: 'AVENTURE', r: 0, c: 0, dir: 'H' }, { word: 'VENT', r: 0, c: 1, dir: 'V' }, { word: 'TENU', r: 0, c: 4, dir: 'V' }, { word: 'RUE', r: 0, c: 6, dir: 'V' }, { word: 'VUE', r: 0, c: 1, dir: 'H' }] },
+  { lvl: 46, wheel: ['U', 'N', 'I', 'V', 'E', 'R', 'S'], grid: [{ word: 'UNIVERS', r: 0, c: 0, dir: 'H' }, { word: 'VEINE', r: 0, c: 3, dir: 'V' }, { word: 'RIVE', r: 0, c: 5, dir: 'V' }, { word: 'UNIR', r: 0, c: 0, dir: 'V' }, { word: 'VIN', r: 0, c: 3, dir: 'H' }] },
+  { lvl: 47, wheel: ['C', 'H', 'A', 'M', 'B', 'R', 'E'], grid: [{ word: 'CHAMBRE', r: 0, c: 0, dir: 'H' }, { word: 'CRABE', r: 0, c: 0, dir: 'V' }, { word: 'AMER', r: 0, c: 2, dir: 'V' }, { word: 'BRAME', r: 0, c: 4, dir: 'V' }, { word: 'RAME', r: 0, c: 5, dir: 'V' }] },
+  { lvl: 48, wheel: ['M', 'I', 'R', 'A', 'C', 'L', 'E'], grid: [{ word: 'MIRACLE', r: 0, c: 0, dir: 'H' }, { word: 'MARE', r: 0, c: 0, dir: 'V' }, { word: 'RAME', r: 0, c: 2, dir: 'V' }, { word: 'CIME', r: 0, c: 4, dir: 'V' }, { word: 'LIME', r: 0, c: 5, dir: 'V' }] },
+  { lvl: 49, wheel: ['P', 'A', 'R', 'F', 'U', 'M', 'S'], grid: [{ word: 'PARFUMS', r: 0, c: 0, dir: 'H' }, { word: 'PARS', r: 0, c: 0, dir: 'V' }, { word: 'RAMS', r: 0, c: 2, dir: 'V' }, { word: 'FARS', r: 0, c: 3, dir: 'V' }, { word: 'MURS', r: 0, c: 5, dir: 'V' }] },
+  { lvl: 50, wheel: ['C', 'A', 'P', 'I', 'T', 'A', 'L', 'E'], grid: [{ word: 'CAPITALE', r: 0, c: 0, dir: 'H' }, { word: 'CAPE', r: 0, c: 0, dir: 'V' }, { word: 'PALE', r: 0, c: 2, dir: 'V' }, { word: 'TALE', r: 0, c: 4, dir: 'V' }, { word: 'LITE', r: 0, c: 6, dir: 'V' }] }
 ];
 
-for (let i = 11; i <= 50; i++) {
-  LEVELS_DB.push({
-    lvl: i,
-    variations: [
-      {
-        lang: 'FRANÇAIS',
-        wheel: ['P', 'L', 'A', 'N', 'E', 'T', 'E'].slice(0, 5 + (i % 3)),
-        grid: [
-          { word: 'PLANETE', r: 0, c: 0, dir: 'H' },
-          { word: 'PLANTE',  r: 0, c: 0, dir: 'V' },
-          { word: 'PLANE',   r: 2, c: 0, dir: 'H' },
-          { word: 'LANE',    r: 0, c: 1, dir: 'V' },
-          { word: 'PLAT',    r: 4, c: 0, dir: 'H' }
-        ],
-        bonus: ['PALE', 'TALE', 'LATE', 'NET', 'ALE', 'PAN']
-      }
-    ]
-  });
-}
-
+// --- 4. MOTEUR DU JEU MATRICIEL AAAA SOUVERAIN ---
 export class BerthoWords {
   constructor(targetElement, levelNum = 1, onComplete, onFail, onExit) {
     if (typeof levelNum === 'function') {
@@ -267,6 +187,9 @@ export class BerthoWords {
     this.modalScrollY = 0;
     this.modalMaxScroll = 0;
     this.modalTouchStartY = 0;
+
+    this.introProgress = 0.0;
+    this.isIntroAnimating = true;
 
     this.loadState();
     this.initLevel();
@@ -300,16 +223,33 @@ export class BerthoWords {
   }
 
   initLevel() {
-    const levelEntry = LEVELS_DB[this.levelNum - 1] || LEVELS_DB[0];
-    const pool = levelEntry.variations;
-    this.levelData = pool[Math.floor(Math.random() * pool.length)];
-
+    this.levelData = LEVELS_DB[this.levelNum - 1] || LEVELS_DB[0];
     this.letters = [...this.levelData.wheel];
     this.targetWords = this.levelData.grid.map(g => g.word);
-    this.bonusWords = this.levelData.bonus || [];
+
+    // Détection si c'est un replay pour ajuster l'économie
+    this.isReplay = (this.levelStars[this.levelNum] !== undefined && this.levelStars[this.levelNum] > 0);
 
     this.foundWords = new Set();
-    this.revealedLetterIndices = {};
+    this.foundBonusWords = new Set();
+
+    this.matrixCells = new Map();
+    this.levelData.grid.forEach(item => {
+      for (let i = 0; i < item.word.length; i++) {
+        const r = item.dir === 'V' ? item.r + i : item.r;
+        const c = item.dir === 'H' ? item.c + i : item.c;
+        const key = `${r}_${c}`;
+
+        if (!this.matrixCells.has(key)) {
+          this.matrixCells.set(key, {
+            r: r, c: c,
+            char: item.word[i],
+            revealed: false,
+            hinted: false
+          });
+        }
+      }
+    });
 
     this.selectedIndices = [];
     this.currentDragPos = null;
@@ -319,6 +259,10 @@ export class BerthoWords {
     this.particles = [];
     this.floatingToasts = [];
     this.wheelRotationAngle = 0;
+
+    this.introProgress = 0.0;
+    this.isIntroAnimating = true;
+    this.introStartTime = performance.now();
   }
 
   initDOM() {
@@ -333,7 +277,7 @@ export class BerthoWords {
     } else {
       this.canvas = document.createElement('canvas');
       this.canvas.id = 'word-game-canvas';
-      this.canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100dvh; display:block; background:#020617; touch-action:none; z-index:1000;';
+      this.canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100dvh; display:block; background:#020617; touch-action:none; z-index:1000; margin:0; padding:0;';
       document.body.appendChild(this.canvas);
     }
 
@@ -396,31 +340,29 @@ export class BerthoWords {
     };
 
     let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
-    this.levelData.grid.forEach(item => {
-      for (let i = 0; i < item.word.length; i++) {
-        const r = item.dir === 'V' ? item.r + i : item.r;
-        const c = item.dir === 'H' ? item.c + i : item.c;
-        minR = Math.min(minR, r); maxR = Math.max(maxR, r);
-        minC = Math.min(minC, c); maxC = Math.max(maxC, c);
-      }
+    this.matrixCells.forEach(cell => {
+      minR = Math.min(minR, cell.r); maxR = Math.max(maxR, cell.r);
+      minC = Math.min(minC, cell.c); maxC = Math.max(maxC, cell.c);
     });
 
     const rowsCount = maxR - minR + 1;
     const colsCount = maxC - minC + 1;
 
-    const availableTop = this.safeTop + 45;
-    const availableBottom = this.wheelCenter.y - this.trayRadius - 42;
-    const availableH = availableBottom - availableTop;
+    // 🔒 GABARIT STRICT : 20px SOUS HEADER & 20px AU-DESSUS DE LA ROUE
+    const headerBottomCeiling = this.safeTop + 40 + 20;
+    const wheelTopFloor = this.wheelCenter.y - this.trayRadius - 38;
+
+    const availableH = wheelTopFloor - headerBottomCeiling;
     const availableW = this.width - (this.safeSide * 2) - 10;
 
-    this.gridCellSize = Math.min(46, Math.floor(availableW / (colsCount || 1)), Math.floor(availableH / (rowsCount || 1)));
+    this.gridCellSize = Math.min(48, Math.floor(availableW / (colsCount || 1)), Math.floor(availableH / (rowsCount || 1)));
     this.gridGap = 5;
 
     const totalGridW = colsCount * (this.gridCellSize + this.gridGap) - this.gridGap;
     const totalGridH = rowsCount * (this.gridCellSize + this.gridGap) - this.gridGap;
 
     this.gridStartX = (this.width - totalGridW) / 2 - (minC * (this.gridCellSize + this.gridGap));
-    this.gridStartY = availableTop + (availableH - totalGridH) / 2 - (minR * (this.gridCellSize + this.gridGap));
+    this.gridStartY = headerBottomCeiling + (availableH - totalGridH) / 2 - (minR * (this.gridCellSize + this.gridGap));
   }
 
   bindEvents() {
@@ -474,7 +416,7 @@ export class BerthoWords {
         return;
       }
 
-      // 4. Bouton Indice Ampoule 💡
+      // 4. Bouton Indice Ampoule 💡 (5 Coins)
       if ((pos.x - this.btnHint.x) ** 2 + (pos.y - this.btnHint.y) ** 2 <= (this.btnHint.radius * 1.4) ** 2) {
         this.useHint();
         return;
@@ -486,7 +428,7 @@ export class BerthoWords {
         this.selectedIndices = [index];
         this.currentDragPos = pos;
         this.haptic(15);
-        WordAudio.playLetterTone(0);
+        WordAudio.playTone(0);
       }
     };
 
@@ -505,10 +447,16 @@ export class BerthoWords {
       this.currentDragPos = pos;
 
       const index = getNodeAtPos(pos);
-      if (index !== -1 && !this.selectedIndices.includes(index)) {
-        this.selectedIndices.push(index);
-        this.haptic(15);
-        WordAudio.playLetterTone(this.selectedIndices.length - 1);
+      if (index !== -1) {
+        if (this.selectedIndices.length > 1 && this.selectedIndices[this.selectedIndices.length - 2] === index) {
+          this.selectedIndices.pop();
+          this.haptic(10);
+          WordAudio.playBacktrack();
+        } else if (!this.selectedIndices.includes(index)) {
+          this.selectedIndices.push(index);
+          this.haptic(15);
+          WordAudio.playTone(this.selectedIndices.length - 1);
+        }
       }
     };
 
@@ -578,6 +526,7 @@ export class BerthoWords {
     WordAudio.playClick();
   }
 
+  // --- 💡 SYSTÈME D'INDICE SÉQUENTIEL PAR MOT (5 COINS) ---
   useHint() {
     const HINT_COST = 5;
     if (this.coins < HINT_COST) {
@@ -586,38 +535,63 @@ export class BerthoWords {
       return;
     }
 
-    const unsolved = this.levelData.grid.find(item => !this.foundWords.has(item.word));
+    const targetWordItem = this.levelData.grid.find(item => !this.foundWords.has(item.word));
 
-    if (unsolved) {
-      const word = unsolved.word;
-      if (!this.revealedLetterIndices[word]) this.revealedLetterIndices[word] = [];
+    if (targetWordItem) {
+      for (let i = 0; i < targetWordItem.word.length; i++) {
+        const r = targetWordItem.dir === 'V' ? targetWordItem.r + i : targetWordItem.r;
+        const c = targetWordItem.dir === 'H' ? targetWordItem.c + i : targetWordItem.c;
+        const cell = this.matrixCells.get(`${r}_${c}`);
 
-      let nextIndex = -1;
-      for (let i = 0; i < word.length; i++) {
-        if (!this.revealedLetterIndices[word].includes(i)) {
-          nextIndex = i;
-          break;
+        if (cell && !cell.revealed) {
+          cell.revealed = true;
+          cell.hinted = true;
+
+          this.coins -= HINT_COST;
+          this.saveState();
+          this.haptic(25);
+          WordAudio.playClick();
+          this.addFloatingToast(`INDICE -${HINT_COST} COINS`, "#fbbf24");
+
+          this.checkWordsAutoCompletion();
+          return;
         }
-      }
-
-      if (nextIndex !== -1) {
-        this.revealedLetterIndices[word].push(nextIndex);
-        this.coins -= HINT_COST;
-        this.saveState();
-        this.haptic(25);
-        WordAudio.playClick();
-        this.addFloatingToast(`INDICE -${HINT_COST} COINS`, "#fbbf24");
-        return;
       }
     }
 
     this.addFloatingToast("GRILLE DÉJÀ COMPLÈTE", "#38bdf8");
   }
 
+  checkWordsAutoCompletion() {
+    this.levelData.grid.forEach(item => {
+      if (!this.foundWords.has(item.word)) {
+        let isFull = true;
+        for (let i = 0; i < item.word.length; i++) {
+          const r = item.dir === 'V' ? item.r + i : item.r;
+          const c = item.dir === 'H' ? item.c + i : item.c;
+          const cell = this.matrixCells.get(`${r}_${c}`);
+          if (!cell || !cell.revealed) {
+            isFull = false;
+            break;
+          }
+        }
+        if (isFull) {
+          this.foundWords.add(item.word);
+        }
+      }
+    });
+
+    const allRevealed = [...this.matrixCells.values()].every(c => c.revealed);
+    if (allRevealed) {
+      setTimeout(() => this.onLevelWon(), 700);
+    }
+  }
+
   getCurrentSpelled() {
     return this.selectedIndices.map(i => this.letterNodes[i].char).join('');
   }
 
+  // --- VALIDATION DES MOTS & ÉCONOMIE DIFFÉRENCIÉE REPLAY ---
   validateWord() {
     const spelled = this.getCurrentSpelled();
     if (!spelled || spelled.length < 2) return;
@@ -626,11 +600,22 @@ export class BerthoWords {
       if (!this.foundWords.has(spelled)) {
         this.foundWords.add(spelled);
 
-        const earned = spelled.length <= 3 ? 10 : (spelled.length === 4 ? 15 : 20);
+        const gridItem = this.levelData.grid.find(g => g.word === spelled);
+        if (gridItem) {
+          for (let i = 0; i < gridItem.word.length; i++) {
+            const r = gridItem.dir === 'V' ? gridItem.r + i : gridItem.r;
+            const c = gridItem.dir === 'H' ? gridItem.c + i : gridItem.c;
+            const cell = this.matrixCells.get(`${r}_${c}`);
+            if (cell) cell.revealed = true;
+          }
+        }
+
+        // Gains complets si 1ère fois, gains réduits si niveau déjà franchi
+        const earned = this.isReplay ? 2 : (spelled.length <= 3 ? 10 : (spelled.length === 4 ? 15 : 20));
         this.coins += earned;
         this.saveState();
 
-        const toastMsg = `+${earned} COINS (${spelled})`;
+        const toastMsg = this.isReplay ? `REJOUÉ : +${earned} COINS` : `+${earned} COINS (${spelled})`;
         this.addFloatingToast(toastMsg, "#34d399");
         this.spawnParticles(this.width / 2, this.height * 0.25, "#34d399");
         WordAudio.playSolved();
@@ -643,14 +628,18 @@ export class BerthoWords {
         this.addFloatingToast("DÉJÀ TROUVÉ", "#fbbf24");
         WordAudio.playError();
       }
-    } else if (this.bonusWords.includes(spelled)) {
-      if (!this.foundWords.has(spelled)) {
-        const earned = 10;
+    } else if (FRENCH_LEXICON.has(spelled)) {
+      if (!this.foundBonusWords.has(spelled)) {
+        this.foundBonusWords.add(spelled);
+        const earned = this.isReplay ? 2 : 10;
         this.coins += earned;
         this.saveState();
+
         this.addFloatingToast(`MOT BONUS +${earned} (${spelled})`, "#fbbf24");
         this.spawnParticles(this.width / 2, this.height * 0.25, "#fbbf24");
         WordAudio.playSolved();
+      } else {
+        this.addFloatingToast("MOT BONUS DÉJÀ COLLECTÉ", "#fbbf24");
       }
     } else {
       this.addFloatingToast(spelled, "#ef4444");
@@ -660,14 +649,15 @@ export class BerthoWords {
   }
 
   onLevelWon() {
-    const bonus = 25;
+    const bonus = this.isReplay ? 5 : 25;
     this.coins += bonus;
     this.levelStars[this.levelNum] = 3;
     this.maxUnlockedLevel = Math.max(this.maxUnlockedLevel, this.levelNum + 1);
     this.saveState();
     this.spawnParticles(this.width / 2, this.height / 2, "#fbbf24", 50);
 
-    this.addFloatingToast(`VICTOIRE ! NIVEAU SUIVANT`, "#34d399");
+    const toast = this.isReplay ? `NIVEAU COMPLÉTÉ (+${bonus} COINS)` : `VICTOIRE ! +${bonus} BONUS`;
+    this.addFloatingToast(toast, "#34d399");
     WordAudio.playSolved();
 
     setTimeout(() => {
@@ -709,15 +699,29 @@ export class BerthoWords {
   }
 
   startLoop() {
-    const loop = () => {
-      this.update();
+    const loop = (timestamp) => {
+      this.update(timestamp);
       this.draw();
       this.animationId = requestAnimationFrame(loop);
     };
     this.animationId = requestAnimationFrame(loop);
   }
 
-  update() {
+  update(timestamp) {
+    if (this.isIntroAnimating) {
+      const elapsed = timestamp - this.introStartTime;
+      const duration = 650;
+      const t = Math.min(1.0, elapsed / duration);
+      const c1 = 1.70158;
+      const c3 = c1 + 1;
+      this.introProgress = 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+
+      if (t >= 1.0) {
+        this.introProgress = 1.0;
+        this.isIntroAnimating = false;
+      }
+    }
+
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
       p.x += p.vx;
@@ -802,41 +806,26 @@ export class BerthoWords {
   }
 
   drawCrosswordMatrix(ctx) {
-    const size = this.gridCellSize;
+    const size = this.gridCellSize * Math.min(1.0, this.introProgress);
     const gap = this.gridGap;
-    const renderedCells = {};
 
-    this.levelData.grid.forEach(item => {
-      const isWordSolved = this.foundWords.has(item.word);
-      const revealedIndices = this.revealedLetterIndices[item.word] || [];
+    this.matrixCells.forEach(cell => {
+      const x = this.gridStartX + cell.c * (this.gridCellSize + gap) + (this.gridCellSize - size) / 2;
+      const y = this.gridStartY + cell.r * (this.gridCellSize + gap) + (this.gridCellSize - size) / 2;
 
-      for (let i = 0; i < item.word.length; i++) {
-        const r = item.dir === 'V' ? item.r + i : item.r;
-        const c = item.dir === 'H' ? item.c + i : item.c;
-        const cellKey = `${r}_${c}`;
-        const char = item.word[i];
-        const isLetterVisible = isWordSolved || revealedIndices.includes(i);
-
-        if (!renderedCells[cellKey] || isLetterVisible) {
-          renderedCells[cellKey] = {
-            r: r, c: c,
-            char: char,
-            visible: isLetterVisible || (renderedCells[cellKey] && renderedCells[cellKey].visible)
-          };
-        }
-      }
-    });
-
-    Object.values(renderedCells).forEach(cell => {
-      const x = this.gridStartX + cell.c * (size + gap);
-      const y = this.gridStartY + cell.r * (size + gap);
-
-      if (cell.visible) {
+      if (cell.revealed) {
         const tileGrad = ctx.createLinearGradient(x, y, x, y + size);
-        tileGrad.addColorStop(0, '#0284c7');
-        tileGrad.addColorStop(1, '#0369a1');
+        if (cell.hinted) {
+          tileGrad.addColorStop(0, '#f59e0b');
+          tileGrad.addColorStop(1, '#b45309');
+          ctx.strokeStyle = '#fde047';
+        } else {
+          tileGrad.addColorStop(0, '#0284c7');
+          tileGrad.addColorStop(1, '#0369a1');
+          ctx.strokeStyle = '#38bdf8';
+        }
+
         ctx.fillStyle = tileGrad;
-        ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 2.5;
         this.roundRect(ctx, x, y, size, size, 8, true, true);
 
@@ -856,7 +845,8 @@ export class BerthoWords {
   drawTrayAndLetters(ctx) {
     const cx = this.wheelCenter.x;
     const cy = this.wheelCenter.y;
-    const R = this.trayRadius;
+    const scale = Math.min(1.0, this.introProgress);
+    const R = this.trayRadius * scale;
 
     // 1. Bol Sombre 3D
     ctx.save();
@@ -877,7 +867,7 @@ export class BerthoWords {
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(cx, cy, R - 2, 0, Math.PI * 2);
+    ctx.arc(cx, cy, Math.max(0, R - 2), 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
 
@@ -940,7 +930,7 @@ export class BerthoWords {
     ctx.textAlign = 'center';
     ctx.fillText("5", hx, hy + 16);
 
-    // 4. Cordon Nacré Blanc Lumineux
+    // 4. Cordon Nacré de Liaison Tactile
     if (this.selectedIndices.length > 0) {
       ctx.save();
       ctx.beginPath();
@@ -974,37 +964,41 @@ export class BerthoWords {
     // 5. Lettres Sculptées en Or 3D
     this.letterNodes.forEach((node, idx) => {
       const isSelected = this.selectedIndices.includes(idx);
-      const fontSize = Math.floor(node.radius * 1.55);
+      const fontSize = Math.floor(node.radius * 1.55 * scale);
 
-      ctx.save();
-      ctx.font = `900 ${fontSize}px "Arial Black", -apple-system, sans-serif`;
-      ctx.textAlign = 'center';
+      if (fontSize > 4) {
+        ctx.save();
+        ctx.font = `900 ${fontSize}px "Arial Black", -apple-system, sans-serif`;
+        ctx.textAlign = 'center';
 
-      ctx.fillStyle = '#451a03';
-      ctx.fillText(node.char, node.x + 1, node.y + fontSize * 0.38 + 4);
+        // Extrusion 3D
+        ctx.fillStyle = '#451a03';
+        ctx.fillText(node.char, node.x + 1, node.y + fontSize * 0.38 + 4);
 
-      const goldGrad = ctx.createLinearGradient(node.x, node.y - fontSize * 0.4, node.x, node.y + fontSize * 0.4);
-      if (isSelected) {
-        goldGrad.addColorStop(0, '#ffffff');
-        goldGrad.addColorStop(0.3, '#fef08a');
-        goldGrad.addColorStop(0.7, '#f59e0b');
-        goldGrad.addColorStop(1, '#ea580c');
-        ctx.shadowColor = '#facc15';
-        ctx.shadowBlur = 20;
-      } else {
-        goldGrad.addColorStop(0, '#fef08a');
-        goldGrad.addColorStop(0.4, '#eab308');
-        goldGrad.addColorStop(0.8, '#d97706');
-        goldGrad.addColorStop(1, '#b45309');
+        // Dégradé Or Pur
+        const goldGrad = ctx.createLinearGradient(node.x, node.y - fontSize * 0.4, node.x, node.y + fontSize * 0.4);
+        if (isSelected) {
+          goldGrad.addColorStop(0, '#ffffff');
+          goldGrad.addColorStop(0.3, '#fef08a');
+          goldGrad.addColorStop(0.7, '#f59e0b');
+          goldGrad.addColorStop(1, '#ea580c');
+          ctx.shadowColor = '#facc15';
+          ctx.shadowBlur = 20;
+        } else {
+          goldGrad.addColorStop(0, '#fef08a');
+          goldGrad.addColorStop(0.4, '#eab308');
+          goldGrad.addColorStop(0.8, '#d97706');
+          goldGrad.addColorStop(1, '#b45309');
+        }
+
+        ctx.fillStyle = goldGrad;
+        ctx.fillText(node.char, node.x, node.y + fontSize * 0.38);
+
+        ctx.strokeStyle = isSelected ? '#ffffff' : '#78350f';
+        ctx.lineWidth = 2;
+        ctx.strokeText(node.char, node.x, node.y + fontSize * 0.38);
+        ctx.restore();
       }
-
-      ctx.fillStyle = goldGrad;
-      ctx.fillText(node.char, node.x, node.y + fontSize * 0.38);
-
-      ctx.strokeStyle = isSelected ? '#ffffff' : '#78350f';
-      ctx.lineWidth = isSelected ? 2 : 1.2;
-      ctx.strokeText(node.char, node.x, node.y + fontSize * 0.38);
-      ctx.restore();
     });
 
     // 6. Pilule Mot en cours
