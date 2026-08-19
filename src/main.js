@@ -1,16 +1,25 @@
+// ============================================================================
+// 🎮 BERTHOPLAY — CONTRÔLEUR CENTRAL (SRC/MAIN.JS) [AUTO-HIDE BANNER PWA]
+// ============================================================================
+
 import { i18n } from './i18n.js';
 import { BerthoUI } from './ui-dialogs.js';
 import { Ambience } from './services/ambience.js';
 import { BerthoSoundEffects } from './services/sound-effects.js';
 import { icon } from './components/icons.js';
 
-// Mode Sandbox local pour le Dev Hub (évite de toucher à la vraie base D1)
+// Mode Sandbox local pour le Dev Hub
 const IS_SANDBOX = true;
 const API_URL = IS_SANDBOX ? '' : 'https://berthoplay.bertho.workers.dev';
 
+<<<<<<< HEAD
 // Emblèmes des jeux — palette verrouillée sur les jetons du design system
 // (obsidienne, sang, vitrail, or). Aucune couleur hors palette.
 const GAME_EMBLEMS = {
+=======
+// Registre de métadonnées visuelles 3D / Relief Métallique AAA
+const HIGH_END_GAME_ICONS = {
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
   billiards: {
     title: 'Billard 3D Pro',
     tagline: 'Table de pierre, huit boules',
@@ -61,20 +70,32 @@ const GAME_EMBLEMS = {
     tagline: "Tenir jusqu'à l'aube",
     infoKey: 'gameBest',
     defaultVal: state => state.hordeScore || 0,
+<<<<<<< HEAD
     svg: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="16" fill="#0A0810" stroke="#C1121F" stroke-width="2"/><circle cx="20" cy="20" r="9" stroke="#8A8296" stroke-width="1.4" opacity="0.7"/><circle cx="20" cy="20" r="3.4" fill="#C1121F"/><path d="M20 2v7M20 31v7M2 20h7M31 20h7" stroke="#C9A227" stroke-width="1.8" stroke-linecap="round"/></svg>`
+=======
+    svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><defs><radialGradient id="horde3D" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#4ade80"/><stop offset="50%" stop-color="#16a34a"/><stop offset="100%" stop-color="#052e16"/></radialGradient></defs><circle cx="20" cy="20" r="17" fill="url(#horde3D)" stroke="#22c55e" stroke-width="1.5"/><circle cx="20" cy="20" r="10" stroke="#000000" stroke-width="1.5" opacity="0.6"/><circle cx="20" cy="20" r="4" fill="#ef4444" stroke="#ffffff" stroke-width="1"/><line x1="20" y1="3" x2="20" y2="37" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="3" y1="20" x2="37" y2="20" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="3 2"/><ellipse cx="14" cy="13" rx="4" ry="2" fill="#ffffff" opacity="0.5"/></svg>`
+  },
+  word: {
+    title: 'Mots Connectés',
+    infoKey: 'gameStage',
+    suffix: '/50',
+    defaultVal: state => state.wordWheelLevel || 1,
+    svg: `<svg width="42" height="42" viewBox="0 0 40 40" fill="none"><defs><radialGradient id="word3DGrad" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#facc15"/><stop offset="60%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#78350f"/></radialGradient></defs><circle cx="20" cy="20" r="18" fill="url(#word3DGrad)" stroke="#fef08a" stroke-width="1.5"/><circle cx="20" cy="20" r="9" fill="#0f172a"/><text x="20" y="24" font-size="11" font-weight="900" fill="#38bdf8" text-anchor="middle">ABC</text></svg>`
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
   }
 };
 
 class SafeState {
   static get() {
     try {
-      const data = localStorage.getItem('BERTHOPLAY_V1');
+      const data = localStorage.getItem('BERTHOPLAY_V1') || localStorage.getItem('BERTHO_TEST_STATE');
       const parsed = data ? JSON.parse(data) : {};
       const state = { ...this.defaultState(), ...parsed };
 
       state.carLevel = Math.max(1, parseInt(state.carLevel, 10) || 1);
       state.bikeLevel = Math.max(1, parseInt(state.bikeLevel, 10) || 1);
       state.bubbleLevel = Math.max(1, parseInt(state.bubbleLevel, 10) || 1);
+      state.wordWheelLevel = Math.max(1, parseInt(state.wordWheelLevel, 10) || 1);
 
       if (!state.userId) {
         state.userId = 'usr_' + Math.random().toString(36).substr(2, 9);
@@ -89,7 +110,9 @@ class SafeState {
   static save(updated) {
     try {
       const current = this.get();
-      localStorage.setItem('BERTHOPLAY_V1', JSON.stringify({ ...current, ...updated }));
+      const next = { ...current, ...updated };
+      localStorage.setItem('BERTHOPLAY_V1', JSON.stringify(next));
+      localStorage.setItem('BERTHO_TEST_STATE', JSON.stringify(next));
     } catch (e) {}
   }
   
@@ -101,6 +124,8 @@ class SafeState {
       bikeLevel: 1,
       bubbleLevel: 1,
       bubbleStars: {},
+      wordWheelLevel: 1,
+      wordWheelStars: {},
       coins: 500,
       billiardsWins: 0,
       checkersWins: 0,
@@ -264,9 +289,43 @@ class BerthoPlay {
   triggerPWAInstall() {
     if (window.deferredPWA_Prompt) {
       window.deferredPWA_Prompt.prompt();
+<<<<<<< HEAD
       window.deferredPWA_Prompt.userChoice?.finally(() => {
         window.deferredPWA_Prompt = null;
         this.renderWebPWABanner();
+=======
+    } else {
+      const modal = document.getElementById('pwa-modal-overlay');
+      if (modal) modal.classList.add('active');
+    }
+  }
+
+  closePWAModal() {
+    const modal = document.getElementById('pwa-modal-overlay');
+    if (modal) modal.classList.remove('active');
+  }
+
+  // --- GESTION DE LA BANNIÈRE BLEUE D'INSTALLATION PWA ---
+  renderWebPWABanner() {
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    let banner = document.getElementById('web-pwa-banner');
+
+    if (!isPWA) {
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'web-pwa-banner';
+        banner.style.cssText = 'position:fixed; top:0; left:0; width:100vw; background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff; z-index:9990; padding:8px 15px; display:flex; justify-content:space-between; align-items:center; box-sizing:border-box; font-size:0.75rem; font-weight:bold; border-bottom:1px solid #38bdf8;';
+        document.body.appendChild(banner);
+      }
+
+      banner.innerHTML = `
+        <span>${i18n.t('pwaBannerText') || "Installez l'application BerthoPlay pour une expérience 100% plein écran"}</span>
+        <button id="btn-banner-pwa" style="background:#fff; color:#0f172a; border:none; padding:5px 12px; border-radius:12px; font-weight:900; cursor:pointer; font-size:0.7rem; text-transform:uppercase;">${i18n.t('btnInstallPWA') || 'INSTALLER'}</button>
+      `;
+
+      document.getElementById('btn-banner-pwa')?.addEventListener('click', () => {
+        this.triggerPWAInstall();
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
       });
       return;
     }
@@ -301,6 +360,7 @@ class BerthoPlay {
     }
   }
 
+<<<<<<< HEAD
   /** Marche à suivre, adaptée à la plateforme réellement détectée. */
   pwaSteps() {
     const ua = navigator.userAgent;
@@ -326,6 +386,26 @@ class BerthoPlay {
       'Choisissez <strong>Installer l\'application</strong>.',
       'Confirmez : BerthoPlay s\'ouvrira en plein écran.'
     ];
+=======
+  // 🔒 MASQUE LA BANNIÈRE DÈS QU'UN JEU SE LANCE
+  hidePWABanner() {
+    const banner = document.getElementById('web-pwa-banner');
+    if (banner) banner.style.display = 'none';
+  }
+
+  // 🔓 RÉAFFICHE LA BANNIÈRE QUAND ON REVIENT AU MENU PRINCIPAL
+  showPWABanner() {
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const banner = document.getElementById('web-pwa-banner');
+    if (banner && !isPWA) {
+      banner.style.display = 'flex';
+    }
+  }
+
+  hideBottomNav() {
+    const nav = document.getElementById('bottom-nav-bar');
+    if (nav) nav.style.display = 'none';
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
   }
 
   isStandalone() {
@@ -341,9 +421,17 @@ class BerthoPlay {
   renderWebPWABanner() {
     const existing = document.getElementById('web-pwa-banner');
 
+<<<<<<< HEAD
     let dismissedAt = 0;
     try { dismissedAt = parseInt(localStorage.getItem('BERTHOPLAY_PWA_DISMISSED') || '0', 10); } catch (e) {}
     const recentlyDismissed = Date.now() - dismissedAt < 7 * 24 * 60 * 60 * 1000;
+=======
+    nav.querySelector('[data-tab="home"] span').innerText = i18n.t('navHome') || 'Accueil';
+    nav.querySelector('[data-tab="feed"] span').innerText = i18n.t('navActus') || 'Actus';
+    nav.querySelector('[data-tab="stats"] span').innerText = i18n.t('navTop') || 'Top';
+    nav.querySelector('[data-tab="account"] span').innerText = i18n.t('navAccount') || 'Compte';
+    nav.querySelector('[data-tab="settings"] span').innerText = i18n.t('navSettings') || 'Réglages';
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
 
     if (this.isStandalone() || recentlyDismissed) {
       existing?.remove();
@@ -415,6 +503,7 @@ class BerthoPlay {
 
   /** Met à jour la bourse dans l'en-tête, avec une pulsation au gain. */
   updateCoinsDisplay(coins) {
+<<<<<<< HEAD
     const purse = document.getElementById('purse');
     const value = document.getElementById('purse-value');
     if (!value) return;
@@ -427,17 +516,51 @@ class BerthoPlay {
     if (purse && next > prev) {
       purse.dataset.bump = 'true';
       setTimeout(() => delete purse.dataset.bump, 400);
+=======
+    const badge = document.getElementById('hub-coins-badge');
+    if (badge) {
+      badge.innerText = `${coins || 0} ${i18n.t('coins') || 'COINS'}`;
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
     }
   }
 
   /** L'en-tête est statique dans le HTML : on n'y rafraîchit que la bourse. */
   renderGlobalTopHeader() {
     const state = SafeState.get();
+<<<<<<< HEAD
     this.updateCoinsDisplay(state.currentUser?.coins ?? state.coins ?? 0);
+=======
+    let topBarHub = document.getElementById('hub-top-bar');
+    
+    if (!topBarHub && this.hub) {
+      topBarHub = document.createElement('div');
+      topBarHub.id = 'hub-top-bar';
+      topBarHub.style.cssText = 'width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; padding: max(10px, env(safe-area-inset-top)) 15px 5px; box-sizing: border-box; z-index: 100;';
+      this.hub.insertBefore(topBarHub, this.hub.firstChild);
+    }
+
+    if (topBarHub) {
+      const initialCoins = state.currentUser?.coins ?? state.coins ?? 0;
+
+      topBarHub.innerHTML = `
+        <button id="btn-user-account" style="background: rgba(15,23,42,0.9); border: 1px solid #38bdf8; color: #38bdf8; padding: 6px 14px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; cursor: pointer; backdrop-filter: blur(8px);"></button>
+        <div id="hub-coins-badge" style="background: rgba(15,23,42,0.9); border: 1px solid #fbbf24; color: #fbbf24; padding: 6px 14px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; backdrop-filter: blur(8px);">${initialCoins} ${i18n.t('coins') || 'COINS'}</div>
+      `;
+
+      const btnUser = document.getElementById('btn-user-account');
+      if (btnUser) {
+        btnUser.textContent = state.currentUser ? state.currentUser.username : (i18n.t('btnConnexion') || "Connexion");
+        btnUser.addEventListener('click', () => {
+          if (this.auth) this.auth.openAuthModal();
+        });
+      }
+    }
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
   }
 
   async showTab(tabName) {
     this.showBottomNav();
+    this.showPWABanner();
     this.renderGlobalTopHeader();
     this.currentTab = tabName;
 
@@ -521,9 +644,13 @@ class BerthoPlay {
   bindEcosystemButton() {
     const btn = document.getElementById('btn-open-eco');
     if (!btn) return;
+<<<<<<< HEAD
     // Bouton-icône : le nom accessible passe par aria-label, pas par le contenu.
     btn.setAttribute('aria-label', i18n.t('btnEco') || 'Infrastructures Bertho');
     btn.setAttribute('title', i18n.t('btnEco') || 'Infrastructures Bertho');
+=======
+    btn.innerText = i18n.t('btnEco') || 'Infrastructures Bertho';
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
 
     btn.onclick = async () => {
       try {
@@ -612,7 +739,12 @@ class BerthoPlay {
     this.renderGlobalTopHeader();
     this.bindEcosystemButton();
 
+<<<<<<< HEAD
     const CORE_GAMES = ['billiards', 'bubble', 'car', 'bike', 'checkers', 'chess', 'horde'];
+=======
+    const CORE_GAMES = ['billiards', 'bubble', 'car', 'bike', 'checkers', 'chess', 'horde', 'word'];
+    let activeGamesList = [...CORE_GAMES];
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
 
     // Une vraie hiérarchie : le jeu repris en grand, les autres en liste.
     // Sans historique, on met en avant le premier du catalogue.
@@ -770,9 +902,14 @@ class BerthoPlay {
     }
   }
 
+  // --- LANCEMENT CENTRALISÉ DES JEUX AVEC DÉSACTIVATION DE LA BANNIÈRE ---
   async startSelectedGame(id) {
     this.logAnalytics('game_start', id);
+<<<<<<< HEAD
     SafeState.save({ lastPlayed: id });
+=======
+    this.hidePWABanner(); // 🛑 Masque la bannière bleue pour TOUS les jeux
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
 
     if (id === 'billiards') {
       this.launchBilliardsGame();
@@ -788,12 +925,51 @@ class BerthoPlay {
       this.launchChessGame();
     } else if (id === 'horde') {
       this.launchHordeGame();
+    } else if (id === 'word') {
+      this.launchWordGame();
+    }
+  }
+
+  async launchWordGame() {
+    this.cleanAllOverlays();
+    this.hideBottomNav();
+    this.hidePWABanner();
+    if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
+    if (this.hub) this.hub.style.display = 'none';
+
+    try {
+      const state = SafeState.get();
+      const currentLvl = state.wordWheelLevel || 1;
+      const module = await import('./games/word.js');
+      const GameClass = module.BerthoWords || module.WordWheelGame || module.default;
+
+      this.currentGame = new GameClass(
+        document.body,
+        currentLvl,
+        (completedLvl, coinsEarned) => {
+          const nextLvl = Math.min(50, completedLvl + 1);
+          const currentCoins = SafeState.get().coins || 0;
+          
+          SafeState.save({
+            coins: currentCoins + coinsEarned,
+            wordWheelLevel: nextLvl
+          });
+
+          this.submitScoreToAPI('word', coinsEarned * 10, 3, completedLvl, coinsEarned);
+        },
+        () => {},
+        () => this.showHub()
+      );
+    } catch (err) {
+      alert("Erreur word.js: " + err.message);
+      this.showHub();
     }
   }
 
   showBubbleLevelSelector() {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     const state = SafeState.get();
     const maxUnlocked = Math.max(1, parseInt(state.bubbleLevel, 10) || 1);
     const starsMap = state.bubbleStars || {};
@@ -826,6 +1002,22 @@ class BerthoPlay {
     }
 
     selector.innerHTML = `
+<<<<<<< HEAD
+=======
+      <style>
+        .bub-sel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(3, 3, 12, 0.96); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; backdrop-filter: blur(20px); padding: max(16px, env(safe-area-inset-top)) 15px max(20px, env(safe-area-inset-bottom)); box-sizing: border-box; overflow-y: auto; color: #fff; }
+        .bub-sel-top { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 520px; margin-bottom: 12px; }
+        .bub-sel-title { font-size: 1.3rem; font-weight: 900; color: #06b6d4; text-transform: uppercase; }
+        .btn-hub-back { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .bub-stars-progress { color: #f59e0b; font-weight: 900; font-size: 0.9rem; margin-bottom: 15px; }
+        .bub-sel-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; max-width: 520px; }
+        .bub-card-step { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 10px 0; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .bub-card-step.unlocked { border-color: #06b6d4; background: rgba(6, 182, 212, 0.15); }
+        .bub-card-step.locked { opacity: 0.3; cursor: not-allowed; border-color: #334155; }
+        .bub-card-step span { font-size: 1rem; font-weight: 900; color: #fff; }
+        .bub-card-step small { font-size: 0.7rem; margin-top: 2px; color: #f59e0b; }
+      </style>
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
       <div class="bub-sel-overlay">
         <div class="bub-sel-top">
           <button class="btn-hub-back" id="btn-hub-from-bub" type="button" data-sfx="back">
@@ -833,12 +1025,17 @@ class BerthoPlay {
           </button>
           <h2 class="bub-sel-title grow">Bubble — 50 étapes</h2>
         </div>
+<<<<<<< HEAD
         <p class="bub-stars-progress">
           ${icon('star', 'icon icon--sm icon--fill')} ${totalStars} / 150 étoiles
         </p>
         <div class="bub-sel-grid">
           ${gridHTML}
         </div>
+=======
+        <div class="bub-stars-progress">⭐ ${totalStars} / 150 ÉTOILES</div>
+        <div class="bub-sel-grid">${gridHTML}</div>
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
       </div>
     `;
 
@@ -852,7 +1049,6 @@ class BerthoPlay {
 
     selector.querySelectorAll('.bub-card-step.unlocked').forEach(card => {
       card.addEventListener('click', () => handleSelectLvl(card));
-      card.addEventListener('pointerdown', () => handleSelectLvl(card));
     });
 
     document.getElementById('btn-hub-from-bub')?.addEventListener('click', () => {
@@ -864,6 +1060,7 @@ class BerthoPlay {
   async launchBubbleGame(lvlToPlay) {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
 
     try {
@@ -887,7 +1084,7 @@ class BerthoPlay {
 
           this.submitScoreToAPI('bubble', coinsEarned * 10, starsEarned, completedLvl, coinsEarned);
         },
-        (failedLvl) => {},
+        () => {},
         () => this.showBubbleLevelSelector()
       );
     } catch (err) {
@@ -899,6 +1096,7 @@ class BerthoPlay {
   async launchBilliardsGame() {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
     if (this.canvas) this.canvas.style.display = 'block';
 
@@ -908,7 +1106,6 @@ class BerthoPlay {
         const currentWins = SafeState.get().billiardsWins || 0;
         const currentCoins = SafeState.get().coins || 0;
         SafeState.save({ billiardsWins: currentWins + 1, coins: currentCoins + 150 });
-
         this.submitScoreToAPI('billiards', 150, 3, 1, 150);
         this.showHub();
       });
@@ -917,10 +1114,11 @@ class BerthoPlay {
       this.showHub();
     }
   }
-  
+
   showCarLevelSelector() {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     const state = SafeState.get();
     const maxUnlocked = Math.max(1, parseInt(state.carLevel, 10) || 1);
 
@@ -940,6 +1138,22 @@ class BerthoPlay {
     const selector = document.createElement('div');
     selector.id = 'level-selector-modal';
     selector.innerHTML = `
+<<<<<<< HEAD
+=======
+      <style>
+        .sel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(3,3,10,0.95); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; backdrop-filter: blur(15px); padding: max(16px, env(safe-area-inset-top)) 15px max(20px, env(safe-area-inset-bottom)); box-sizing: border-box; overflow-y: auto; color: #fff; }
+        .sel-top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; margin-bottom: 15px; }
+        .sel-title { font-size: 1.5rem; font-weight: 900; color: #00ffff; text-transform: uppercase; }
+        .btn-hub-back { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .sel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; width: 100%; max-width: 550px; }
+        .sel-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; }
+        .sel-card.unlocked { border-color: #00ffff; background: rgba(0,255,255,0.12); }
+        .sel-card.locked { opacity: 0.35; cursor: not-allowed; border-color: #334155; }
+        .sel-card h4 { font-size: 0.9rem; color: #fff; margin-bottom: 4px; font-weight: 800; }
+        .sel-card p { font-size: 0.7rem; color: #94a3b8; font-weight: 600; }
+        .sel-close { margin-top: 20px; padding: 12px 30px; background: rgba(255,0,85,0.2); border: 1px solid #ff0055; color: #fff; border-radius: 20px; font-size: 0.85rem; font-weight: 800; cursor: pointer; }
+      </style>
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
       <div class="sel-overlay">
         <div class="sel-top-bar">
           <button class="btn-hub-back" id="btn-hub-from-car" type="button" data-sfx="back">
@@ -971,7 +1185,6 @@ class BerthoPlay {
 
     selector.querySelectorAll('.sel-card.unlocked').forEach(card => {
       card.addEventListener('click', () => handleSelectCarLvl(card));
-      card.addEventListener('pointerdown', () => handleSelectCarLvl(card));
     });
     
     const closeAll = () => {
@@ -982,10 +1195,11 @@ class BerthoPlay {
     document.getElementById('btn-close-sel')?.addEventListener('click', closeAll);
     document.getElementById('btn-hub-from-car')?.addEventListener('click', closeAll);
   }
-  
+
   showBikeStepSelector() {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     const state = SafeState.get();
     const maxUnlocked = Math.max(1, parseInt(state.bikeLevel, 10) || 1);
 
@@ -1005,6 +1219,22 @@ class BerthoPlay {
     const selector = document.createElement('div');
     selector.id = 'bike-selector-modal';
     selector.innerHTML = `
+<<<<<<< HEAD
+=======
+      <style>
+        .sel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(3,3,10,0.95); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; backdrop-filter: blur(15px); padding: max(16px, env(safe-area-inset-top)) 15px max(20px, env(safe-area-inset-bottom)); box-sizing: border-box; overflow-y: auto; color: #fff; }
+        .sel-top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; margin-bottom: 15px; }
+        .sel-title { font-size: 1.5rem; font-weight: 900; color: #00ffff; text-transform: uppercase; }
+        .btn-hub-back { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .sel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; width: 100%; max-width: 550px; }
+        .sel-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; }
+        .sel-card.unlocked { border-color: #00ffff; background: rgba(0,255,255,0.12); }
+        .sel-card.locked { opacity: 0.35; cursor: not-allowed; border-color: #334155; }
+        .sel-card h4 { font-size: 0.9rem; color: #fff; margin-bottom: 4px; font-weight: 800; }
+        .sel-card p { font-size: 0.7rem; color: #94a3b8; font-weight: 600; }
+        .sel-close { margin-top: 20px; padding: 12px 30px; background: rgba(255,0,85,0.2); border: 1px solid #ff0055; color: #fff; border-radius: 20px; font-size: 0.85rem; font-weight: 800; cursor: pointer; }
+      </style>
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
       <div class="sel-overlay">
         <div class="sel-top-bar">
           <button class="btn-hub-back" id="btn-hub-from-bike" type="button" data-sfx="back">
@@ -1036,7 +1266,6 @@ class BerthoPlay {
 
     selector.querySelectorAll('.sel-card.unlocked').forEach(card => {
       card.addEventListener('click', () => handleSelectBikeStep(card));
-      card.addEventListener('pointerdown', () => handleSelectBikeStep(card));
     });
 
     const closeAll = () => {
@@ -1051,6 +1280,7 @@ class BerthoPlay {
   async launchCarGame(levelToPlay) {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
     
     if (this.canvas) {
@@ -1078,7 +1308,7 @@ class BerthoPlay {
           if (completedLevel < 10) this.launchCarGame(nextLvl);
           else this.showCarLevelSelector();
         },
-        (failedLevel) => this.launchCarGame(failedLevel),
+        () => {},
         () => this.showCarLevelSelector()
       );
     } catch (err) {
@@ -1090,6 +1320,7 @@ class BerthoPlay {
   async launchBikeGame(stepToPlay) {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
     
     if (this.canvas) {
@@ -1117,7 +1348,7 @@ class BerthoPlay {
           if (completedStep < 10) this.launchBikeGame(nextStep);
           else this.showBikeStepSelector();
         },
-        (failedStep) => this.launchBikeGame(failedStep),
+        () => {},
         () => this.showBikeStepSelector()
       );
     } catch (err) {
@@ -1129,6 +1360,7 @@ class BerthoPlay {
   async launchCheckersGame() {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
     
     try {
@@ -1147,6 +1379,7 @@ class BerthoPlay {
   async launchChessGame() {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
     
     try {
@@ -1165,6 +1398,7 @@ class BerthoPlay {
   async launchHordeGame() {
     this.cleanAllOverlays();
     this.hideBottomNav();
+    this.hidePWABanner();
     if (this.currentGame && typeof this.currentGame.destroy === 'function') this.currentGame.destroy();
     if (this.canvas) this.canvas.style.display = 'block';
     
@@ -1194,9 +1428,17 @@ class BerthoPlay {
       this.currentGame.destroy();
       this.currentGame = null;
     }
+<<<<<<< HEAD
 
     this.exitGame();
     if (this.hub) this.hub.style.display = '';
+=======
+    
+    if (this.canvas) this.canvas.style.display = 'none';
+    if (this.backBtn) this.backBtn.style.display = 'none';
+    if (this.hub) this.hub.style.display = 'flex';
+    this.showPWABanner(); // 🔓 Réaffiche la bannière bleue PWA sur le Hub
+>>>>>>> a0239789d9828d38c0371e6dd35ea034f9487eff
     this.showTab('home');
   }
 }
